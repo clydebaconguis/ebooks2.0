@@ -15,9 +15,15 @@ dependencies:
     flutter:
         sdk: flutter
     cupertino_icons: ^1.0.2
-    http: ^1.0.0
+    http: ^0.13.6
     shared_preferences: ^2.1.2
     dots_indicator: ^3.0.0
+    dio: ^5.2.1+1
+    flutter_windowmanager: ^0.2.0
+    path_provider: ^2.0.15
+    permission_handler: ^10.3.0
+    syncfusion_flutter_pdf: ^21.2.10
+    syncfusion_flutter_pdfviewer: ^21.2.10
 
 dev_dependencies:
     flutter_test:

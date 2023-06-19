@@ -109,9 +109,13 @@ class _AllBooksState extends State<AllBooks> {
                               debugPrint(book.img.toString());
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigator.push(context,
-                                  //     MaterialPageRoute(builder: (context)=>Detail(articleInfo:article, index:0))
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailBookPage(
+                                          bookInfo: book, index: 0),
+                                    ),
+                                  );
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.only(
@@ -187,6 +191,7 @@ class _AllBooksState extends State<AllBooks> {
                                                 style: const TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
