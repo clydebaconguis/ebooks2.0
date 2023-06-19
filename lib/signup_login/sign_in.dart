@@ -3,6 +3,7 @@ import 'dart:convert';
 // import 'package:flutter/cupertino.dart';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
+import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/signup_login/sign_up.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_app_backend/api/my_api.dart';
@@ -44,12 +45,12 @@ class _SignInState extends State<SignIn> {
   }
 
   _navigateToBooks() {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ArticlePage(),
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AllBooks(),
+      ),
+    );
   }
 
   _login() async {
@@ -79,10 +80,9 @@ class _SignInState extends State<SignIn> {
     final double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFffffff),
       body: Container(
         padding: const EdgeInsets.only(left: 30, right: 40),
-        child: Expanded(
+        child: SafeArea(
           child: ListView(
             children: [
               SizedBox(height: height * 0.1),
@@ -158,9 +158,11 @@ class _SignInState extends State<SignIn> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignUp()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUp(),
+                        ),
+                      );
                     },
                     child: const TextWidget(
                         text: "Sign up", fontSize: 16, isUnderLine: true),

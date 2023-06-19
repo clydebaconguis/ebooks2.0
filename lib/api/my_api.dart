@@ -17,6 +17,7 @@ class CallApi {
     return await http.post(Uri.parse(fullUrl),
         body: jsonEncode(data), headers: _setHeaders());
   }
+
   login(data, apiUrl) async {
     var fullUrl = _local + apiUrl;
     return await http.post(Uri.parse(fullUrl),
