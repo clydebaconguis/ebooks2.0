@@ -5,6 +5,7 @@ import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/models/get_articles_info.dart';
 import 'package:ebooks/models/get_books_info.dart';
 import 'package:flutter/material.dart';
+import 'package:ebooks/api/my_api.dart';
 // import 'package:flutter_app_backend/api/my_api.dart';
 // import 'package:flutter_app_backend/components/text_widget.dart';
 // import 'package:flutter_app_backend/models/get_article_info.dart';
@@ -167,10 +168,10 @@ class _AllBooksState extends State<AllBooks> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10.0),
-                                              image: const DecorationImage(
+                                              image: DecorationImage(
                                                 fit: BoxFit.fill,
                                                 image: NetworkImage(
-                                                    "https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/07/attachment_73599840-e1500060411553.png?auto=format&q=60&fit=max&w=930"),
+                                                  'https://drive.google.com/uc?export=view&id=${book.img}',),
                                               ),
                                             ),
                                           ),
@@ -189,7 +190,7 @@ class _AllBooksState extends State<AllBooks> {
                                               Text(
                                                 book.title,
                                                 style: const TextStyle(
-                                                  fontSize: 16,
+                                                  fontSize: 18,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.blueGrey,
                                                 ),

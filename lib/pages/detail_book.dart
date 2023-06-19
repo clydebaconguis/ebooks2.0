@@ -72,10 +72,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                     blurRadius: 7,
                                     offset: const Offset(0, 3))
                               ],
-                              image: const DecorationImage(
+                              image: DecorationImage(
                                   image: NetworkImage(
-                                      // "http://mark.dbestech.com/uploads/${widget.bookInfo.img}"
-                                      "https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/07/attachment_73599840-e1500060411553.png?auto=format&q=60&fit=max&w=930"),
+                                      'https://drive.google.com/uc?export=view&id=${widget.bookInfo.img}'),
                                   fit: BoxFit.fill)),
                         ),
                       ),
