@@ -1,4 +1,6 @@
 import 'package:ebooks/pages/all_books.dart';
+import 'package:ebooks/pages/nav_main.dart';
+import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_app_backend/pages/article_page.dart';
 import 'package:ebooks/signup_login/sign_in.dart';
@@ -35,7 +37,7 @@ class _AuthPageState extends State<AuthPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: (_isLoggedIn ? const AllBooks() : const SignIn()),
+        body: (_isLoggedIn ? const MyNav() : const SignIn()),
       ),
     );
   }

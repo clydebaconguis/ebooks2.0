@@ -6,6 +6,19 @@ import 'package:ebooks/auth/auth_page.dart';
 import 'package:ebooks/models/get_articles_info.dart';
 import 'package:flutter/material.dart';
 
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: WelcomePage(),
+      debugShowCheckedModeBanner: false,
+      title: 'Ebook',
+    );
+  }
+}
+
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
 
@@ -69,14 +82,15 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF333d94),
+      backgroundColor: const Color(0xff292735),
       body: Column(
         children: [
           Container(
             height: MediaQuery.of(context).size.height / 2,
             decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("img/background.png"), fit: BoxFit.fill)),
+                    image: AssetImage("img/background-welcome.png"),
+                    fit: BoxFit.fill)),
           ),
           _buildRow(
             [
@@ -99,7 +113,7 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           Container(
             height: 180,
-            color: const Color(0xFF333d94),
+            color: const Color(0xff292735),
             child: PageView.builder(
               onPageChanged: _onPageChanged,
               controller: PageController(viewportFraction: 1.0),
@@ -125,40 +139,41 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ),
           Expanded(
-              child: Stack(
-            children: [
-              Positioned(
-                height: 80,
-                bottom: 80,
-                left: (MediaQuery.of(context).size.width - 200) / 2,
-                right: (MediaQuery.of(context).size.width - 200) / 2,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AuthPage()));
-                  },
-                  child: Container(
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: const Color(0xFF7179ed),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Get Started',
-                          style: TextStyle(color: Colors.white, fontSize: 26),
-                        ),
-                      ],
+            child: Stack(
+              children: [
+                Positioned(
+                  height: 80,
+                  bottom: 80,
+                  left: (MediaQuery.of(context).size.width - 200) / 2,
+                  right: (MediaQuery.of(context).size.width - 200) / 2,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AuthPage()));
+                    },
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: const Color(0xff17bbab),
+                      ),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Get Started',
+                            style: TextStyle(color: Colors.white, fontSize: 26),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ))
+              ],
+            ),
+          )
         ],
       ),
     );

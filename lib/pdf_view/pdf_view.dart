@@ -1,27 +1,37 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:ebooks/api/my_api.dart';
+import 'package:ebooks/models/get_books_info_02.dart';
+import 'package:ebooks/provider/navigation_provider2.dart';
+import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:path_provider/path_provider.dart';
 
-// void main() => runApp(const PdfView());
-
 class PdfView extends StatelessWidget {
-  const PdfView({super.key});
+  final String path;
+  final Books2 books;
+  const PdfView({super.key, required this.path, required this.books});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Syncfusion Flutter PDF Viewer',
-      home: PDFViewPage(),
-    );
-  }
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => NavigationProvider2(),
+        child: PDFViewPage(
+          path: path,
+          books: books,
+        ),
+      );
 }
 
 class PDFViewPage extends StatefulWidget {
-  const PDFViewPage({super.key});
+  final String path;
+  final Books2 books;
+  // final Book bookInfo;
+  const PDFViewPage({super.key, required this.path, required this.books});
 
   @override
   State<PDFViewPage> createState() => _PDFViewPage();
@@ -40,9 +50,9 @@ const snackBar3 = SnackBar(
 class _PDFViewPage extends State<PDFViewPage> {
   bool fileExists = false;
   bool downloaded = false;
-  // var url = 'https://www.africau.edu/images/default/sample.pdf';
-  var url =
-      'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
+
+  // var url =
+  //     'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
   late PdfViewerController _pdfViewerController;
   final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
 
@@ -94,51 +104,45 @@ class _PDFViewPage extends State<PDFViewPage> {
 
   @override
   void initState() {
-    scanLocalDir(fileExists, url);
+    // scanLocalDir(fileExists, url);
     _pdfViewerController = PdfViewerController();
     restrictScreenshot();
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const Icon(Icons.arrow_back),
-        title: const Text('Flutter PDF Viewer'),
-        actions: [
-          downloaded
-              ? IconButton(
-                  onPressed: () =>
-                      {ScaffoldMessenger.of(context).showSnackBar(snackBar2)},
-                  icon: const Icon(Icons.download_done),
-                )
-              : IconButton(
-                  onPressed: () => setState(() {
-                    downloaded = true;
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    download(url, splitPath(url));
-                  }),
-                  icon: const Icon(Icons.download),
-                ),
-          IconButton(
-            onPressed: () =>
-                _pdfViewerStateKey.currentState!.openBookmarkView(),
-            icon: const Icon(Icons.bookmark),
-          ),
-          IconButton(
-            onPressed: () => _pdfViewerController.zoomLevel = 1.25,
-            icon: const Icon(Icons.zoom_in),
-          ),
-        ],
-      ),
-      body: SfPdfViewer.network(
-        url,
-        controller: _pdfViewerController,
-        key: _pdfViewerStateKey,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        endDrawer: const NavigationDrawerWidget2(),
+        body: (widget.path.isNotEmpty)
+            ? SfPdfViewer.network(
+                'http://192.168.0.103/${widget.path}',
+                controller: _pdfViewerController,
+                key: _pdfViewerStateKey,
+              )
+            : (widget.books.picurl.isNotEmpty)
+                ? CachedNetworkImage(
+                    imageUrl: "http://192.168.0.103/${widget.books.picurl}",
+                    // "https://drive.google.com/uc?export=view&id=${book.img}",
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  )
+                : Center(
+                    child: Image.asset(
+                      "img/CK_logo.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+      );
 
   Future<void> scanLocalDir(bool fileExists, url) async {
     var dir = await getApplicationSupportDirectory();

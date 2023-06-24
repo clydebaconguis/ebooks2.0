@@ -1,19 +1,13 @@
 import 'dart:convert';
 
-// import 'package:flutter/cupertino.dart';
 import 'package:ebooks/api/my_api.dart';
-import 'package:ebooks/models/get_articles_info.dart';
-import 'package:ebooks/models/get_books_info.dart';
 import 'package:flutter/material.dart';
-import 'package:ebooks/api/my_api.dart';
-// import 'package:flutter_app_backend/api/my_api.dart';
-// import 'package:flutter_app_backend/components/text_widget.dart';
-// import 'package:flutter_app_backend/models/get_article_info.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/text_widget.dart';
-import 'article_page.dart';
+import '../models/get_books_info_02.dart';
 import 'detail_book.dart';
 
 class AllBooks extends StatefulWidget {
@@ -24,33 +18,34 @@ class AllBooks extends StatefulWidget {
 }
 
 class _AllBooksState extends State<AllBooks> {
-  var books = <Books>[];
+  var books = <Books2>[];
 
   @override
   void initState() {
-    _getArticles();
+    _initData();
     super.initState();
   }
 
-  _getArticles() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var user = localStorage.getString("user");
-
-/*
-    if(user!=null){
-    var userInfo=jsonDecode(user);
-      debugPrint(userInfo);
-    }else{
-      debugPrint("no info");
-    }*/
-    await _initData();
-  }
+//   _getArticles() async {
+//     SharedPreferences localStorage = await SharedPreferences.getInstance();
+//     var user = localStorage.getString("user");
+//
+// /*
+//     if(user!=null){
+//     var userInfo=jsonDecode(user);
+//       debugPrint(userInfo);
+//     }else{
+//       debugPrint("no info");
+//     }*/
+//     await _initData();
+//   }
 
   _initData() async {
-    await CallApi().getPublicData("books").then((response) {
+    await CallApi().getPublicData("viewbook").then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
-        books = list.map((model) => Books.fromJson(model)).toList();
+        print(list);
+        books = list.map((model) => Books2.fromJson(model)).toList();
       });
     });
   }
@@ -69,34 +64,34 @@ class _AllBooksState extends State<AllBooks> {
               SizedBox(
                 height: height * 0.02,
               ),
-              Container(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // IconButton(
-                    //     padding: EdgeInsets.zero,
-                    //     constraints: const BoxConstraints(),
-                    //     icon: const Icon(Icons.arrow_back_ios,
-                    //         color: Color(0xFF363f93)),
-                    //     onPressed: () => Navigator.pop(context)),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(
-                        Icons.home_outlined,
-                        color: Color(0xFF363f93),
-                      ),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AllBooks(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.only(left: 20, right: 20),
+              //   // child: Row(
+              //   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   //   children: [
+              //   //     // IconButton(
+              //   //     //     padding: EdgeInsets.zero,
+              //   //     //     constraints: const BoxConstraints(),
+              //   //     //     icon: const Icon(Icons.arrow_back_ios,
+              //   //     //         color: Color(0xFF363f93)),
+              //   //     //     onPressed: () => Navigator.pop(context)),
+              //   //     // IconButton(
+              //   //     //   padding: EdgeInsets.zero,
+              //   //     //   constraints: const BoxConstraints(),
+              //   //     //   icon: const Icon(
+              //   //     //     Icons.home_outlined,
+              //   //     //     color: Color(0xff232324),
+              //   //     //   ),
+              //   //     //   onPressed: () => Navigator.push(
+              //   //     //     context,
+              //   //     //     MaterialPageRoute(
+              //   //     //       builder: (context) => const AllBooks(),
+              //   //     //     ),
+              //   //     //   ),
+              //   //     // ),
+              //   //   ],
+              //   // ),
+              // ),
               const SizedBox(
                 height: 15,
               ),
@@ -107,7 +102,7 @@ class _AllBooksState extends State<AllBooks> {
                       : Column(
                           children: books.map(
                             (book) {
-                              debugPrint(book.img.toString());
+                              debugPrint(book.picurl.toString());
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -154,7 +149,7 @@ class _AllBooksState extends State<AllBooks> {
                                         top: 0,
                                         left: 10,
                                         child: Card(
-                                          color: Colors.orange,
+                                          color: Colors.transparent,
                                           elevation: 10.0,
                                           shadowColor:
                                               Colors.grey.withOpacity(0.5),
@@ -162,19 +157,47 @@ class _AllBooksState extends State<AllBooks> {
                                             borderRadius:
                                                 BorderRadius.circular(15.0),
                                           ),
-                                          child: Container(
-                                            height: 200,
-                                            width: 150,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              image: DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: NetworkImage(
-                                                  'https://drive.google.com/uc?export=view&id=${book.img}',),
-                                              ),
-                                            ),
-                                          ),
+                                          child: book.picurl.isNotEmpty
+                                              ? CachedNetworkImage(
+                                                  imageUrl:
+                                                      "http://192.168.0.103/${book.picurl}",
+                                                  // "https://drive.google.com/uc?export=view&id=${book.img}",
+                                                  imageBuilder: (context,
+                                                          imageProvider) =>
+                                                      Container(
+                                                    height: 200,
+                                                    width: 150,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  placeholder: (context, url) =>
+                                                      const CircularProgressIndicator(),
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(Icons.error),
+                                                )
+                                              : Container(
+                                                  height: 200,
+                                                  width: 150,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                    image:
+                                                        const DecorationImage(
+                                                      image: AssetImage(
+                                                          "img/CK_logo.png"),
+                                                    ),
+                                                  ),
+                                                ),
                                         ),
                                       ),
                                       Positioned(
@@ -192,7 +215,7 @@ class _AllBooksState extends State<AllBooks> {
                                                 style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.blueGrey,
+                                                  color: Color(0xff292735),
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
@@ -201,20 +224,22 @@ class _AllBooksState extends State<AllBooks> {
                                               const Divider(
                                                   color: Colors.black),
                                               TextWidget(
+                                                  color:
+                                                      const Color(0xcd292735),
                                                   text:
-                                                      "Author: ${book.author}",
+                                                      "publish: ${book.createddatetime}",
                                                   fontSize: 14),
-                                              const Divider(
-                                                  color: Colors.black),
-                                              Text(
-                                                book.description,
-                                                style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 14),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                                softWrap: true,
-                                              ),
+                                              const Divider(color: Colors.grey),
+                                              // Text(
+                                              //   book.description,
+                                              //   style: const TextStyle(
+                                              //       fontWeight: FontWeight.bold,
+                                              //       color: Colors.grey,
+                                              //       fontSize: 14),
+                                              //   overflow: TextOverflow.ellipsis,
+                                              //   maxLines: 2,
+                                              //   softWrap: true,
+                                              // ),
                                             ],
                                           ),
                                         ),

@@ -5,11 +5,6 @@ import 'package:ebooks/components/text_widget.dart';
 import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter_app_backend/api/my_api.dart';
-// import 'package:flutter_app_backend/components/text_widget.dart';
-// import 'package:flutter_app_backend/pages/article_page.dart';
-// import 'package:flutter_app_backend/signup_login/sing_in.dart';
-// import 'package:flutter_app_backend/welcome/home_page.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -35,8 +30,8 @@ class _SignUpState extends State<SignUp> {
       backgroundColor: const Color(0xFFffffff),
       body: Container(
         padding: const EdgeInsets.only(left: 30, right: 40),
-        child: Expanded(
-          child: ListView(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
               SizedBox(height: height * 0.1),
               Container(

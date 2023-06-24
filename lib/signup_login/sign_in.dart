@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
 import 'package:ebooks/pages/all_books.dart';
+import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/signup_login/sign_up.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_app_backend/api/my_api.dart';
@@ -18,6 +19,10 @@ class SignIn extends StatefulWidget {
   @override
   State<SignIn> createState() => _SignInState();
 }
+
+const snackBar2 = SnackBar(
+  content: Text('Fill all fields!'),
+);
 
 class _SignInState extends State<SignIn> {
   var loggedIn = false;
@@ -48,7 +53,7 @@ class _SignInState extends State<SignIn> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const AllBooks(),
+        builder: (context) => const MyNav(),
       ),
     );
   }
@@ -82,8 +87,8 @@ class _SignInState extends State<SignIn> {
       resizeToAvoidBottomInset: false,
       body: Container(
         padding: const EdgeInsets.only(left: 30, right: 40),
-        child: SafeArea(
-          child: ListView(
+        child: SingleChildScrollView(
+          child: Column(
             children: [
               SizedBox(height: height * 0.1),
               Container(
@@ -134,7 +139,15 @@ class _SignInState extends State<SignIn> {
                       text: "Sign in", fontSize: 22, isUnderLine: false),
                   GestureDetector(
                     onTap: () {
-                      _login();
+                      if (textController.text.isEmpty ||
+                          emailController.text.isEmpty) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Fill all fields!'),
+                        ));
+                      } else {
+                        _login();
+                      }
                     },
                     child: Container(
                       height: 60,
