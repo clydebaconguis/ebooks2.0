@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:ebooks/app_util.dart';
 import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/all_books.dart';
@@ -5,54 +8,65 @@ import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../models/pdf_tile.dart';
 
-class NavigationDrawerWidget extends StatelessWidget {
-  final padding = const EdgeInsets.symmetric(horizontal: 20);
-
+class NavigationDrawerWidget extends StatefulWidget {
   const NavigationDrawerWidget({super.key});
+
+  @override
+  State<NavigationDrawerWidget> createState() => _NavigationDrawerWidgetState();
+}
+
+class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
+  final padding = const EdgeInsets.symmetric(horizontal: 20);
+  late List<FileSystemEntity> files;
+  static const pdfTiles = [
+    PdfTile(
+      title: 'JungleBook',
+      lessons: [
+        PdfTile(
+          title: 'c4611_sample_explain.pdf',
+        ),
+      ],
+    ),
+  ];
+
+  var url =
+      'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
+  @override
+  void initState() {
+    // _downloadPdf();
+    getBooks();
+    super.initState();
+  }
+
+  getBooks() async {
+    files = await AppUtil.readBooks();
+  }
+
+  String splitPath(url) {
+    File file = File(url);
+    String filename = file.path.split(Platform.pathSeparator).last;
+    return filename;
+  }
+
+  _downloadPdf() async {
+    String filename = AppUtil().splitPath(url);
+    String newFile = await AppUtil.downloadPdFiles(url, filename, 'JungleBook');
+    if (newFile == "success") {
+      AppUtil.readFilesDir('JungleBook');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final safeArea =
         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
-
     final provider = Provider.of<NavigationProvider>(context);
     final isCollapsed = provider.isCollapsed;
-
-    const pdfTiles = [
-      PdfTile(
-        title: 'Chapter 1',
-        lessons: [
-          PdfTile(
-            title: 'Lesson 1',
-          ),
-          PdfTile(
-            title: 'Lesson 2',
-          ),
-          PdfTile(
-            title: 'Lesson 3',
-          ),
-        ],
-      ),
-      PdfTile(
-        title: 'Chapter 2',
-        lessons: [
-          PdfTile(
-            title: 'Lesson 1',
-          ),
-          PdfTile(
-            title: 'Lesson 2',
-          ),
-          PdfTile(
-            title: 'Lesson 3',
-          ),
-        ],
-      ),
-    ];
-
     return SizedBox(
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
       child: Drawer(
@@ -68,13 +82,16 @@ class NavigationDrawerWidget extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               buildList(items: itemsFirst, isCollapsed: isCollapsed),
-              const Spacer(),
               const SizedBox(height: 24),
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     child: buildTile(isCollapsed: isCollapsed, items: pdfTiles),
-              //   ),
-              // ),
+              const Divider(
+                color: Colors.white24,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: buildTile(isCollapsed: isCollapsed, items: files),
+                ),
+              ),
+              // const Spacer(),
               buildCollapseIcon(context, isCollapsed),
               const SizedBox(height: 12),
             ],
@@ -86,7 +103,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   Widget buildTile({
     required bool isCollapsed,
-    required List<PdfTile> items,
+    required List<FileSystemEntity> items,
     int indexOffset = 0,
   }) =>
       ListView.separated(
@@ -99,29 +116,30 @@ class NavigationDrawerWidget extends StatelessWidget {
           final item = items[index];
 
           return buildMenuItemTiles(
-              isCollapsed: isCollapsed,
-              text: item.title,
-              icon: Icons.folder,
-              items: item.lessons
-              // onClicked: () => selectItem(context, indexOffset + index),
-              );
+            isCollapsed: isCollapsed,
+            text: splitPath(item.path),
+            icon: Icons.folder_zip_sharp,
+            // items: item.lessons
+            // onClicked: () => selectItem(context, indexOffset + index),
+          );
           // return ExpansionTile(
           //   title: Text(item.title),
           //   children: item.lessons.map((e) => Text(e.title)).toList(),
           // );
         },
       );
+
   Widget buildMenuItemTiles({
     required bool isCollapsed,
     required String text,
     required IconData icon,
-    required List<PdfTile> items,
+    // required List<PdfTile> items,
     VoidCallback? onClicked,
   }) {
-    const color = Colors.yellow;
-    const color2 = Colors.orange;
+    final color = Colors.pink.shade50;
+    final color2 = Colors.pink.shade400;
+    final leadingPdf = Icon(Icons.picture_as_pdf, color: color2);
     final leading = Icon(icon, color: color);
-    final leading2 = Icon(icon, color: color2);
 
     return Material(
       color: Colors.transparent,
@@ -137,18 +155,18 @@ class NavigationDrawerWidget extends StatelessWidget {
                   iconTheme: const IconThemeData(color: Colors.white),
                 ),
                 child: ExpansionTile(
-                  title: Text(text,
-                      style: const TextStyle(color: color, fontSize: 16)),
-                  children: items
-                      .map((it) => ListTile(
-                            leading: leading2,
-                            title: Text(
-                              it.title,
-                              style:
-                                  const TextStyle(color: color2, fontSize: 16),
-                            ),
-                          ))
-                      .toList(),
+                  collapsedIconColor: color,
+                  title:
+                      Text(text, style: TextStyle(color: color, fontSize: 16)),
+                  // children: items
+                  //     .map((it) => ListTile(
+                  //           leading: leadingPdf,
+                  //           title: Text(
+                  //             it.title,
+                  //             style: TextStyle(color: color, fontSize: 16),
+                  //           ),
+                  //         ))
+                  //     .toList(),
                 ),
               )),
     );

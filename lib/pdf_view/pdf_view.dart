@@ -62,40 +62,6 @@ class _PDFViewPage extends State<PDFViewPage> {
     }
   }
 
-  Future download(String url, String filename) async {
-    if (!fileExists) {
-      var dir = await getApplicationSupportDirectory();
-      var savePath = '${dir.path}/$filename';
-      // print(savePath);
-      var dio = Dio();
-      dio.interceptors.add(LogInterceptor());
-      try {
-        var response = await dio.get(
-          url,
-          onReceiveProgress: showDownloadProgress,
-          //Received data with List<int>
-          options: Options(
-            responseType: ResponseType.bytes,
-            followRedirects: false,
-            receiveTimeout: const Duration(seconds: 60),
-          ),
-        );
-        var file = File(savePath);
-        var raf = file.openSync(mode: FileMode.write);
-        // response.data is List<int> type
-        raf.writeFromSync(response.data);
-        await raf.close();
-        setState(() {
-          fileExists = true;
-        });
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(snackBar3);
-    }
-  }
-
   Future<void> restrictScreenshot() async {
     await FlutterWindowManager.addFlags(
       FlutterWindowManager.FLAG_SECURE,
@@ -114,8 +80,8 @@ class _PDFViewPage extends State<PDFViewPage> {
   Widget build(BuildContext context) => Scaffold(
         endDrawer: const NavigationDrawerWidget2(),
         body: (widget.path.isNotEmpty)
-            ? SfPdfViewer.network(
-                'http://192.168.0.103/${widget.path}',
+            ? SfPdfViewer.file(
+                File(widget.path),
                 controller: _pdfViewerController,
                 key: _pdfViewerStateKey,
               )
