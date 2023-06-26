@@ -12,6 +12,9 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../provider/navigation_provider.dart';
+import '../widget/navigation_drawer_widget.dart';
+
 class PdfView extends StatelessWidget {
   final String path;
   final Books2 books;
@@ -19,7 +22,7 @@ class PdfView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => NavigationProvider2(),
+        create: (_) => NavigationProvider(),
         child: PDFViewPage(
           path: path,
           books: books,
@@ -78,7 +81,7 @@ class _PDFViewPage extends State<PDFViewPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        endDrawer: const NavigationDrawerWidget2(),
+        endDrawer: const NavigationDrawerWidget(),
         body: (widget.path.isNotEmpty)
             ? SfPdfViewer.file(
                 File(widget.path),

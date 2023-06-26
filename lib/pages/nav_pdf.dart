@@ -20,7 +20,7 @@ class MyNav2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => NavigationProvider2(),
+        create: (_) => NavigationProvider(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: title,
@@ -49,7 +49,7 @@ class _NavPdfState extends State<NavPdf> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        endDrawer: const NavigationDrawerWidget2(),
+        endDrawer: const NavigationDrawerWidget(),
         appBar: AppBar(
           leading: IconButton(
             padding: EdgeInsets.zero,

@@ -8,12 +8,6 @@ class Books2 {
 
   Books2(this.bookid, this.title, this.picurl, this.createddatetime);
 
-  // Books2.fromJson(Map json)
-  //     : id = json['id'],
-  //       title = json['title'],
-  //       picurl = json['picurl'] != null,
-  //       createddatetime = json['createddatetime'];
-
   factory Books2.fromJson(Map json) {
     var pic = json['picurl'] ?? '';
     var created = json['createddatetime'] ?? '';

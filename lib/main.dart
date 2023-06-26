@@ -1,5 +1,6 @@
 import 'package:ebooks/models/get_books_info_02.dart';
 import 'package:ebooks/pages/all_books.dart';
+import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
@@ -17,10 +18,7 @@ Future main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(MyNav2(
-      path:
-          '/data/user/0/com.example.ebooks/files/JungleBook/c4611_sample_explain.pdf',
-      books: Books2(0, '', '', '')));
+  runApp(const Splash());
 }
 
 class MyApp extends StatelessWidget {

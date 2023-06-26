@@ -1,20 +1,20 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:ebooks/models/pdf_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppUtil {
-  static Future<List<FileSystemEntity>> readBooks() async {
+  readBooks() async {
     var dir = await getApplicationSupportDirectory();
     final pathFile = Directory(dir.path);
     final List<FileSystemEntity> entities = await pathFile.list().toList();
     final Iterable<Directory> files = entities.whereType<Directory>();
-    // files.forEach(print);
-    return entities;
+    return files;
   }
 
-  static Future<List<FileSystemEntity>> readFilesDir(String folderName) async {
+  readFilesDir(String folderName) async {
     var dir = await getApplicationSupportDirectory();
     final pathFile = Directory('${dir.path}/$folderName');
     final List<FileSystemEntity> entities = await pathFile.list().toList();

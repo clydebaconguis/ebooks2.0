@@ -9,15 +9,16 @@ class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Clean Code',
-      home: AnimatedSplashScreen(
-          duration: 3000,
-          splash: 'img/CK_logo.png',
-          nextScreen: const Welcome(),
-          splashTransition: SplashTransition.fadeTransition,
-          pageTransitionType: PageTransitionType.leftToRightWithFade,
-          backgroundColor: Colors.white),
-    );
+        debugShowCheckedModeBanner: false,
+        title: '',
+        home: AnimatedSplashScreen(
+            splashIconSize: 200.0,
+            duration: 2000,
+            centered: true,
+            splash: 'img/CK_logo.png',
+            nextScreen: const Welcome(),
+            splashTransition: SplashTransition.scaleTransition,
+            pageTransitionType: PageTransitionType.bottomToTop,
+            backgroundColor: Colors.white));
   }
 }

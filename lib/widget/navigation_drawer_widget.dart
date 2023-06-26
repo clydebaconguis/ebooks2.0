@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ebooks/app_util.dart';
@@ -6,12 +7,15 @@ import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
+import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../models/get_books_info_02.dart';
 import '../models/pdf_tile.dart';
+import '../pages/nav_pdf.dart';
 
 class NavigationDrawerWidget extends StatefulWidget {
   const NavigationDrawerWidget({super.key});
@@ -22,30 +26,36 @@ class NavigationDrawerWidget extends StatefulWidget {
 
 class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
-  late List<FileSystemEntity> files;
-  static const pdfTiles = [
-    PdfTile(
-      title: 'JungleBook',
-      lessons: [
-        PdfTile(
-          title: 'c4611_sample_explain.pdf',
-        ),
-      ],
-    ),
-  ];
+  // List<PdfTile> files = [];
 
-  var url =
-      'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
   @override
   void initState() {
-    // _downloadPdf();
-    getBooks();
+    // getDownloadedBooks();
     super.initState();
   }
 
-  getBooks() async {
-    files = await AppUtil.readBooks();
-  }
+  // getDownloadedBooks() async {
+  //   var result = await AppUtil().readBooks();
+  //   final List<PdfTile> listOfPdfs = [];
+  //   final List<PdfTile> listOfChild = [];
+  //   result.forEach((item) async {
+  //     print(item);
+  //     var fldrName = splitPath(item.path);
+  //     var fldrChild = await AppUtil().readFilesDir(fldrName);
+  //
+  //     if (fldrChild.isNotEmpty) {
+  //       fldrChild.forEach((element) {
+  //         print(element);
+  //         listOfChild.add(
+  //           PdfTile(title: splitPath(element.path), path: element.path),
+  //         );
+  //       });
+  //       setState(() {
+  //         files.add(P);
+  //       });
+  //     }
+  //   });
+  // }
 
   String splitPath(url) {
     File file = File(url);
@@ -53,20 +63,14 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     return filename;
   }
 
-  _downloadPdf() async {
-    String filename = AppUtil().splitPath(url);
-    String newFile = await AppUtil.downloadPdFiles(url, filename, 'JungleBook');
-    if (newFile == "success") {
-      AppUtil.readFilesDir('JungleBook');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final safeArea =
         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
+
     final provider = Provider.of<NavigationProvider>(context);
-    final isCollapsed = provider.isCollapsed;
+    var isCollapsed = provider.isCollapsed;
+
     return SizedBox(
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
       child: Drawer(
@@ -86,12 +90,16 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
               const Divider(
                 color: Colors.white24,
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: buildTile(isCollapsed: isCollapsed, items: files),
-                ),
-              ),
-              // const Spacer(),
+              // Expanded(
+              //   child: SingleChildScrollView(
+              //     child: files.isNotEmpty
+              //         ? buildTile(isCollapsed: isCollapsed, items: files)
+              //         : const Center(
+              //             child: CircularProgressIndicator(),
+              //           ),
+              //   ),
+              // ),
+              const Spacer(),
               buildCollapseIcon(context, isCollapsed),
               const SizedBox(height: 12),
             ],
@@ -101,9 +109,22 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     );
   }
 
+  onClick(path) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => MyNav2(
+            path: path,
+            books: Books2(0, '', '', ''),
+          ),
+        ),
+        (Route<dynamic> route) => false);
+    print(path);
+  }
+
+  // Pdf Tile
   Widget buildTile({
     required bool isCollapsed,
-    required List<FileSystemEntity> items,
+    required List<PdfTile> items,
     int indexOffset = 0,
   }) =>
       ListView.separated(
@@ -117,23 +138,20 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
 
           return buildMenuItemTiles(
             isCollapsed: isCollapsed,
-            text: splitPath(item.path),
-            icon: Icons.folder_zip_sharp,
-            // items: item.lessons
-            // onClicked: () => selectItem(context, indexOffset + index),
+            text: item.title,
+            path: item.path,
+            icon: Icons.folder_copy_outlined,
+            items: item.lessons,
           );
-          // return ExpansionTile(
-          //   title: Text(item.title),
-          //   children: item.lessons.map((e) => Text(e.title)).toList(),
-          // );
         },
       );
 
   Widget buildMenuItemTiles({
     required bool isCollapsed,
     required String text,
+    required String path,
     required IconData icon,
-    // required List<PdfTile> items,
+    required List<PdfTile> items,
     VoidCallback? onClicked,
   }) {
     final color = Colors.pink.shade50;
@@ -146,32 +164,38 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       child: isCollapsed
           ? ListTile(
               title: leading,
-              onTap: onClicked,
+              // onTap: onClicked,
             )
           : ListTile(
+              minLeadingWidth: 0,
               leading: leading,
-              title: Theme(
-                data: ThemeData(
-                  iconTheme: const IconThemeData(color: Colors.white),
+              title: ExpansionTile(
+                collapsedIconColor: color,
+                title: Text(
+                  text,
+                  style: TextStyle(color: color, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  softWrap: true,
                 ),
-                child: ExpansionTile(
-                  collapsedIconColor: color,
-                  title:
-                      Text(text, style: TextStyle(color: color, fontSize: 16)),
-                  // children: items
-                  //     .map((it) => ListTile(
-                  //           leading: leadingPdf,
-                  //           title: Text(
-                  //             it.title,
-                  //             style: TextStyle(color: color, fontSize: 16),
-                  //           ),
-                  //         ))
-                  //     .toList(),
-                ),
-              )),
+                children: items
+                    .map((it) => ListTile(
+                          onTap: () => onClick(it.path),
+                          minVerticalPadding: 0,
+                          horizontalTitleGap: 0,
+                          leading: leadingPdf,
+                          title: Text(
+                            it.title,
+                            style: TextStyle(color: color, fontSize: 16),
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
     );
   }
 
+  // Main Nav tile
   Widget buildList({
     required bool isCollapsed,
     required List<DrawerItem> items,

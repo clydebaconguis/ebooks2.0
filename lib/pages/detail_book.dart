@@ -1,6 +1,10 @@
 // import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ebooks/app_util.dart';
 import 'package:ebooks/models/get_books_info.dart';
+import 'package:ebooks/models/get_lessons.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter_app_backend/components/text_widget.dart';
 // import 'package:flutter_app_backend/models/get_article_info.dart';
 
+import '../api/my_api.dart';
 import '../components/text_widget.dart';
 import '../models/get_books_info_02.dart';
 import 'all_books.dart';
@@ -23,15 +28,61 @@ class DetailBookPage extends StatefulWidget {
 }
 
 class _DetailBookPageState extends State<DetailBookPage> {
-  _storeBookId() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    localStorage.setInt('bookid', widget.bookInfo.bookid);
-  }
+  List<Lessons> lessons = [];
+  // _storeBookId() async {
+  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //   localStorage.setInt('bookid', widget.bookInfo.bookid);
+  // }
 
   @override
   void initState() {
-    _storeBookId();
+    // _storeBookId();
+    _fetchParts();
     super.initState();
+  }
+
+  // _checkBookIdStatus() async {
+  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //   var bookid = localStorage.getInt('bookid');
+  //   if (bookid != null) {
+  //     setState(() {
+  //       bookId = bookid;
+  //     });
+  //     _fetchParts();
+  //   }
+  // }
+
+  _fetchParts() async {
+    CallApi().getPublicData('bookchapter/${widget.bookInfo.bookid}').then(
+      (response) {
+        setState(
+          () {
+            Iterable list = json.decode(response.body);
+            print(list);
+            lessons = list.map((e) => Lessons.fromJson(e)).toList();
+            // if (response.body != null) {
+            //
+            // } else {
+            //   // If that call was not successful, throw an error.
+            //   throw Exception('Failed to load post');
+            // }
+          },
+        );
+      },
+    );
+  }
+
+  _fileExist() {}
+
+  _downloadPdf() async {
+    lessons.forEach((element) async {
+      String filename = AppUtil().splitPath(element.path);
+      String newFile = await AppUtil.downloadPdFiles(
+          element.path, filename, widget.bookInfo.title);
+      if (newFile == "success") {
+        AppUtil().readFilesDir(widget.bookInfo.title);
+      }
+    });
   }
 
   @override
@@ -184,20 +235,20 @@ class _DetailBookPageState extends State<DetailBookPage> {
                             TextWidget(text: "Share", fontSize: 20),
                           ],
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.download_for_offline,
-                              color: Color(0xFF7b8ea3),
-                              size: 40,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            TextWidget(text: "Download", fontSize: 20),
-                          ],
-                        )
+                        // Row(
+                        //   mainAxisSize: MainAxisSize.min,
+                        //   children: <Widget>[
+                        //     Icon(
+                        //       Icons.download_for_offline,
+                        //       color: Color(0xFF7b8ea3),
+                        //       size: 40,
+                        //     ),
+                        //     SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     TextWidget(text: "Download", fontSize: 20),
+                        //   ],
+                        // )
                       ],
                     ),
                   ),
@@ -231,6 +282,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                   const Divider(color: Color(0xFF7b8ea3)),
                   GestureDetector(
                     onTap: () {
+                      _downloadPdf();
                       Navigator.push(
                         context,
                         MaterialPageRoute(

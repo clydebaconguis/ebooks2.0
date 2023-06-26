@@ -27,13 +27,17 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  var articles = <ArticleInfo>[];
+  var articles = <String>[
+    "Welcome to CK! We’re excited to have you on board.",
+    "CK is the best way to your school study.",
+    "Get ready to experience the best way to access books with CK."
+  ];
   final _totalDots = 3;
   double _currentPosition = 0.0;
 
   @override
   void initState() {
-    _initData();
+    // _initData();
     super.initState();
   }
 
@@ -61,15 +65,15 @@ class _WelcomePageState extends State<WelcomePage> {
     return (_currentPosition + 1.0).toStringAsPrecision(2);
   }
 
-  _initData() async {
-    CallApi().getPublicData('welcome').then((response) {
-      setState(() {
-        Iterable list = json.decode(response.body);
-        print(list);
-        articles = list.map((model) => ArticleInfo.fromJson(model)).toList();
-      });
-    });
-  }
+  // _initData() async {
+  //   CallApi().getPublicData('welcome').then((response) {
+  //     setState(() {
+  //       Iterable list = json.decode(response.body);
+  //       print(list);
+  //       articles = list.map((model) => ArticleInfo.fromJson(model)).toList();
+  //     });
+  //   });
+  // }
 
   _onPageChanged(int index) {
     setState(() {
@@ -101,6 +105,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 decorator: DotsDecorator(
                   size: const Size.square(9.0),
                   activeSize: const Size(18.0, 9.0),
+                  activeColor: const Color(0xffcf167f),
                   activeShape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
                   ),
@@ -125,9 +130,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.only(right: 10),
                   child: Text(
-                    articles[i].articleContent.isEmpty
-                        ? "Nothing "
-                        : articles[i].articleContent,
+                    articles[i].isEmpty ? "Nothing " : articles[i],
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -157,7 +160,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       height: 80,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        color: const Color(0xff17bbab),
+                        color: const Color(0xffcf167f),
                       ),
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
