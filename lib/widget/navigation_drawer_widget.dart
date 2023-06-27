@@ -12,6 +12,7 @@ import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/get_books_info_02.dart';
 import '../models/pdf_tile.dart';
@@ -26,7 +27,7 @@ class NavigationDrawerWidget extends StatefulWidget {
 
 class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
-  // List<PdfTile> files = [];
+  late List<PdfTile> files = [];
 
   @override
   void initState() {
@@ -35,33 +36,32 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   }
 
   // getDownloadedBooks() async {
-  //   var result = await AppUtil().readBooks();
-  //   final List<PdfTile> listOfPdfs = [];
-  //   final List<PdfTile> listOfChild = [];
-  //   result.forEach((item) async {
-  //     print(item);
-  //     var fldrName = splitPath(item.path);
-  //     var fldrChild = await AppUtil().readFilesDir(fldrName);
+  //   files.clear();
+  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //   var currentBook = localStorage.getString('currentBook');
+  //   // final List<PdfTile> listOfChild = [];
+  //   var foldrChild = await AppUtil().readFilesDir(currentBook!);
   //
-  //     if (fldrChild.isNotEmpty) {
-  //       fldrChild.forEach((element) {
-  //         print(element);
-  //         listOfChild.add(
-  //           PdfTile(title: splitPath(element.path), path: element.path),
-  //         );
-  //       });
-  //       setState(() {
-  //         files.add(P);
-  //       });
-  //     }
-  //   });
+  //   if (foldrChild.isNotEmpty) {
+  //     foldrChild.forEach((element) {
+  //       // print(element);
+  //       if (element.path.isNotEmpty &&
+  //           splitPath(element.path).toString() != "cover_image") {
+  //         setState(() {
+  //           files.add(
+  //             PdfTile(title: splitPath(element.path), path: element.path),
+  //           );
+  //         });
+  //       }
+  //     });
+  //   }
   // }
 
-  String splitPath(url) {
-    File file = File(url);
-    String filename = file.path.split(Platform.pathSeparator).last;
-    return filename;
-  }
+  // String split(url) {
+  //   File file = File(url);
+  //   String filename = file.path.split(Platform.pathSeparator).last;
+  //   return filename;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,14 +110,14 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   }
 
   onClick(path) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => MyNav2(
-            path: path,
-            books: Books2(0, '', '', ''),
-          ),
-        ),
-        (Route<dynamic> route) => false);
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(
+    //       builder: (context) => MyNav2(
+    //         path: path,
+    //         books: PdfTile(),
+    //       ),
+    //     ),
+    //     (Route<dynamic> route) => false);
     print(path);
   }
 
@@ -140,8 +140,8 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             isCollapsed: isCollapsed,
             text: item.title,
             path: item.path,
-            icon: Icons.folder_copy_outlined,
-            items: item.lessons,
+            icon: Icons.picture_as_pdf_outlined,
+            // items: item.lessons,
           );
         },
       );
@@ -151,7 +151,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     required String text,
     required String path,
     required IconData icon,
-    required List<PdfTile> items,
+    // required List<PdfTile> items,
     VoidCallback? onClicked,
   }) {
     final color = Colors.pink.shade50;
@@ -169,28 +169,32 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
           : ListTile(
               minLeadingWidth: 0,
               leading: leading,
-              title: ExpansionTile(
-                collapsedIconColor: color,
-                title: Text(
-                  text,
-                  style: TextStyle(color: color, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  softWrap: true,
-                ),
-                children: items
-                    .map((it) => ListTile(
-                          onTap: () => onClick(it.path),
-                          minVerticalPadding: 0,
-                          horizontalTitleGap: 0,
-                          leading: leadingPdf,
-                          title: Text(
-                            it.title,
-                            style: TextStyle(color: color, fontSize: 16),
-                          ),
-                        ))
-                    .toList(),
+              title: Text(
+                text,
+                style: TextStyle(color: color),
               ),
+              // title: ExpansionTile(
+              //   collapsedIconColor: color,
+              //   title: Text(
+              //     text,
+              //     style: TextStyle(color: color, fontSize: 16),
+              //     overflow: TextOverflow.ellipsis,
+              //     maxLines: 2,
+              //     softWrap: true,
+              //   ),
+              //   children: items
+              //       .map((it) => ListTile(
+              //             onTap: () => onClick(it.path),
+              //             minVerticalPadding: 0,
+              //             horizontalTitleGap: 0,
+              //             leading: leadingPdf,
+              //             title: Text(
+              //               it.title,
+              //               style: TextStyle(color: color, fontSize: 16),
+              //             ),
+              //           ))
+              //       .toList(),
+              // ),
             ),
     );
   }
@@ -233,18 +237,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       case 1:
         navigateTo(const Classmate());
         break;
-      // case 2:
-      //   navigateTo(TestingPage());
-      //   break;
-      // case 3:
-      //   navigateTo(PerformancePage());
-      //   break;
-      // case 4:
-      //   navigateTo(DeploymentPage());
-      //   break;
-      // case 5:
-      //   navigateTo(ResourcesPage());
-      //   break;
     }
   }
 
@@ -276,6 +268,35 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   Widget buildCollapseIcon(BuildContext context, bool isCollapsed) {
     const double size = 52;
     final icon = isCollapsed ? Icons.arrow_forward_ios : Icons.arrow_back_ios;
+    final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
+    final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
+    final width = isCollapsed ? double.infinity : size;
+
+    return Container(
+      alignment: alignment,
+      margin: margin,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          child: SizedBox(
+            width: width,
+            height: size,
+            child: Icon(icon, color: Colors.white),
+          ),
+          onTap: () {
+            final provider =
+                Provider.of<NavigationProvider>(context, listen: false);
+
+            provider.toggleIsCollapsed();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
+    const double size = 52;
+    final icon = isCollapsed ? Icons.arrow_back_ios : Icons.arrow_forward_ios;
     final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
     final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
     final width = isCollapsed ? double.infinity : size;

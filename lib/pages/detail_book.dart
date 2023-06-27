@@ -1,13 +1,20 @@
 // import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:ebooks/app_util.dart';
 import 'package:ebooks/models/get_books_info.dart';
 import 'package:ebooks/models/get_lessons.dart';
+import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter_app_backend/components/text_widget.dart';
 // import 'package:flutter_app_backend/models/get_article_info.dart';
@@ -28,29 +35,37 @@ class DetailBookPage extends StatefulWidget {
 }
 
 class _DetailBookPageState extends State<DetailBookPage> {
+  final String mainHost = CallApi().getHost();
   List<Lessons> lessons = [];
-  // _storeBookId() async {
-  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
-  //   localStorage.setInt('bookid', widget.bookInfo.bookid);
-  // }
+  bool _isLoading = false;
 
   @override
   void initState() {
     // _storeBookId();
     _fetchParts();
+    readSpecificBook();
     super.initState();
   }
 
-  // _checkBookIdStatus() async {
-  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
-  //   var bookid = localStorage.getInt('bookid');
-  //   if (bookid != null) {
-  //     setState(() {
-  //       bookId = bookid;
-  //     });
-  //     _fetchParts();
-  //   }
-  // }
+  readSpecificBook() async {
+    var dir = await getApplicationSupportDirectory();
+    final pathFile = Directory(dir.path);
+    final List<FileSystemEntity> entities = await pathFile.list().toList();
+    final Iterable<Directory> files = entities.whereType<Directory>();
+    files.forEach((element) {
+      print(element.absolute);
+    });
+    // // return files;
+    // entities.forEach((element) {
+    //   print(element.path);
+    // });
+    // print(entities);
+    // pathFile.deleteSync(recursive: true);
+    // entities.forEach((element) {
+    //   print(element.path);
+    // });
+    // print(entities);
+  }
 
   _fetchParts() async {
     CallApi().getPublicData('bookchapter/${widget.bookInfo.bookid}').then(
@@ -58,31 +73,161 @@ class _DetailBookPageState extends State<DetailBookPage> {
         setState(
           () {
             Iterable list = json.decode(response.body);
-            print(list);
             lessons = list.map((e) => Lessons.fromJson(e)).toList();
-            // if (response.body != null) {
-            //
-            // } else {
-            //   // If that call was not successful, throw an error.
-            //   throw Exception('Failed to load post');
-            // }
+            if (kDebugMode) {
+              print("size : ${lessons.length}");
+            }
           },
         );
       },
     );
   }
+  //   throw Exception('Failed to load post');
 
-  _fileExist() {}
+  Future<bool> fileExist(String folderName) async {
+    final Directory appDir = await getApplicationSupportDirectory();
+    // const folderName = 'SampleBook';
+    final Directory appDirFolder = Directory("${appDir.path}/$folderName/");
+    if (await appDirFolder.exists()) {
+      //if folder already exists return path
+      return true;
+    } else {
+      //if folder not exists create folder and then return its path
+      return false;
+    }
+  }
+
+  downloadImage(String foldr, String filename, String imgUrl) async {
+    String host = "$mainHost$imgUrl";
+    var savePath = '$foldr$filename';
+    // print(savePath);
+    var dio = Dio();
+    dio.interceptors.add(LogInterceptor());
+    try {
+      var response = await dio.get(
+        host,
+        //Received data with List<int>
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: const Duration(seconds: 60),
+        ),
+      );
+      var file = File(savePath);
+      var raf = file.openSync(mode: FileMode.write);
+      // response.data is List<int> type
+      raf.writeFromSync(response.data);
+      await raf.close();
+      print("image dowloaded successfully");
+    } catch (e) {
+      debugPrint(e.toString());
+      print("image failed to download");
+    }
+  }
 
   _downloadPdf() async {
-    lessons.forEach((element) async {
-      String filename = AppUtil().splitPath(element.path);
-      String newFile = await AppUtil.downloadPdFiles(
-          element.path, filename, widget.bookInfo.title);
-      if (newFile == "success") {
-        AppUtil().readFilesDir(widget.bookInfo.title);
-      }
+    setState(() {
+      _isLoading = true;
     });
+    _isLoading = true;
+    var exist = await fileExist(widget.bookInfo.title);
+    if (exist) {
+      print("file already exist!");
+    } else {
+      final Directory appDir = await getApplicationSupportDirectory();
+      final Directory appDirFolder =
+          Directory("${appDir.path}/${widget.bookInfo.title}/");
+      print(appDirFolder.path);
+      //if folder not exists create folder and then return its path
+      final Directory bookNewFolder =
+          await appDirFolder.create(recursive: true);
+      print(bookNewFolder.path);
+      downloadImage(bookNewFolder.path, "cover_image", widget.bookInfo.picurl);
+      lessons.forEach((element) async {
+        if (element.path.isNotEmpty) {
+          String filename = AppUtil().splitPath(element.path);
+          downloadPdFiles(element.path, filename, bookNewFolder.path);
+          // readSpecificBook();
+
+          // if (kDebugMode) {
+          //   print('${element.chaptertitle} - ${element.path}');
+          // }
+        }
+      });
+      Timer(const Duration(seconds: 3), () {
+        // <-- Delay here
+        setState(() {
+          _isLoading = false;
+          saveCurrentBook(widget.bookInfo.title);
+          navigateToMainNav(bookNewFolder.path); // <-- Code run after delay
+        });
+      });
+      checkLoading();
+    }
+  }
+
+  checkLoading() {
+    if (_isLoading) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Preparing."),
+        backgroundColor: Colors.pink,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Completed!."),
+        backgroundColor: Colors.pink,
+      ));
+    }
+  }
+
+  navigateToMainNav(String path) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyNav2(
+          books:
+              PdfTile(title: widget.bookInfo.title, path: '${path}cover_image'),
+          path: '',
+        ),
+      ),
+    );
+  }
+
+  Future<void> saveCurrentBook(bookName) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    localStorage.setString('currentBook', bookName);
+  }
+
+  downloadPdFiles(
+    String url,
+    String filename,
+    String bookFolderDir,
+  ) async {
+    String host = "$mainHost/$url";
+    var savePath = '$bookFolderDir$filename';
+    // print(savePath);
+    var dio = Dio();
+    dio.interceptors.add(LogInterceptor());
+    try {
+      print("Downloading...");
+
+      var response = await dio.get(
+        host,
+        //Received data with List<int>
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: const Duration(seconds: 60),
+        ),
+      );
+      var file = File(savePath);
+      var raf = file.openSync(mode: FileMode.write);
+      // response.data is List<int> type
+      raf.writeFromSync(response.data);
+      await raf.close();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -128,8 +273,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         elevation: 0.0,
                         child: widget.bookInfo.picurl.isNotEmpty
                             ? CachedNetworkImage(
-                                imageUrl:
-                                    'http://192.168.0.103/${widget.bookInfo.picurl}',
+                                imageUrl: '$mainHost${widget.bookInfo.picurl}',
                                 imageBuilder: (context, imageProvider) =>
                                     Container(
                                   height: 200,
@@ -255,18 +399,22 @@ class _DetailBookPageState extends State<DetailBookPage> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Row(
+                  const Row(
                     children: [
-                      const TextWidget(
+                      TextWidget(
                         text: "Details",
                         fontSize: 30,
                       ),
-                      Expanded(
-                        child: Container(
-                          child: Text('${widget.bookInfo.bookid}'),
-                        ),
-                      )
                     ],
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 20),
+                    child: TextWidget(
+                      color: Colors.grey,
+                      text:
+                          'This book was brought to you by CK Children\'s Publishing Company.',
+                      fontSize: 20,
+                    ),
                   ),
                   const SizedBox(
                     height: 30,
@@ -280,36 +428,42 @@ class _DetailBookPageState extends State<DetailBookPage> {
                   //     color: Colors.grey),
                   // ),
                   const Divider(color: Color(0xFF7b8ea3)),
-                  GestureDetector(
-                    onTap: () {
-                      _downloadPdf();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyNav2(
-                            path: '',
-                            books: widget.bookInfo,
+                  Container(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            _downloadPdf();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.pink,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.only(
+                                left: 15.0,
+                                right: 15.0,
+                                top: 10.0,
+                                bottom: 10.0,
+                              ),
+                              alignment: Alignment.center),
+                          child: const Text(
+                            "View Book",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.only(right: 20),
-                      child: Row(
-                        children: [
-                          const TextWidget(
-                            text: "View Book",
-                            fontSize: 20,
-                          ),
-                          Expanded(child: Container()),
-                          const IconButton(
-                              icon: Icon(Icons.arrow_forward_ios),
-                              onPressed: null)
-                        ],
-                      ),
+                        // Expanded(child: Container()),
+                        // const IconButton(
+                        //     icon: Icon(Icons.arrow_forward_ios),
+                        //     onPressed: null)
+                      ],
                     ),
                   ),
-                  const Divider(color: Color(0xFF7b8ea3)),
+                  // const Divider(color: Color(0xFF7b8ea3)),
                 ],
               ),
             ),

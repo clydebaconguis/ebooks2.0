@@ -1,3 +1,4 @@
+import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/widget/navigation_drawer_widget.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MyNav extends StatelessWidget {
-  static const String title = 'EBooks';
+  static const String title = 'Demo';
 
   const MyNav({super.key});
 

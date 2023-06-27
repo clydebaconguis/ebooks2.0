@@ -1,221 +1,349 @@
-// import 'dart:convert';
-//
-// import 'package:ebooks/data/drawer_items.dart';
-// import 'package:ebooks/models/drawer_item.dart';
-// import 'package:ebooks/models/get_books_info.dart';
-// import 'package:ebooks/models/get_books_info_02.dart';
-// import 'package:ebooks/models/get_chapters.dart';
-// import 'package:ebooks/models/get_lessons.dart';
-// import 'package:ebooks/models/get_parts.dart';
-// import 'package:ebooks/pages/nav_pdf.dart';
-// import 'package:flutter/material.dart                                              ';
-// import 'package:provider/provider.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-// import '../api/my_api.dart';
-// import '../models/get_part.dart';
-// import '../models/pdf_tile.dart';
-// import '../provider/navigation_provider2.dart';
-//
-// class NavigationDrawerWidget2 extends StatefulWidget {
-//   const NavigationDrawerWidget2({super.key});
-//
-//   @override
-//   State<NavigationDrawerWidget2> createState() =>
-//       _NavigationDrawerWidget2State();
-// }
-//
-// class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
-//   final padding = const EdgeInsets.symmetric(horizontal: 20);
-//   List<Lessons> lessons = [];
-//   var bookId = 0;
-//
-//   @override
-//   void initState() {
-//     _checkBookIdStatus();
-//     super.initState();
-//   }
-//
-//   _checkBookIdStatus() async {
-//     SharedPreferences localStorage = await SharedPreferences.getInstance();
-//     var bookid = localStorage.getInt('bookid');
-//     if (bookid != null) {
-//       setState(() {
-//         bookId = bookid;
-//       });
-//       _fetchParts();
-//     }
-//   }
-//
-//   _fetchParts() async {
-//     CallApi().getPublicData('bookchapter/$bookId').then(
-//       (response) {
-//         setState(
-//           () {
-//             Iterable list = json.decode(response.body);
-//             print(list);
-//             lessons = list.map((e) => Lessons.fromJson(e)).toList();
-//             // if (response.body != null) {
-//             //
-//             // } else {
-//             //   // If that call was not successful, throw an error.
-//             //   throw Exception('Failed to load post');
-//             // }
-//           },
-//         );
-//       },
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final safeArea =
-//         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
-//
-//     final provider = Provider.of<NavigationProvider2>(context);
-//     final isCollapsed = provider.isCollapsed;
-//
-//     return SizedBox(
-//       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
-//       child: Drawer(
-//         child: Container(
-//           color: const Color(0xff292735),
-//           child: Column(
-//             children: [
-//               Container(
-//                 padding: const EdgeInsets.symmetric(vertical: 24).add(safeArea),
-//                 width: double.infinity,
-//                 color: Colors.white12,
-//                 child: buildHeader(isCollapsed),
-//               ),
-//               const SizedBox(height: 24),
-//               Expanded(
-//                 child: SingleChildScrollView(
-//                   child: buildTile(isCollapsed: isCollapsed, items: lessons),
-//                 ),
-//               ),
-//               buildCollapseIcon(context, isCollapsed),
-//               const SizedBox(height: 12),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget buildTile({
-//     required bool isCollapsed,
-//     required List<Lessons> items,
-//     int indexOffset = 0,
-//   }) =>
-//       ListView.separated(
-//         padding: isCollapsed ? EdgeInsets.zero : padding,
-//         shrinkWrap: true,
-//         primary: false,
-//         itemCount: items.length,
-//         separatorBuilder: (context, index) => const SizedBox(height: 16),
-//         itemBuilder: (context, index) {
-//           final item = items[index];
-//
-//           return buildMenuItemTiles(
-//             isCollapsed: isCollapsed,
-//             text: item.title,
-//             cat: item.chaptertitle,
-//             icon: Icons.folder,
-//             path: item.path,
-//           );
-//         },
-//       );
-//
-//   Widget buildMenuItemTiles({
-//     required bool isCollapsed,
-//     required String text,
-//     required String cat,
-//     required IconData icon,
-//     required String path,
-//   }) {
-//     final color = Colors.pink.shade50;
-//     final leadingPdf = Icon(Icons.picture_as_pdf, color: color);
-//     return Material(
-//       color: Colors.transparent,
-//       child: isCollapsed
-//           ? ListTile(
-//               title: leadingPdf,
-//               // onTap: onClicked,
-//             )
-//           : ListTile(
-//               onTap: () => onClick(path),
-//               leading: leadingPdf,
-//               title: Text(
-//                 '$cat- $text',
-//                 style: TextStyle(color: color, fontSize: 15),
-//               ),
-//             ),
-//     );
-//   }
-//
-//   onClick(path) {
-//     Navigator.of(context).pushAndRemoveUntil(
-//         MaterialPageRoute(
-//           builder: (context) => MyNav2(
-//             path: path,
-//             books: Books2(0, '', '', ''),
-//           ),
-//         ),
-//         (Route<dynamic> route) => false);
-//     print(path);
-//   }
-//
-//   Widget buildCollapseIcon(BuildContext context, bool isCollapsed) {
-//     const double size = 52;
-//     final icon = isCollapsed
-//         ? Icons.arrow_back_ios_new_outlined
-//         : Icons.arrow_forward_ios_outlined;
-//     final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
-//     final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
-//     final width = isCollapsed ? double.infinity : size;
-//
-//     return Container(
-//       alignment: alignment,
-//       margin: margin,
-//       child: Material(
-//         color: Colors.transparent,
-//         child: InkWell(
-//           child: SizedBox(
-//             width: width,
-//             height: size,
-//             child: Icon(icon, color: Colors.white),
-//           ),
-//           onTap: () {
-//             final provider =
-//                 Provider.of<NavigationProvider2>(context, listen: false);
-//
-//             provider.toggleIsCollapsed2();
-//           },
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget buildHeader(bool isCollapsed) => isCollapsed
-//       ? const Image(
-//           width: 50,
-//           height: 50,
-//           image: AssetImage("img/icon.png"),
-//         )
-//       : const Row(
-//           children: [
-//             SizedBox(width: 24),
-//             Image(
-//               width: 50,
-//               height: 50,
-//               image: AssetImage('img/icon.png'),
-//             ),
-//             SizedBox(width: 16),
-//             Text(
-//               'EBook',
-//               style: TextStyle(fontSize: 32, color: Colors.white),
-//             ),
-//           ],
-//         );
-// }
+import 'dart:ffi';
+import 'dart:io';
+
+import 'package:ebooks/app_util.dart';
+import 'package:ebooks/data/drawer_items.dart';
+import 'package:ebooks/models/drawer_item.dart';
+import 'package:ebooks/pages/classmate_page.dart';
+import 'package:ebooks/pages/nav_main.dart';
+import 'package:ebooks/pdf_view/pdf_view.dart';
+import 'package:ebooks/provider/navigation_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/pdf_tile.dart';
+import '../pages/nav_pdf.dart';
+
+class NavigationDrawerWidget2 extends StatefulWidget {
+  const NavigationDrawerWidget2({super.key});
+
+  @override
+  State<NavigationDrawerWidget2> createState() =>
+      _NavigationDrawerWidget2State();
+}
+
+class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
+  final padding = const EdgeInsets.symmetric(horizontal: 20);
+  late List<PdfTile> files = [];
+
+  @override
+  void initState() {
+    getDownloadedBooks();
+    super.initState();
+  }
+
+  getDownloadedBooks() async {
+    files.clear();
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var currentBook = localStorage.getString('currentBook');
+    // final List<PdfTile> listOfChild = [];
+    var foldrChild = await AppUtil().readFilesDir(currentBook!);
+
+    if (foldrChild.isNotEmpty) {
+      foldrChild.forEach((element) {
+        // print(element);
+        if (element.path.isNotEmpty &&
+            splitPath(element.path).toString() != "cover_image") {
+          setState(() {
+            files.add(
+              PdfTile(title: splitPath(element.path), path: element.path),
+            );
+          });
+        }
+      });
+    }
+  }
+
+  String split(url) {
+    File file = File(url);
+    String filename = file.path.split(Platform.pathSeparator).last;
+    return filename;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final safeArea =
+        EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
+
+    final provider = Provider.of<NavigationProvider>(context);
+    var isCollapsed = provider.isCollapsed;
+
+    return SizedBox(
+      width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
+      child: Drawer(
+        child: Container(
+          color: const Color(0xff292735),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 24).add(safeArea),
+                width: double.infinity,
+                color: Colors.white12,
+                child: buildHeader(isCollapsed),
+              ),
+              const SizedBox(height: 24),
+              buildList(items: itemsFirst, isCollapsed: isCollapsed),
+              const SizedBox(height: 24),
+              const Divider(
+                color: Colors.white24,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: files.isNotEmpty
+                      ? buildTile(isCollapsed: isCollapsed, items: files)
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
+              ),
+              const Spacer(),
+              buildCollapseIcon2(context, isCollapsed),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  onClick(path) {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => MyNav2(
+            path: path,
+            books: const PdfTile(
+              title: '',
+              path: '',
+            ),
+          ),
+        ),
+        (Route<dynamic> route) => false);
+    print(path);
+  }
+
+  // Pdf Tile
+  Widget buildTile({
+    required bool isCollapsed,
+    required List<PdfTile> items,
+    int indexOffset = 0,
+  }) =>
+      ListView.separated(
+        padding: isCollapsed ? EdgeInsets.zero : padding,
+        shrinkWrap: true,
+        primary: false,
+        itemCount: items.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final item = items[index];
+
+          return buildMenuItemTiles(
+            isCollapsed: isCollapsed,
+            text: item.title,
+            path: item.path,
+            icon: Icons.picture_as_pdf_outlined,
+            // items: item.lessons,
+          );
+        },
+      );
+
+  Widget buildMenuItemTiles({
+    required bool isCollapsed,
+    required String text,
+    required String path,
+    required IconData icon,
+    // required List<PdfTile> items,
+    // VoidCallback? onClicked,
+  }) {
+    final color = Colors.pink.shade50;
+    // final color2 = Colors.pink.shade400;
+    // final leadingPdf = Icon(Icons.picture_as_pdf, color: color2);
+    final leading = Icon(icon, color: color);
+
+    return Material(
+      color: Colors.transparent,
+      child: isCollapsed
+          ? ListTile(
+              title: leading,
+              // onTap: onClicked,
+            )
+          : ListTile(
+              onTap: () => onClick(path),
+              minLeadingWidth: 0,
+              leading: leading,
+              title: Text(
+                text,
+                style: TextStyle(color: color),
+              ),
+              // title: ExpansionTile(
+              //   collapsedIconColor: color,
+              //   title: Text(
+              //     text,
+              //     style: TextStyle(color: color, fontSize: 16),
+              //     overflow: TextOverflow.ellipsis,
+              //     maxLines: 2,
+              //     softWrap: true,
+              //   ),
+              //   children: items
+              //       .map((it) => ListTile(
+              //             onTap: () => onClick(it.path),
+              //             minVerticalPadding: 0,
+              //             horizontalTitleGap: 0,
+              //             leading: leadingPdf,
+              //             title: Text(
+              //               it.title,
+              //               style: TextStyle(color: color, fontSize: 16),
+              //             ),
+              //           ))
+              //       .toList(),
+              // ),
+            ),
+    );
+  }
+
+  // Main Nav tile
+  Widget buildList({
+    required bool isCollapsed,
+    required List<DrawerItem> items,
+    int indexOffset = 0,
+  }) =>
+      ListView.separated(
+        padding: isCollapsed ? EdgeInsets.zero : padding,
+        shrinkWrap: true,
+        primary: false,
+        itemCount: items.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final item = items[index];
+
+          return buildMenuItem(
+            isCollapsed: isCollapsed,
+            text: item.title,
+            icon: item.icon,
+            onClicked: () => selectItem(context, indexOffset + index),
+          );
+        },
+      );
+
+  void selectItem(BuildContext context, int index) {
+    navigateTo(page) => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => page,
+        ));
+
+    Navigator.of(context).pop();
+
+    switch (index) {
+      case 0:
+        navigateTo(const MyNav());
+        break;
+      case 1:
+        navigateTo(const Classmate());
+        break;
+    }
+  }
+
+  Widget buildMenuItem({
+    required bool isCollapsed,
+    required String text,
+    required IconData icon,
+    VoidCallback? onClicked,
+  }) {
+    const color = Colors.white;
+    final leading = Icon(icon, color: color);
+
+    return Material(
+      color: Colors.transparent,
+      child: isCollapsed
+          ? ListTile(
+              title: leading,
+              onTap: onClicked,
+            )
+          : ListTile(
+              leading: leading,
+              title: Text(text,
+                  style: const TextStyle(color: color, fontSize: 16)),
+              onTap: onClicked,
+            ),
+    );
+  }
+
+  Widget buildCollapseIcon(BuildContext context, bool isCollapsed) {
+    const double size = 52;
+    final icon = isCollapsed ? Icons.arrow_forward_ios : Icons.arrow_back_ios;
+    final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
+    final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
+    final width = isCollapsed ? double.infinity : size;
+
+    return Container(
+      alignment: alignment,
+      margin: margin,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          child: SizedBox(
+            width: width,
+            height: size,
+            child: Icon(icon, color: Colors.white),
+          ),
+          onTap: () {
+            final provider =
+                Provider.of<NavigationProvider>(context, listen: false);
+
+            provider.toggleIsCollapsed();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
+    const double size = 52;
+    final icon = isCollapsed ? Icons.arrow_back_ios : Icons.arrow_forward_ios;
+    final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
+    final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
+    final width = isCollapsed ? double.infinity : size;
+
+    return Container(
+      alignment: alignment,
+      margin: margin,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          child: SizedBox(
+            width: width,
+            height: size,
+            child: Icon(icon, color: Colors.white),
+          ),
+          onTap: () {
+            final provider =
+                Provider.of<NavigationProvider>(context, listen: false);
+
+            provider.toggleIsCollapsed();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildHeader(bool isCollapsed) => isCollapsed
+      ? const Image(
+          width: 50,
+          height: 50,
+          image: AssetImage("img/icon.png"),
+        )
+      : const Row(
+          children: [
+            SizedBox(width: 24),
+            Image(
+              width: 50,
+              height: 50,
+              image: AssetImage('img/icon.png'),
+            ),
+            SizedBox(width: 16),
+            Text(
+              'EBook',
+              style: TextStyle(fontSize: 32, color: Colors.white),
+            ),
+          ],
+        );
+}

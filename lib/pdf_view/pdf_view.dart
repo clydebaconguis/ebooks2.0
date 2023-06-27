@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/models/get_books_info_02.dart';
+import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,12 @@ import '../widget/navigation_drawer_widget.dart';
 
 class PdfView extends StatelessWidget {
   final String path;
-  final Books2 books;
+  final PdfTile books;
   const PdfView({super.key, required this.path, required this.books});
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => NavigationProvider(),
+        create: (_) => NavigationProvider2(),
         child: PDFViewPage(
           path: path,
           books: books,
@@ -32,7 +33,7 @@ class PdfView extends StatelessWidget {
 
 class PDFViewPage extends StatefulWidget {
   final String path;
-  final Books2 books;
+  final PdfTile books;
   // final Book bookInfo;
   const PDFViewPage({super.key, required this.path, required this.books});
 
@@ -81,29 +82,19 @@ class _PDFViewPage extends State<PDFViewPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        endDrawer: const NavigationDrawerWidget(),
+        endDrawer: const NavigationDrawerWidget2(),
         body: (widget.path.isNotEmpty)
             ? SfPdfViewer.file(
                 File(widget.path),
                 controller: _pdfViewerController,
                 key: _pdfViewerStateKey,
               )
-            : (widget.books.picurl.isNotEmpty)
-                ? CachedNetworkImage(
-                    imageUrl: "http://192.168.0.103/${widget.books.picurl}",
-                    // "https://drive.google.com/uc?export=view&id=${book.img}",
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+            : (widget.books.path.isNotEmpty)
+                ? Image.file(
+                    height: double.infinity,
+                    width: double.infinity,
+                    File(widget.books.path),
+                    fit: BoxFit.fill,
                   )
                 : Center(
                     child: Image.asset(

@@ -9,6 +9,11 @@ class CallApi {
   final String _noWifi = 'http://192.168.77.110:8000/api/';
   // final String _emulator = 'http://10.0.2.2:8000/api/';
   final String _imgUrl = 'https://drive.google.com/uc?export=view&id=';
+  final String _host = 'http://192.168.0.103/';
+  getHost() {
+    return _host;
+  }
+
   getImage() {
     return _imgUrl;
   }

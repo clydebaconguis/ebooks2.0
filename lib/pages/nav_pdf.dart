@@ -1,3 +1,4 @@
+import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
@@ -12,15 +13,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/get_books_info_02.dart';
 
 class MyNav2 extends StatelessWidget {
-  static const String title = 'Ebooks Demo';
+  static const String title = 'Demo';
   final String path;
-  final Books2 books;
+  final PdfTile books;
 
   const MyNav2({super.key, required this.path, required this.books});
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => NavigationProvider(),
+        create: (_) => NavigationProvider2(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: title,
@@ -34,7 +35,7 @@ class MyNav2 extends StatelessWidget {
 
 class NavPdf extends StatefulWidget {
   final String path;
-  final Books2 books;
+  final PdfTile books;
   const NavPdf({super.key, required this.path, required this.books});
 
   @override
@@ -49,7 +50,7 @@ class _NavPdfState extends State<NavPdf> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        endDrawer: const NavigationDrawerWidget(),
+        endDrawer: const NavigationDrawerWidget2(),
         appBar: AppBar(
           leading: IconButton(
             padding: EdgeInsets.zero,
