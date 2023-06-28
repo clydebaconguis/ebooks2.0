@@ -50,12 +50,11 @@ class _SignInState extends State<SignIn> {
   }
 
   _navigateToBooks() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MyNav(),
-      ),
-    );
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const MyNav(),
+        ),
+        (Route<dynamic> route) => false);
   }
 
   _login() async {
@@ -66,7 +65,7 @@ class _SignInState extends State<SignIn> {
     print(emailController.text);
     print(textController.text);
 
-    var res = await CallApi().login(data, 'login');
+    var res = await CallApi().login(data, 'studentlogin');
     var body = json.decode(res.body);
     print(body);
 
@@ -93,18 +92,18 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: height * 0.1),
               Container(
                 padding: const EdgeInsets.only(left: 0, right: 30),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(Icons.arrow_back_ios,
-                          color: Color(0xFF363f93)),
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(context),
-                    )
+                    // IconButton(
+                    //   padding: EdgeInsets.zero,
+                    //   constraints: const BoxConstraints(),
+                    //   icon: const Icon(Icons.arrow_back_ios,
+                    //       color: Color(0xFF363f93)),
+                    //   onPressed: () =>
+                    //       Navigator.of(context, rootNavigator: true)
+                    //           .pop(context),
+                    // )
                   ],
                 ),
               ),
@@ -154,7 +153,7 @@ class _SignInState extends State<SignIn> {
                       width: 60,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFF363f93),
+                        color: Color(0xffcf167f),
                       ),
                       child: const Icon(Icons.arrow_forward,
                           color: Colors.white, size: 30),

@@ -5,6 +5,9 @@ import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/auth/auth_page.dart';
 import 'package:ebooks/models/get_articles_info.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../pages/nav_main.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -30,16 +33,26 @@ class _WelcomePageState extends State<WelcomePage> {
   var articles = <String>[
     "Welcome to CK! We’re excited to have you on board.",
     "CK is the best way to your school study.",
-    "Get ready to experience the best way to access books with CK."
+    "Get ready to experience the best way to access books with ease."
   ];
   final _totalDots = 3;
   double _currentPosition = 0.0;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
     // _initData();
+    // _checkLoginStatus();
     super.initState();
   }
+
+  // navigateToMainNav() {
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //       MaterialPageRoute(
+  //         builder: (context) => const MyNav(),
+  //       ),
+  //       (Route<dynamic> route) => false);
+  // }
 
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;

@@ -7,8 +7,10 @@ import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
+import 'package:ebooks/pages/profile.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
+import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +64,19 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   //   String filename = file.path.split(Platform.pathSeparator).last;
   //   return filename;
   // }
+  navigateToSignIn() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const SignIn(),
+        ),
+        (Route<dynamic> route) => false);
+  }
+
+  logout() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    await localStorage.clear();
+    navigateToSignIn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +115,8 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
               //   ),
               // ),
               const Spacer(),
+              buildLogout(items: itemsFirst2, isCollapsed: isCollapsed),
+              const SizedBox(height: 12),
               buildCollapseIcon(context, isCollapsed),
               const SizedBox(height: 12),
             ],
@@ -237,6 +254,9 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       case 1:
         navigateTo(const Classmate());
         break;
+      case 2:
+        navigateTo(const Profile());
+        break;
     }
   }
 
@@ -281,7 +301,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
           child: SizedBox(
             width: width,
             height: size,
-            child: Icon(icon, color: Colors.white),
+            child: Icon(icon, color: Colors.pink[400]),
           ),
           onTap: () {
             final provider =
@@ -294,34 +314,34 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     );
   }
 
-  Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
-    const double size = 52;
-    final icon = isCollapsed ? Icons.arrow_back_ios : Icons.arrow_forward_ios;
-    final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
-    final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
-    final width = isCollapsed ? double.infinity : size;
-
-    return Container(
-      alignment: alignment,
-      margin: margin,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          child: SizedBox(
-            width: width,
-            height: size,
-            child: Icon(icon, color: Colors.white),
-          ),
-          onTap: () {
-            final provider =
-                Provider.of<NavigationProvider>(context, listen: false);
-
-            provider.toggleIsCollapsed();
-          },
-        ),
-      ),
-    );
-  }
+  // Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
+  //   const double size = 52;
+  //   final icon = isCollapsed ? Icons.arrow_back_ios : Icons.arrow_forward_ios;
+  //   final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
+  //   final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
+  //   final width = isCollapsed ? double.infinity : size;
+  //
+  //   return Container(
+  //     alignment: alignment,
+  //     margin: margin,
+  //     child: Material(
+  //       color: Colors.transparent,
+  //       child: InkWell(
+  //         child: SizedBox(
+  //           width: width,
+  //           height: size,
+  //           child: Icon(icon, color: Colors.white),
+  //         ),
+  //         onTap: () {
+  //           final provider =
+  //               Provider.of<NavigationProvider>(context, listen: false);
+  //
+  //           provider.toggleIsCollapsed();
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget buildHeader(bool isCollapsed) => isCollapsed
       ? const Image(
@@ -344,4 +364,26 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             ),
           ],
         );
+
+  Widget buildLogout({
+    required bool isCollapsed,
+    required List<DrawerItem> items,
+    int indexOffset = 0,
+  }) =>
+      ListView.separated(
+        padding: isCollapsed ? EdgeInsets.zero : padding,
+        shrinkWrap: true,
+        primary: false,
+        itemCount: items.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final item = items[index];
+
+          return buildMenuItem(
+              isCollapsed: isCollapsed,
+              text: item.title,
+              icon: item.icon,
+              onClicked: () => logout());
+        },
+      );
 }

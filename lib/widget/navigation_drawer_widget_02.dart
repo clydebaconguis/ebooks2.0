@@ -6,6 +6,7 @@ import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
+import 'package:ebooks/pages/profile.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:flutter/material.dart';
@@ -93,11 +94,15 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                   child: files.isNotEmpty
                       ? buildTile(isCollapsed: isCollapsed, items: files)
                       : const Center(
-                          child: CircularProgressIndicator(),
+                          child: Center(
+                            child: Text(
+                              "No Files",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
                 ),
               ),
-              const Spacer(),
               buildCollapseIcon2(context, isCollapsed),
               const SizedBox(height: 12),
             ],
@@ -238,6 +243,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
         break;
       case 1:
         navigateTo(const Classmate());
+        break;
+      case 2:
+        navigateTo(const Profile());
         break;
     }
   }

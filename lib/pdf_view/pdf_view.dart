@@ -95,6 +95,11 @@ class _PDFViewPage extends State<PDFViewPage> {
                     width: double.infinity,
                     File(widget.books.path),
                     fit: BoxFit.fill,
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace? stackTrace) {
+                      // Return a fallback image or widget when an error occurs
+                      return Image.asset('img/CK_logo.png');
+                    },
                   )
                 : Center(
                     child: Image.asset(

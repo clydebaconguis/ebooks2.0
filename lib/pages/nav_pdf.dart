@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/get_books_info_02.dart';
 
 class MyNav2 extends StatelessWidget {
-  static const String title = 'Demo';
+  // static const String title = 'Demo';
   final String path;
   final PdfTile books;
 
@@ -24,7 +24,7 @@ class MyNav2 extends StatelessWidget {
         create: (_) => NavigationProvider2(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: title,
+          title: books.title,
           home: NavPdf(
             path: path,
             books: books,
@@ -63,7 +63,7 @@ class _NavPdfState extends State<NavPdf> {
                 (Route<dynamic> route) => false),
           ),
           backgroundColor: const Color(0xff292735),
-          title: const Text(MyNav2.title),
+          title: Text(widget.books.title),
           centerTitle: true,
         ),
         body: PdfView(path: widget.path, books: widget.books),

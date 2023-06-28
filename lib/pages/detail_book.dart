@@ -43,29 +43,29 @@ class _DetailBookPageState extends State<DetailBookPage> {
   void initState() {
     // _storeBookId();
     _fetchParts();
-    readSpecificBook();
+    // readSpecificBook();
     super.initState();
   }
 
-  readSpecificBook() async {
-    var dir = await getApplicationSupportDirectory();
-    final pathFile = Directory(dir.path);
-    final List<FileSystemEntity> entities = await pathFile.list().toList();
-    final Iterable<Directory> files = entities.whereType<Directory>();
-    files.forEach((element) {
-      print(element.absolute);
-    });
-    // // return files;
-    // entities.forEach((element) {
-    //   print(element.path);
-    // });
-    // print(entities);
-    // pathFile.deleteSync(recursive: true);
-    // entities.forEach((element) {
-    //   print(element.path);
-    // });
-    // print(entities);
-  }
+  // readSpecificBook() async {
+  //   var dir = await getApplicationSupportDirectory();
+  //   final pathFile = Directory(dir.path);
+  //   final List<FileSystemEntity> entities = await pathFile.list().toList();
+  //   final Iterable<Directory> files = entities.whereType<Directory>();
+  //   files.forEach((element) {
+  //     print(element.absolute);
+  //   });
+  //   // // return files;
+  //   // entities.forEach((element) {
+  //   //   print(element.path);
+  //   // });
+  //   // print(entities);
+  //   // pathFile.deleteSync(recursive: true);
+  //   // entities.forEach((element) {
+  //   //   print(element.path);
+  //   // });
+  //   // print(entities);
+  // }
 
   _fetchParts() async {
     CallApi().getPublicData('bookchapter/${widget.bookInfo.bookid}').then(
@@ -84,11 +84,32 @@ class _DetailBookPageState extends State<DetailBookPage> {
   }
   //   throw Exception('Failed to load post');
 
+  // imageExist(String folderName) async {
+  //   final Directory appDir = await getApplicationSupportDirectory();
+  //   // const folderName = 'SampleBook';
+  //   final Directory appDirFolder =
+  //       Directory("${appDir.path}/$folderName/cover_image");
+  //   if (await appDirFolder.exists()) {
+  //     //if folder already exists return path
+  //     print(appDirFolder.path);
+  //     return appDirFolder.path;
+  //   } else {
+  //     //if folder not exists create folder and then return its path
+  //     return '';
+  //   }
+  // }
+
   Future<bool> fileExist(String folderName) async {
     final Directory appDir = await getApplicationSupportDirectory();
     // const folderName = 'SampleBook';
     final Directory appDirFolder = Directory("${appDir.path}/$folderName/");
     if (await appDirFolder.exists()) {
+      // File imageFile = File("$appDir/${widget.bookInfo.title}/cover_image");
+      // if (await imageFile.exists()) {
+      //   setState(() {
+      //     imgPathLocal = imageFile.path;
+      //   });
+      // }
       //if folder already exists return path
       return true;
     } else {
@@ -125,7 +146,13 @@ class _DetailBookPageState extends State<DetailBookPage> {
     }
   }
 
+  // checkImageExist() async {
+  //   imgPathLocal = await imageExist(widget.bookInfo.title);
+  // }
+
   _downloadPdf() async {
+    final Directory appDir = await getApplicationSupportDirectory();
+    var imgPathLocal = "${appDir.path}/${widget.bookInfo.title}/cover_image";
     setState(() {
       _isLoading = true;
     });
@@ -133,8 +160,18 @@ class _DetailBookPageState extends State<DetailBookPage> {
     var exist = await fileExist(widget.bookInfo.title);
     if (exist) {
       print("file already exist!");
+      Timer(const Duration(seconds: 2), () {
+        // <-- Delay here
+        setState(() {
+          _isLoading = false;
+          // final Directory imgPath =
+          //     Directory("${appDir.path}/${widget.bookInfo.title}/cover_image");
+          // var imgUrl = "${appDir.path}/${widget.bookInfo.title}/cover_image";
+          saveCurrentBook(widget.bookInfo.title);
+          navigateToMainNav(imgPathLocal); // <-- Code run after delay
+        });
+      });
     } else {
-      final Directory appDir = await getApplicationSupportDirectory();
       final Directory appDirFolder =
           Directory("${appDir.path}/${widget.bookInfo.title}/");
       print(appDirFolder.path);
@@ -159,7 +196,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
         setState(() {
           _isLoading = false;
           saveCurrentBook(widget.bookInfo.title);
-          navigateToMainNav(bookNewFolder.path); // <-- Code run after delay
+          navigateToMainNav(
+              "${bookNewFolder.path}cover_image"); // <-- Code run after delay
         });
       });
       checkLoading();
@@ -169,12 +207,12 @@ class _DetailBookPageState extends State<DetailBookPage> {
   checkLoading() {
     if (_isLoading) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Preparing."),
+        content: Text("Preparing..."),
         backgroundColor: Colors.pink,
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Completed!."),
+        content: Text("Redirecting..."),
         backgroundColor: Colors.pink,
       ));
     }
@@ -185,8 +223,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MyNav2(
-          books:
-              PdfTile(title: widget.bookInfo.title, path: '${path}cover_image'),
+          books: PdfTile(title: widget.bookInfo.title, path: path),
           path: '',
         ),
       ),

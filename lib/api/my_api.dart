@@ -25,9 +25,9 @@ class CallApi {
   }
 
   login(data, apiUrl) async {
-    // var fullUrl = _ckIpv4 + apiUrl;
-    // return await http.post(Uri.parse(fullUrl),
-    //     body: jsonEncode(data), headers: _setHeaders());
+    var fullUrl = _ckIpv4 + apiUrl;
+    return await http.post(Uri.parse(fullUrl),
+        body: jsonEncode(data), headers: _setHeaders());
   }
 
   // getData(apiUrl) async {
@@ -40,11 +40,11 @@ class CallApi {
         'Accept': 'application/json',
       };
 
-  // _getToken() async {
-  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
-  //   var token = localStorage.getString('token');
-  //   return '?token=$token';
-  // }
+  getToken() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    return '?token=$token';
+  }
 
   // getArticles(apiUrl) async {}
 

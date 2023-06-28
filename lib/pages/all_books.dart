@@ -25,7 +25,10 @@ class _AllBooksState extends State<AllBooks> {
   var books = <Books2>[];
   List<PdfTile> files = [];
   bool activeConnection = true;
+  bool repeated = false;
   Future checkUserConnection() async {
+    repeated = true;
+
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -45,15 +48,19 @@ class _AllBooksState extends State<AllBooks> {
 
   displayScreeMsg() {
     if (activeConnection) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Connection restored."),
-        backgroundColor: Colors.pink,
-      ));
+      if (!repeated) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Connection restored."),
+          backgroundColor: Colors.pink,
+        ));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Offline Mode."),
-        backgroundColor: Colors.pink,
-      ));
+      if (!repeated) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Offline Mode."),
+          backgroundColor: Colors.pink,
+        ));
+      }
     }
   }
 
@@ -66,7 +73,7 @@ class _AllBooksState extends State<AllBooks> {
 
   readSpecificBook() async {
     var dir = await getApplicationSupportDirectory();
-    final pathFile = Directory('${dir.path}/Visual Graphics Design Okey');
+    final pathFile = Directory(dir.path);
     // final pathFile = Directory(dir.path);
     final List<FileSystemEntity> entities = await pathFile.list().toList();
     // final Iterable<Directory> files = entities.whereType<Directory>();
@@ -78,7 +85,7 @@ class _AllBooksState extends State<AllBooks> {
     //   print(element.path);
     // });
     // print(entities);
-    // pathFile.deleteSync(recursive: true);
+    pathFile.deleteSync(recursive: true);
     // entities.forEach((element) {
     //   print(element.path);
     // });
@@ -156,9 +163,9 @@ class _AllBooksState extends State<AllBooks> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: height * 0.02,
-              ),
+              // SizedBox(
+              //   height: height * 0.02,
+              // ),
               // Container(
               //   padding: const EdgeInsets.only(left: 20, right: 20),
               //   // child: Row(
@@ -187,9 +194,9 @@ class _AllBooksState extends State<AllBooks> {
               //   //   ],
               //   // ),
               // ),
-              const SizedBox(
-                height: 15,
-              ),
+              // const SizedBox(
+              //   height: 15,
+              // ),
 
               Expanded(
                 child: (files.isNotEmpty && !activeConnection)

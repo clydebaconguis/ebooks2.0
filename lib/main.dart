@@ -20,7 +20,7 @@ Future main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const Splash());
+  runApp(Splash());
 }
 
 class MyApp extends StatelessWidget {
