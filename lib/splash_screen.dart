@@ -37,13 +37,13 @@ class _SplashState extends State<Splash> {
         debugShowCheckedModeBanner: false,
         title: '',
         home: AnimatedSplashScreen(
-            splashIconSize: 200.0,
+            splashIconSize: 100,
             duration: 2000,
             centered: true,
             splash: 'img/CK_logo.png',
             nextScreen: loggedIn ? const MyNav() : const Welcome(),
-            splashTransition: SplashTransition.scaleTransition,
-            pageTransitionType: PageTransitionType.bottomToTop,
+            splashTransition: SplashTransition.fadeTransition,
+            pageTransitionType: PageTransitionType.fade,
             backgroundColor: Colors.white));
   }
 }

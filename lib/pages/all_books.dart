@@ -25,10 +25,7 @@ class _AllBooksState extends State<AllBooks> {
   var books = <Books2>[];
   List<PdfTile> files = [];
   bool activeConnection = true;
-  bool repeated = false;
   Future checkUserConnection() async {
-    repeated = true;
-
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -48,19 +45,15 @@ class _AllBooksState extends State<AllBooks> {
 
   displayScreeMsg() {
     if (activeConnection) {
-      if (!repeated) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Connection restored."),
-          backgroundColor: Colors.pink,
-        ));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Connection restored."),
+        backgroundColor: Colors.pink,
+      ));
     } else {
-      if (!repeated) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Offline Mode."),
-          backgroundColor: Colors.pink,
-        ));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Offline Mode."),
+        backgroundColor: Colors.pink,
+      ));
     }
   }
 
@@ -317,10 +310,23 @@ class _AllBooksState extends State<AllBooks> {
                                               softWrap: true,
                                             ),
                                             const Divider(color: Colors.black),
-                                            const TextWidget(
-                                                color: Color(0xcd292735),
-                                                text: "publish: sample123",
-                                                fontSize: 14),
+                                            const ListTile(
+                                              contentPadding:
+                                                  EdgeInsets.only(left: 0),
+                                              horizontalTitleGap: 0,
+                                              minVerticalPadding: 0,
+                                              minLeadingWidth: 0,
+                                              leading: Icon(
+                                                Icons.download_done_rounded,
+                                                color: Colors.green,
+                                                textDirection:
+                                                    TextDirection.ltr,
+                                              ),
+                                              title: TextWidget(
+                                                  color: Colors.grey,
+                                                  text: "Downloaded",
+                                                  fontSize: 14),
+                                            ),
                                             const Divider(color: Colors.grey),
                                             // Text(
                                             //   book.description,
