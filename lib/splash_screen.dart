@@ -42,7 +42,7 @@ class _SplashState extends State<Splash> {
             centered: true,
             splash: 'img/CK_logo.png',
             nextScreen: loggedIn ? const MyNav() : const Welcome(),
-            splashTransition: SplashTransition.fadeTransition,
+            splashTransition: SplashTransition.sizeTransition,
             pageTransitionType: PageTransitionType.fade,
             backgroundColor: Colors.white));
   }
