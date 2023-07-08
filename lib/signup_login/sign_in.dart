@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 
 // import 'package:flutter/cupertino.dart';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
-import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/signup_login/sign_up.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 // import 'package:flutter_app_backend/api/my_api.dart';
 // import 'package:flutter_app_backend/components/text_widget.dart';
 // import 'package:flutter_app_backend/pages/article_page.dart';
@@ -26,6 +27,7 @@ const snackBar2 = SnackBar(
 
 class _SignInState extends State<SignIn> {
   var loggedIn = false;
+  // late bool _isLoading = false;
   TextEditingController textController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
@@ -34,40 +36,31 @@ class _SignInState extends State<SignIn> {
     super.initState();
   }
 
-  _showMsg(msg) {
-    //
-    final snackBar = SnackBar(
-      backgroundColor: const Color(0xFF363f93),
-      content: Text(msg),
-      action: SnackBarAction(
-        label: 'Close',
-        onPressed: () {
-          // Some code to undo the change!
-        },
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   _navigateToBooks() {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const MyNav(),
-        ),
-        (Route<dynamic> route) => false);
+    EasyLoading.showSuccess('Great Success!');
+    Timer(const Duration(seconds: 1), () {
+      // <-- Delay here
+      EasyLoading.dismiss();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const MyNav(),
+          ),
+          (Route<dynamic> route) => false);
+    });
   }
 
   _login() async {
+    EasyLoading.show(status: 'loading...');
     var data = {
       'email': emailController.text,
       'password': textController.text,
     };
-    print(emailController.text);
-    print(textController.text);
+    // print(emailController.text);
+    // print(textController.text);
 
     var res = await CallApi().login(data, 'studentlogin');
     var body = json.decode(res.body);
-    print(body);
+    // print(body);
 
     if (body['success']) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -75,123 +68,142 @@ class _SignInState extends State<SignIn> {
       localStorage.setString('user', json.encode(body['user']));
       _navigateToBooks();
     } else {
-      _showMsg(body['message']);
+      // _showMsg(body['message']);
+      EasyLoading.showError('Failed to Login');
+      EasyLoading.dismiss();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: const EdgeInsets.only(left: 30, right: 40),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: height * 0.1),
-              Container(
-                padding: const EdgeInsets.only(left: 0, right: 30),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // IconButton(
-                    //   padding: EdgeInsets.zero,
-                    //   constraints: const BoxConstraints(),
-                    //   icon: const Icon(Icons.arrow_back_ios,
-                    //       color: Color(0xFF363f93)),
-                    //   onPressed: () =>
-                    //       Navigator.of(context, rootNavigator: true)
-                    //           .pop(context),
-                    // )
-                  ],
+    return MaterialApp(
+      home: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          padding: const EdgeInsets.only(left: 30, right: 40),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: height * 0.1),
+                Container(
+                  padding: const EdgeInsets.only(left: 0, right: 30),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // IconButton(
+                      //   padding: EdgeInsets.zero,
+                      //   constraints: const BoxConstraints(),
+                      //   icon: const Icon(Icons.arrow_back_ios,
+                      //       color: Color(0xFF363f93)),
+                      //   onPressed: () =>
+                      //       Navigator.of(context, rootNavigator: true)
+                      //           .pop(context),
+                      // )
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: height * 0.1),
-              const TextWidget(
+                SizedBox(height: height * 0.1),
+                const TextWidget(
+                  color: Color(0xffcf167f),
                   text: "You’re One Step Away",
                   fontSize: 26,
-                  isUnderLine: false),
-              const TextWidget(
-                  text: "From Greatness", fontSize: 26, isUnderLine: false),
-              SizedBox(height: height * 0.1),
-              TextInput(
-                  textString: "Email",
-                  textController: emailController,
-                  hint: "Email"),
-              SizedBox(
-                height: height * .05,
-              ),
-              TextInput(
-                textString: "Password",
-                textController: textController,
-                hint: "Password",
-                obscureText: true,
-              ),
-              SizedBox(
-                height: height * .05,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const TextWidget(
-                      text: "Sign in", fontSize: 22, isUnderLine: false),
-                  GestureDetector(
-                    onTap: () {
-                      if (textController.text.isEmpty ||
-                          emailController.text.isEmpty) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('Fill all fields!'),
-                        ));
-                      } else {
-                        _login();
-                      }
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 60,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
+                  isUnderLine: false,
+                ),
+                const TextWidget(
+                    color: Color(0xffcf167f),
+                    text: "From Greatness",
+                    fontSize: 26,
+                    isUnderLine: false),
+                SizedBox(height: height * 0.1),
+                TextInput(
+                    textString: "Email",
+                    textController: emailController,
+                    hint: "Email"),
+                SizedBox(
+                  height: height * .05,
+                ),
+                TextInput(
+                  textString: "Password",
+                  textController: textController,
+                  hint: "Password",
+                  obscureText: true,
+                ),
+                SizedBox(
+                  height: height * .05,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const TextWidget(
                         color: Color(0xffcf167f),
-                      ),
-                      child: const Icon(Icons.arrow_forward,
-                          color: Colors.white, size: 30),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: height * .1,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUp(),
+                        text: "Sign in",
+                        fontSize: 22,
+                        isUnderLine: false),
+                    GestureDetector(
+                      onTap: () {
+                        if (textController.text.isEmpty ||
+                            emailController.text.isEmpty) {
+                          EasyLoading.showToast(
+                            'Fill all fields!',
+                            toastPosition: EasyLoadingToastPosition.bottom,
+                          );
+                        } else {
+                          _login();
+                        }
+                      },
+                      child: Container(
+                        height: 60,
+                        width: 60,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xffcf167f),
                         ),
-                      );
-                    },
-                    child: const TextWidget(
-                        text: "Sign up", fontSize: 16, isUnderLine: true),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const TextWidget(
+                        child: const Icon(Icons.arrow_forward,
+                            color: Colors.white, size: 30),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: height * .1,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUp(),
+                          ),
+                        );
+                      },
+                      child: const TextWidget(
+                        color: Color(0xffcf167f),
+                        text: "Sign up",
+                        fontSize: 16,
+                        isUnderLine: true,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: const TextWidget(
+                        color: Color(0xffcf167f),
                         text: "Forgot Password",
                         fontSize: 16,
-                        isUnderLine: true),
-                  )
-                ],
-              )
-            ],
+                        isUnderLine: true,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
+      builder: EasyLoading.init(),
     );
   }
 }
@@ -218,11 +230,22 @@ class TextInput extends StatelessWidget {
       keyboardType: TextInputType.text,
       obscureText: obscureText,
       decoration: InputDecoration(
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xffcf167f),
+          ),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xffcf167f),
+          ),
+        ),
         hintText: textString,
         hintStyle: const TextStyle(
-            color: Color(0xFF9b9b9b),
-            fontSize: 15,
-            fontWeight: FontWeight.normal),
+          color: Color(0xFF9b9b9b),
+          fontSize: 15,
+          fontWeight: FontWeight.normal,
+        ),
       ),
     );
   }

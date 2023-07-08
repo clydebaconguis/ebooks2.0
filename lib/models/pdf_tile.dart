@@ -1,14 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
 class PdfTile {
   final String title;
   final String path;
-  final List<PdfTile> lessons;
+  final List<PdfTile> children;
 
   const PdfTile({
     required this.title,
     required this.path,
-    this.lessons = const [],
+    this.children = const [],
   });
 }

@@ -1,10 +1,6 @@
-import 'dart:convert';
-
-import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
 import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -36,26 +32,32 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: height * 0.1),
               Container(
                 padding: const EdgeInsets.only(left: 0, right: 30),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: const Icon(Icons.arrow_back_ios,
-                          color: Color(0xFF363f93)),
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true)
-                              .pop(context),
-                    )
-                  ],
+                  // children: [
+                  //   IconButton(
+                  //     padding: EdgeInsets.zero,
+                  //     constraints: const BoxConstraints(),
+                  //     icon: const Icon(Icons.arrow_back_ios,
+                  //         color: Color(0xFF363f93)),
+                  //     onPressed: () =>
+                  //         Navigator.of(context, rootNavigator: true)
+                  //             .pop(context),
+                  //   )
+                  // ],
                 ),
               ),
               SizedBox(height: height * 0.1),
               const TextWidget(
-                  text: "New here?", fontSize: 26, isUnderLine: false),
+                  color: Color(0xffcf167f),
+                  text: "New here?",
+                  fontSize: 26,
+                  isUnderLine: false),
               const TextWidget(
-                  text: "Sign up in Minutes", fontSize: 26, isUnderLine: false),
+                  color: Color(0xffcf167f),
+                  text: "Sign up in Minutes",
+                  fontSize: 26,
+                  isUnderLine: false),
               SizedBox(height: height * 0.1),
               TextInput(
                   textString: "Name",
@@ -84,7 +86,10 @@ class _SignUpState extends State<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const TextWidget(
-                      text: "Sign up", fontSize: 22, isUnderLine: false),
+                      color: Color(0xffcf167f),
+                      text: "Sign up",
+                      fontSize: 22,
+                      isUnderLine: false),
                   GestureDetector(
                     onTap: () {
                       // _login();
@@ -94,7 +99,7 @@ class _SignUpState extends State<SignUp> {
                       width: 60,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFF363f93),
+                        color: Color(0xffcf167f),
                       ),
                       child: const Icon(Icons.arrow_forward,
                           color: Colors.white, size: 30),
@@ -116,7 +121,10 @@ class _SignUpState extends State<SignUp> {
                               builder: (context) => const SignIn()));
                     },
                     child: const TextWidget(
-                        text: "Sign in", fontSize: 16, isUnderLine: true),
+                        color: Color(0xffcf167f),
+                        text: "Sign in",
+                        fontSize: 16,
+                        isUnderLine: true),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -126,6 +134,7 @@ class _SignUpState extends State<SignUp> {
                       //         builder: (context) => const SignIn()));
                     },
                     child: const TextWidget(
+                        color: Color(0xffcf167f),
                         text: "Forgot Password",
                         fontSize: 16,
                         isUnderLine: true),
@@ -139,53 +148,34 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  _showMsg(msg) {
-    //
-    final snackBar = SnackBar(
-      backgroundColor: const Color(0xFF363f93),
-      content: Text(msg),
-      action: SnackBarAction(
-        label: 'Close',
-        onPressed: () {
-          // Some code to undo the change!
-        },
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
+  // _register() async {
+  //   var data = {
+  //     'name': nameController.text,
+  //     'email': emailController.text,
+  //     'password': passController.text,
+  //   };
+  //   debugPrint(nameController.text);
+  //   debugPrint(emailController.text);
+  //   debugPrint(passController.text);
+  //   debugPrint(repassController.text);
 
-  _navigateToBooks() {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ArticlePage(),
-    //   ),
-    // );
-  }
+  //   var res = await CallApi().postData(data, 'register');
+  //   var body = json.decode(res.body);
 
-  _register() async {
-    var data = {
-      'name': nameController.text,
-      'email': emailController.text,
-      'password': passController.text,
-    };
-    debugPrint(nameController.text);
-    debugPrint(emailController.text);
-    debugPrint(passController.text);
-    debugPrint(repassController.text);
-
-    var res = await CallApi().postData(data, 'register');
-    var body = json.decode(res.body);
-
-    if (body['success']) {
-      SharedPreferences localStorage = await SharedPreferences.getInstance();
-      localStorage.setString('token', body['token']);
-      localStorage.setString('user', json.encode(body['user']));
-      _navigateToBooks();
-    } else {
-      _showMsg(body['message']);
-    }
-  }
+  //   if (body['success']) {
+  //     SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //     localStorage.setString('token', body['token']);
+  //     localStorage.setString(
+  //       'user',
+  //       json.encode(
+  //         body['user'],
+  //       ),
+  //     );
+  //     _navigateToBooks();
+  //   } else {
+  //     _showMsg(body['message']);
+  //   }
+  // }
 }
 
 class TextInput extends StatelessWidget {
@@ -210,6 +200,16 @@ class TextInput extends StatelessWidget {
       keyboardType: TextInputType.text,
       obscureText: obscureText,
       decoration: InputDecoration(
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xffcf167f),
+          ),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xffcf167f),
+          ),
+        ),
         hintText: textString,
         hintStyle: const TextStyle(
             color: Color(0xFF9b9b9b),

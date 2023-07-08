@@ -23,7 +23,7 @@ class TextWidget extends StatelessWidget {
           border: Border(
               bottom: BorderSide(
         color: isUnderLine
-            ? const Color(0xFF363f93)
+            ? const Color(0xffcf167f)
             : const Color(0xFFffffff), // Text colour here
         width: 1.0, // Underline width
       ))),

@@ -6,7 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
-  Splash({super.key});
+  const Splash({super.key});
 
   @override
   State<Splash> createState() => _SplashState();
@@ -40,7 +40,7 @@ class _SplashState extends State<Splash> {
             splashIconSize: 100,
             duration: 2000,
             centered: true,
-            splash: 'img/CK_logo.png',
+            splash: 'img/liceo-logo.png',
             nextScreen: loggedIn ? const MyNav() : const Welcome(),
             splashTransition: SplashTransition.sizeTransition,
             pageTransitionType: PageTransitionType.fade,

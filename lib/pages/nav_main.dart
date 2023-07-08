@@ -1,8 +1,8 @@
-import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pages/all_books.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 class MyNav extends StatelessWidget {
@@ -13,10 +13,11 @@ class MyNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (_) => NavigationProvider(),
-        child: const MaterialApp(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: title,
-          home: NavMain(),
+          home: const NavMain(),
+          builder: EasyLoading.init(),
         ),
       );
 }

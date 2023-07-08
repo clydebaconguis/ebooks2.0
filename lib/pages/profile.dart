@@ -27,7 +27,7 @@ class _ProfileState extends State<Profile> {
             backgroundColor: const Color(0xff292735),
             title: const Text('Profile Page'),
           ),
-          body: const Center(child: Text('This is Profile Page')),
+          // body: const ProfilePage(),
         ),
       ),
     );

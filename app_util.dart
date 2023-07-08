@@ -11,7 +11,7 @@ class AppUtil {
     final List<FileSystemEntity> entities = await pathFile.list().toList();
     final Iterable<Directory> files = entities.whereType<Directory>();
 
-    files.forEach(print);
+    // files.forEach(print);
     return files;
   }
 

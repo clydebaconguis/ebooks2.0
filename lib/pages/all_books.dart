@@ -11,7 +11,7 @@ import '../components/text_widget.dart';
 import '../models/get_books_info_02.dart';
 import '../models/pdf_tile.dart';
 import 'detail_book.dart';
-import 'package:mime/mime.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class AllBooks extends StatefulWidget {
   const AllBooks({Key? key}) : super(key: key);
@@ -21,9 +21,11 @@ class AllBooks extends StatefulWidget {
 }
 
 class _AllBooksState extends State<AllBooks> {
+  late ConnectivityResult _connectivityResult = ConnectivityResult.none;
   final String host = CallApi().getHost();
   var books = <Books2>[];
   List<PdfTile> files = [];
+  bool reloaded = false;
   bool activeConnection = true;
   Future checkUserConnection() async {
     try {
@@ -40,53 +42,93 @@ class _AllBooksState extends State<AllBooks> {
         getDownloadedBooks();
       });
     }
-    displayScreeMsg();
+    // displayScreeMsg();
   }
 
   displayScreeMsg() {
-    if (activeConnection) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Connection restored."),
-        backgroundColor: Colors.pink,
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Offline Mode."),
-        backgroundColor: Colors.pink,
-      ));
+    if (!reloaded) {
+      if (activeConnection) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Connection restored."),
+          backgroundColor: Colors.pink,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Offline Mode."),
+          backgroundColor: Colors.pink,
+        ));
+      }
     }
   }
 
   @override
   void initState() {
-    checkUserConnection();
-    // readSpecificBook();
+    checkConnectivity();
+    // Listen for connectivity changes
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        _connectivityResult = result;
+        if (_connectivityResult.toString() == "ConnectivityResult.mobile" ||
+            _connectivityResult.toString() == "ConnectivityResult.wifi") {
+          setState(() {
+            reloaded = true;
+            activeConnection = true;
+            getBooksOnline();
+          });
+        } else {
+          setState(() {
+            reloaded = true;
+            activeConnection = false;
+            getDownloadedBooks();
+          });
+        }
+        displayScreeMsg();
+      });
+    });
+    // checkUserConnection();
+    readSpecificBook();
     super.initState();
+  }
+
+  Future<void> checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      _connectivityResult = connectivityResult;
+      if (_connectivityResult.toString() == "ConnectivityResult.mobile" ||
+          _connectivityResult.toString() == "ConnectivityResult.wifi") {
+        setState(() {
+          reloaded = true;
+          activeConnection = true;
+          getBooksOnline();
+        });
+      } else {
+        setState(() {
+          reloaded = true;
+          activeConnection = false;
+          getDownloadedBooks();
+        });
+      }
+      displayScreeMsg();
+    });
   }
 
   readSpecificBook() async {
     var dir = await getApplicationSupportDirectory();
-    final pathFile = Directory(dir.path);
     // final pathFile = Directory(dir.path);
+    final pathFile = Directory(
+        '${dir.path}/Visual Graphics Design Okey/1 INTRODUCTION TO COMPUTER IMAGES AND ADOBE PHOTOSHOP/Chapter 2: Getting Started in Photoshop');
     final List<FileSystemEntity> entities = await pathFile.list().toList();
-    // final Iterable<Directory> files = entities.whereType<Directory>();
-    entities.forEach((element) {
-      print(element.absolute);
-    });
-    // // return files;
-    // entities.forEach((element) {
-    //   print(element.path);
-    // });
-    // print(entities);
-    pathFile.deleteSync(recursive: true);
-    // entities.forEach((element) {
-    //   print(element.path);
-    // });
+    final Iterable<Directory> files = entities.whereType<Directory>();
+    // pathFile.deleteSync(recursive: true);
+    for (var element in entities) {
+      print(element.path);
+    }
     // print(entities);
   }
 
   getDownloadedBooks() async {
     books.clear();
+    files.clear();
     var result = await AppUtil().readBooks();
     late String imgUrl = '';
     final List<PdfTile> listOfChild = [];
@@ -113,7 +155,7 @@ class _AllBooksState extends State<AllBooks> {
         setState(
           () {
             files.add(
-              PdfTile(title: foldrName, path: imgUrl, lessons: listOfChild),
+              PdfTile(title: foldrName, path: imgUrl, children: listOfChild),
             );
           },
         );
@@ -130,6 +172,7 @@ class _AllBooksState extends State<AllBooks> {
 
   getBooksOnline() async {
     files.clear();
+    books.clear();
     await CallApi().getPublicData("viewbook").then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
@@ -147,7 +190,6 @@ class _AllBooksState extends State<AllBooks> {
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
@@ -156,6 +198,13 @@ class _AllBooksState extends State<AllBooks> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // _connectivityResult.toString() == "ConnectivityResult.mobile"
+              //     ? const Text(
+              //         "MOBILE",
+              //       )
+              //     : const Text(
+              //         "WIFI",
+              //       ),
               // SizedBox(
               //   height: height * 0.02,
               // ),
@@ -477,11 +526,10 @@ class _AllBooksState extends State<AllBooks> {
                                               ),
                                               const Divider(
                                                   color: Colors.black),
-                                              TextWidget(
-                                                  color:
-                                                      const Color(0xcd292735),
+                                              const TextWidget(
+                                                  color: Color(0xcd292735),
                                                   text:
-                                                      "publish: ${book.createddatetime}",
+                                                      "Author: CK Children's Publishing",
                                                   fontSize: 14),
                                               const Divider(color: Colors.grey),
                                               // Text(

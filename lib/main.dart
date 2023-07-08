@@ -1,17 +1,13 @@
-import 'package:ebooks/models/get_books_info_02.dart';
+import 'dart:io';
+
+import 'package:ebooks/app_util.dart';
 import 'package:ebooks/pages/all_books.dart';
-import 'package:ebooks/pages/nav_main.dart';
-import 'package:ebooks/pages/nav_pdf.dart';
-import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/splash_screen.dart';
-import 'package:ebooks/welcome/welcome_page.dart';
 import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-import 'models/pdf_tile.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +15,28 @@ Future main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  deleteExpiredBooks();
 
-  runApp(Splash());
+  runApp(const Splash());
+}
+
+deleteExpiredBooks() async {
+  var result = await AppUtil().readBooks();
+  result.forEach((item) {
+    final directory = Directory(item.path);
+    final now = DateTime.now();
+    final lastModified = File(directory.path).statSync().modified;
+    final difference = now.difference(lastModified);
+    if (difference.inDays >= 365) {
+      directory.deleteSync(recursive: true);
+    }
+  });
+}
+
+String splitPath(url) {
+  File file = File(url);
+  String filename = file.path.split(Platform.pathSeparator).last;
+  return filename;
 }
 
 class MyApp extends StatelessWidget {

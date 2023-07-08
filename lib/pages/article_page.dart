@@ -2,13 +2,7 @@ import 'dart:convert';
 
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/models/get_articles_info.dart';
-// import 'package:flappy_search_bar/flappy_search_bar.dart';
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_app_backend/api/my_api.dart';
-// import 'package:flutter_app_backend/components/text_widget.dart';
-// import 'package:flutter_app_backend/models/get_article_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ArticlePage extends StatefulWidget {
   const ArticlePage({Key? key}) : super(key: key);
@@ -28,9 +22,6 @@ class _ArticlePageState extends State<ArticlePage> {
   }
 
   _getArticles() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var user = localStorage.getString("user");
-
 /*
     if(user!=null){
     var userInfo=jsonDecode(user);
@@ -59,13 +50,12 @@ class _ArticlePageState extends State<ArticlePage> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    final double width = MediaQuery.of(context).size.width;
     debugPrint(height.toString());
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight: 30,
-        backgroundColor: Color(0xFFffffff),
+        backgroundColor: const Color(0xFFffffff),
         elevation: 0.0,
       ),
       body: const Column(

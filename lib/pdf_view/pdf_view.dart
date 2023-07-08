@@ -1,20 +1,12 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
-import 'package:ebooks/api/my_api.dart';
-import 'package:ebooks/models/get_books_info_02.dart';
 import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../provider/navigation_provider.dart';
-import '../widget/navigation_drawer_widget.dart';
 
 class PdfView extends StatelessWidget {
   final String path;
@@ -57,8 +49,8 @@ class _PDFViewPage extends State<PDFViewPage> {
 
   // var url =
   //     'https://www.adobe.com/support/products/enterprise/knowledgecenter/media/c4611_sample_explain.pdf';
-  late PdfViewerController _pdfViewerController;
-  final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
+  // late PdfViewerController _pdfViewerController;
+  // final GlobalKey<SfPdfViewerState> _pdfViewerStateKey = GlobalKey();
 
   void showDownloadProgress(received, total) {
     if (total != -1) {
@@ -75,7 +67,7 @@ class _PDFViewPage extends State<PDFViewPage> {
   @override
   void initState() {
     // scanLocalDir(fileExists, url);
-    _pdfViewerController = PdfViewerController();
+    // _pdfViewerController = PdfViewerController();
     restrictScreenshot();
     super.initState();
   }
@@ -86,15 +78,16 @@ class _PDFViewPage extends State<PDFViewPage> {
         body: (widget.path.isNotEmpty)
             ? SfPdfViewer.file(
                 File(widget.path),
-                controller: _pdfViewerController,
-                key: _pdfViewerStateKey,
+                canShowPaginationDialog: false,
+                // controller: _pdfViewerController,
+                // key: _pdfViewerStateKey,
               )
             : (widget.books.path.isNotEmpty)
                 ? Image.file(
                     height: double.infinity,
                     width: double.infinity,
                     File(widget.books.path),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.contain,
                     errorBuilder: (BuildContext context, Object exception,
                         StackTrace? stackTrace) {
                       // Return a fallback image or widget when an error occurs
@@ -121,7 +114,7 @@ class _PDFViewPage extends State<PDFViewPage> {
         downloaded = true;
       });
     } else {
-      print('url pdf path NO-EXIST $path');
+      // print('url pdf path NO-EXIST $path');
     }
   }
 

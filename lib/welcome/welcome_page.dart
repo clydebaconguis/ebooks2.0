@@ -1,13 +1,6 @@
-import 'dart:convert';
-
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/auth/auth_page.dart';
-import 'package:ebooks/models/get_articles_info.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../pages/nav_main.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -37,7 +30,6 @@ class _WelcomePageState extends State<WelcomePage> {
   ];
   final _totalDots = 3;
   double _currentPosition = 0.0;
-  bool _isLoggedIn = false;
 
   @override
   void initState() {

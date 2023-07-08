@@ -1,8 +1,5 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:ebooks/models/pdf_tile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppUtil {
@@ -10,7 +7,7 @@ class AppUtil {
     var dir = await getApplicationSupportDirectory();
     final pathFile = Directory(dir.path);
     final List<FileSystemEntity> entities = await pathFile.list().toList();
-    final Iterable<Directory> files = entities.whereType<Directory>();
+    // final Iterable<Directory> files = entities.whereType<Directory>();
     return entities;
   }
 
