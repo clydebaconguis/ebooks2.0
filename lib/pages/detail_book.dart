@@ -260,7 +260,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                   }
                   await Future.wait(futures);
                   // All functions have completed executing
-                  EasyLoading.dismiss();
+                  // EasyLoading.dismiss();
                 }
                 // print(lessonFile);
               }
@@ -425,7 +425,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 20,
                       ),
                       Row(
                         children: [
@@ -509,56 +509,56 @@ class _DetailBookPageState extends State<DetailBookPage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.favorite,
-                                  color: Color(0xFF7b8ea3),
-                                  size: 40,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                TextWidget(text: "Like", fontSize: 20),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.share,
-                                  color: Color(0xFF7b8ea3),
-                                  size: 40,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                TextWidget(text: "Share", fontSize: 20),
-                              ],
-                            ),
-                            // Row(
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: <Widget>[
-                            //     Icon(
-                            //       Icons.download_for_offline,
-                            //       color: Color(0xFF7b8ea3),
-                            //       size: 40,
-                            //     ),
-                            //     SizedBox(
-                            //       width: 10,
-                            //     ),
-                            //     TextWidget(text: "Download", fontSize: 20),
-                            //   ],
-                            // )
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      // padding: const EdgeInsets.only(right: 20),
+                      // child: const Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // children: [
+                      //   Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: <Widget>[
+                      //       Icon(
+                      //         Icons.favorite,
+                      //         color: Color(0xFF7b8ea3),
+                      //         size: 40,
+                      //       ),
+                      //       SizedBox(
+                      //         width: 10,
+                      //       ),
+                      //       TextWidget(text: "Like", fontSize: 20),
+                      //     ],
+                      //   ),
+                      //   Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: <Widget>[
+                      //       Icon(
+                      //         Icons.share,
+                      //         color: Color(0xFF7b8ea3),
+                      //         size: 40,
+                      //       ),
+                      //       SizedBox(
+                      //         width: 10,
+                      //       ),
+                      //       TextWidget(text: "Share", fontSize: 20),
+                      //     ],
+                      //   ),
+                      // Row(
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: <Widget>[
+                      //     Icon(
+                      //       Icons.download_for_offline,
+                      //       color: Color(0xFF7b8ea3),
+                      //       size: 40,
+                      //     ),
+                      //     SizedBox(
+                      //       width: 10,
+                      //     ),
+                      //     TextWidget(text: "Download", fontSize: 20),
+                      //   ],
+                      // )
+                      // ],
+                      // ),
+                      // ),
                       const SizedBox(
                         height: 40,
                       ),

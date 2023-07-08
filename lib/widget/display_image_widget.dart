@@ -32,12 +32,13 @@ class DisplayImage extends StatelessWidget {
   Widget buildImage(Color color) {
     final image = imagePath.contains('https://')
         ? NetworkImage(imagePath)
-        : FileImage(File(imagePath));
+        : AssetImage(imagePath);
 
     return CircleAvatar(
       radius: 75,
       backgroundColor: color,
       child: CircleAvatar(
+        backgroundColor: const Color(0xE7E91E63),
         backgroundImage: image as ImageProvider,
         radius: 70,
       ),

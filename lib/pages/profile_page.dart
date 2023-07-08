@@ -74,17 +74,16 @@ class _ProfilePageState extends State<ProfilePage> {
             //   ),
             // ),
             InkWell(
-                onTap: () {
-                  navigateSecondPage(EditImagePage(
-                    user: user,
-                  ));
-                },
-                child: user.image.isNotEmpty
-                    ? DisplayImage(
-                        imagePath: user.image,
-                        onPressed: () {},
-                      )
-                    : Image.asset("img/CK_logo.png")),
+              onTap: () {
+                // navigateSecondPage(EditImagePage(
+                //   user: user,
+                // ));
+              },
+              child: DisplayImage(
+                imagePath: 'img/anonymous.jpg',
+                onPressed: () {},
+              ),
+            ),
             buildUserInfoDisplay(
               user.name,
               'Name',
@@ -139,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Expanded(
                       child: TextButton(
                           onPressed: () {
-                            navigateSecondPage(editPage);
+                            // navigateSecondPage(editPage);
                           },
                           child: Text(
                             getValue,

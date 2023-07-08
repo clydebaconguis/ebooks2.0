@@ -30,6 +30,8 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
   late String currentBook = '';
   String pathFile = '';
   late Directory dir;
+  List<PdfTile> filteredItems = [];
+  bool searchActivate = false;
 
   getASD() async {
     dir = await getApplicationSupportDirectory();
@@ -145,13 +147,75 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     return filename;
   }
 
+  List<PdfTile> flattenNestedArray(List<PdfTile> nestedArray) {
+    List<PdfTile> flattenedArray = [];
+
+    nestedArray.forEach((object) {
+      // flattenedArray.add(object);
+      if (object.children.isNotEmpty) {
+        List<PdfTile> innerChld = object.children;
+        innerChld.forEach((element) {
+          var isDir = _checkDirectoryExistsSync(element.path);
+          if (isDir) {
+            if (element.children.isNotEmpty) {
+              var fldr = element.children;
+              fldr.forEach((elem) {
+                var isFldr = _checkDirectoryExistsSync(elem.path);
+                if (!isFldr) {
+                  flattenedArray.addAll(fldr);
+                  return;
+                }
+              });
+            }
+          } else {
+            flattenedArray.addAll(innerChld);
+            return;
+          }
+        });
+      }
+    });
+
+    return flattenedArray;
+  }
+
+  void filterSearchResults(String query) {
+    List<PdfTile> flattenedArray = [];
+    List<PdfTile> searchResults = [];
+
+    if (query.isNotEmpty) {
+      flattenedArray = flattenNestedArray(files);
+      flattenedArray.forEach((object) {
+        print(object.title);
+      });
+
+      searchResults = flattenedArray.where((element) {
+        if (element.title.toLowerCase().contains(query.toLowerCase())) {
+          return true;
+        }
+        return searchResults.isNotEmpty;
+      }).toList();
+    } else {
+      setState(() {
+        searchActivate = false;
+      });
+    }
+    setState(() {
+      filteredItems = searchResults;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final int currentYear = DateTime.now().year;
     final safeArea =
         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
 
     final provider = Provider.of<NavigationProvider>(context);
     var isCollapsed = provider.isCollapsed;
+    files.sort((a, b) => a.title.compareTo(b.title));
+    for (var element in files) {
+      print(element.title);
+    }
 
     return SizedBox(
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
@@ -170,22 +234,32 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               ),
               // const SizedBox(height: 5),
               buildList(items: itemsFirst3, isCollapsed: isCollapsed),
-              // const Text(
-              //   'Book Lessons',
-              //   style: TextStyle(color: Colors.white, fontSize: 17),
-              //   textAlign: TextAlign.center,
-              // ),
-              // const SizedBox(height: 5),
+
               const Divider(
                 color: Colors.white24,
               ),
 
-              const SizedBox(
-                height: 5,
-              ),
-              const Text(
-                "search here",
-                style: TextStyle(color: Colors.white),
+              Container(
+                padding: const EdgeInsets.only(left: 10.0, right: 8.0),
+                child: TextField(
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      searchActivate = true;
+                      filterSearchResults(value);
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelStyle: TextStyle(color: Colors.white),
+                    labelText: 'Search lesson',
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
 
               const Divider(
@@ -194,16 +268,19 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
 
               Expanded(
                 child: SingleChildScrollView(
-                  child: files.isNotEmpty
+                  child: files.isNotEmpty && !searchActivate
                       ? buildTile(isCollapsed: isCollapsed, items: files)
-                      : const Center(
-                          child: Center(
-                            child: Text(
-                              "No Files",
-                              style: TextStyle(color: Colors.white),
+                      : filteredItems.isNotEmpty && searchActivate
+                          ? buildTile2(
+                              isCollapsed: isCollapsed, items: filteredItems)
+                          : const Center(
+                              child: Center(
+                                child: Text(
+                                  "No Files",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
                 ),
               ),
               !isCollapsed
@@ -217,14 +294,14 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             const Icon(
                               Icons.copyright_outlined,
                               color: Colors.white38,
-                              size: 20.0,
+                              size: 18.0,
                             ),
                             const SizedBox(
                               width: 8,
                             ),
-                            const Text(
-                              'Copyright 2023',
-                              style: TextStyle(
+                            Text(
+                              'Copyright $currentYear',
+                              style: const TextStyle(
                                   color: Colors.white38, fontSize: 12),
                               textAlign: TextAlign.center,
                             ),
@@ -240,15 +317,12 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             const SizedBox(
                               width: 8,
                             ),
-                            ColoredBox(
-                              color: Colors.white12,
-                              child: Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Image.asset(
-                                  'img/cklogo.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.white12,
+                              child: Image.asset(
+                                "img/cklogo.png",
+                                height: 25,
                               ),
                             ),
                             const SizedBox(
@@ -259,19 +333,12 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                         ),
                       ),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                          left: 1.0, right: 1.0, bottom: 4.0),
-                      child: ColoredBox(
-                        color: Colors.white12,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Image.asset(
-                            'img/cklogo.png',
-                            height: 30,
-                            width: 30,
-                          ),
-                        ),
+                  : CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.white12,
+                      child: Image.asset(
+                        "img/cklogo.png",
+                        height: 25,
                       ),
                     ),
               isCollapsed
@@ -284,19 +351,67 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     );
   }
 
-  onClick(path) {
+  onClick(String path, String title) {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => MyNav2(
             path: path,
-            books: const PdfTile(
-              title: '',
+            books: PdfTile(
+              title: title,
               path: '',
             ),
           ),
         ),
         (Route<dynamic> route) => false);
     // print(path);
+  }
+
+  Widget buildTile2({
+    required bool isCollapsed,
+    required List<PdfTile> items,
+    int indexOffset = 0,
+  }) =>
+      ListView.separated(
+        padding: isCollapsed ? EdgeInsets.zero : padding,
+        shrinkWrap: true,
+        primary: false,
+        itemCount: items.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 16),
+        itemBuilder: (context, index) {
+          final item = items[index];
+
+          return buildMenuItemTiles2(
+            isCollapsed: isCollapsed,
+            text: item.title,
+            path: item.path,
+          );
+        },
+      );
+  Widget buildMenuItemTiles2({
+    required bool isCollapsed,
+    required String text,
+    required String path,
+  }) {
+    const color = Color.fromARGB(255, 229, 100, 100);
+    // final color2 = Colors.pink.shade400;
+    const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color);
+
+    return Material(
+      color: Colors.transparent,
+      child: isCollapsed
+          ? const ListTile(
+              title: leadingPdf,
+              // onTap: onClicked,
+            )
+          : ListTile(
+              onTap: () => onClick(path, text),
+              leading: leadingPdf,
+              title: Text(
+                text,
+                style: const TextStyle(color: color),
+              ),
+            ),
+    );
   }
 
   // Pdf Tile
@@ -349,6 +464,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     // final color2 = Colors.pink.shade400;
     const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color3);
     final leading = Icon(icon, color: color2);
+    child.sort((a, b) => a.title.compareTo(b.title));
 
     return Material(
       color: Colors.transparent,
@@ -373,15 +489,17 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 ),
                 children: innerChild.isEmpty
                     ? child
-                        .map((et) => ListTile(
-                            onTap: () => onClick(et.path),
-                            title: Text(
-                              et.title,
-                              style:
-                                  const TextStyle(color: color3, fontSize: 15),
-                            )
-                            // onTap: onClicked,
-                            ))
+                        .map(
+                          (et) => ListTile(
+                              onTap: () => onClick(et.path, et.title),
+                              title: Text(
+                                et.title,
+                                style: const TextStyle(
+                                    color: color3, fontSize: 15),
+                              )
+                              // onTap: onClicked,
+                              ),
+                        )
                         .toList()
                     : child.map((e) {
                         return ExpansionTile(
@@ -392,7 +510,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                           ),
                           children: e.children.map((item) {
                             return ListTile(
-                                onTap: () => onClick(item.path),
+                                onTap: () => onClick(item.path, item.title),
                                 title: Text(
                                   item.title,
                                   style: const TextStyle(
@@ -605,7 +723,8 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
           errorBuilder:
               (BuildContext context, Object exception, StackTrace? stackTrace) {
             // Return a fallback image or widget when an error occurs
-            return Image.asset('img/liceo-logo.png');
+            // return Image.asset('img/liceo-logo.png');
+            return const CircularProgressIndicator();
           },
         )
       : Row(
@@ -622,7 +741,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                   errorBuilder: (BuildContext context, Object exception,
                       StackTrace? stackTrace) {
                     // Return a fallback image or widget when an error occurs
-                    return Image.asset('img/liceo-logo.png');
+                    return const CircularProgressIndicator();
                   },
                 ),
               ),

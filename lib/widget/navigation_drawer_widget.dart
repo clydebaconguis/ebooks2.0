@@ -152,7 +152,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                             const Icon(
                               Icons.copyright_outlined,
                               color: Colors.white38,
-                              size: 20.0,
+                              size: 18.0,
                             ),
                             const SizedBox(
                               width: 8,
@@ -502,8 +502,8 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                   radius: 32,
                   backgroundColor: Color(0xE7E91E63),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "https://th.bing.com/th/id/OIP.5i32quyHJYp94d_natkAAwHaHa?w=188&h=187&c=7&r=0&o=5&dpr=1.5&pid=1.7"),
+                    backgroundColor: Color(0xE7E91E63),
+                    backgroundImage: AssetImage("img/anonymous.jpg"),
                     radius: 30,
                   ),
                 ),
@@ -525,8 +525,8 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                   radius: 65,
                   backgroundColor: Color(0xE7E91E63),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "https://th.bing.com/th/id/OIP.5i32quyHJYp94d_natkAAwHaHa?w=188&h=187&c=7&r=0&o=5&dpr=1.5&pid=1.7"),
+                    backgroundColor: Color(0xE7E91E63),
+                    backgroundImage: AssetImage("img/anonymous.jpg"),
                     radius: 60,
                   ),
                 ),
