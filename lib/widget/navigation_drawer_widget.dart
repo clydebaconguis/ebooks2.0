@@ -175,15 +175,12 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                             const SizedBox(
                               width: 8,
                             ),
-                            ColoredBox(
-                              color: Colors.white12,
-                              child: Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Image.asset(
-                                  'img/cklogo.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.white12,
+                              child: Image.asset(
+                                "img/cklogo.png",
+                                height: 25,
                               ),
                             ),
                             const SizedBox(
@@ -194,19 +191,12 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                         ),
                       ),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.only(
-                          left: 1.0, right: 1.0, bottom: 4.0),
-                      child: ColoredBox(
-                        color: Colors.white12,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Image.asset(
-                            'img/cklogo.png',
-                            height: 30,
-                            width: 30,
-                          ),
-                        ),
+                  : CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.white12,
+                      child: Image.asset(
+                        "img/cklogo.png",
+                        height: 25,
                       ),
                     ),
               isCollapsed

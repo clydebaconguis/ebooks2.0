@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class MyNav2 extends StatelessWidget {
   // static const String title = 'Demo';
@@ -35,30 +38,65 @@ class NavPdf extends StatefulWidget {
   State<NavPdf> createState() => _NavPdfState();
 }
 
-class _NavPdfState extends State<NavPdf> {
+class _NavPdfState extends State<NavPdf>
+    with AutomaticKeepAliveClientMixin<NavPdf> {
   @override
-  void initState() {
-    super.initState();
+  bool get wantKeepAlive => true;
+  String title = '';
+  String pdfPath = '';
+
+  void updateData(String path, String barTitle) {
+    setState(() {
+      pdfPath = path;
+      title = barTitle;
+    });
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        drawer: const NavigationDrawerWidget2(),
-        appBar: AppBar(
-          // leading: IconButton(
-          //   padding: EdgeInsets.zero,
-          //   constraints: const BoxConstraints(),
-          //   icon: const Icon(Icons.arrow_back_ios, color: Color(0xffffffff)),
-          //   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-          //       MaterialPageRoute(
-          //         builder: (context) => const MyNav(),
-          //       ),
-          //       (Route<dynamic> route) => false),
-          // ),
-          backgroundColor: const Color(0xff292735),
-          title: Text(widget.books.title),
-          centerTitle: true,
-        ),
-        body: PdfView(path: widget.path, books: widget.books),
-      );
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Scaffold(
+      drawer: NavigationDrawerWidget2(updateData: updateData),
+      appBar: AppBar(
+        // leading: IconButton(
+        //   padding: EdgeInsets.zero,
+        //   constraints: const BoxConstraints(),
+        //   icon: const Icon(Icons.arrow_back_ios, color: Color(0xffffffff)),
+        //   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+        //       MaterialPageRoute(
+        //         builder: (context) => const MyNav(),
+        //       ),
+        //       (Route<dynamic> route) => false),
+        // ),
+        backgroundColor: const Color(0xff292735),
+        title: Text(title),
+        centerTitle: true,
+      ),
+      body: pdfPath.isNotEmpty
+          ? SfPdfViewer.file(
+              File(pdfPath),
+              canShowPaginationDialog: false,
+              // controller: _pdfViewerController,
+              // key: _pdfViewerStateKey,
+            )
+          : (widget.books.path.isNotEmpty)
+              ? Image.file(
+                  height: double.infinity,
+                  width: double.infinity,
+                  File(widget.books.path),
+                  fit: BoxFit.contain,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    // Return a fallback image or widget when an error occurs
+                    return Image.asset('img/CK_logo.png');
+                  },
+                )
+              : Center(
+                  child: Image.asset(
+                    "img/CK_logo.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+    );
+  }
 }

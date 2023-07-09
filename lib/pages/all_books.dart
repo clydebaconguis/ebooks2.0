@@ -147,7 +147,10 @@ class _AllBooksState extends State<AllBooks> {
             if (element.path.isNotEmpty &&
                 splitPath(element.path).toString() != "cover_image") {
               listOfChild.add(
-                PdfTile(title: splitPath(element.path), path: element.path),
+                PdfTile(
+                    title: splitPath(element.path),
+                    path: element.path,
+                    isExpanded: false),
               );
             }
           });
@@ -155,7 +158,11 @@ class _AllBooksState extends State<AllBooks> {
         setState(
           () {
             files.add(
-              PdfTile(title: foldrName, path: imgUrl, children: listOfChild),
+              PdfTile(
+                  title: foldrName,
+                  path: imgUrl,
+                  children: listOfChild,
+                  isExpanded: false),
             );
           },
         );

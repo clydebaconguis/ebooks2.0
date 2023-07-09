@@ -343,7 +343,8 @@ class _DetailBookPageState extends State<DetailBookPage> {
       context,
       MaterialPageRoute(
         builder: (context) => MyNav2(
-          books: PdfTile(title: widget.bookInfo.title, path: path),
+          books: PdfTile(
+              title: widget.bookInfo.title, path: path, isExpanded: false),
           path: '',
         ),
       ),

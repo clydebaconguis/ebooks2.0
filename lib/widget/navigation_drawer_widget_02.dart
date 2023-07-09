@@ -7,17 +7,21 @@ import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/pdf_view/pdf_view.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
+import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
 import '../models/pdf_tile.dart';
 import '../pages/nav_pdf.dart';
 import '../pages/profile_page.dart';
 
 class NavigationDrawerWidget2 extends StatefulWidget {
-  const NavigationDrawerWidget2({super.key});
+  final Function(String, String) updateData;
+
+  const NavigationDrawerWidget2({super.key, required this.updateData});
 
   @override
   State<NavigationDrawerWidget2> createState() =>
@@ -32,17 +36,41 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
   late Directory dir;
   List<PdfTile> filteredItems = [];
   bool searchActivate = false;
+  String selectedPdf = '';
+  String pdfPath = '';
+  String title = '';
+
+  getSpfBook() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      currentBook = localStorage.getString('currentBook')!;
+    });
+  }
 
   getASD() async {
     dir = await getApplicationSupportDirectory();
-    pathFile = '${dir.path}/$currentBook/cover_image';
+    setState(() {
+      pathFile = '${dir.path}/$currentBook/cover_image';
+    });
   }
 
   @override
   void initState() {
+    getSpfBook();
+    getProviderFiles();
     getASD();
-    getDownloadedBooks();
     super.initState();
+  }
+
+  getProviderFiles() {
+    final provider = Provider.of<NavigationProvider2>(context, listen: false);
+    setState(() {
+      files = provider.files;
+      selectedPdf = provider.selectedpdf;
+    });
+    if (files.isEmpty) {
+      getDownloadedBooks();
+    }
   }
 
   bool _checkDirectoryExistsSync(String path) {
@@ -53,7 +81,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
   getDownloadedBooks() async {
     files.clear();
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    currentBook = localStorage.getString('currentBook')!;
+    setState(() {
+      currentBook = localStorage.getString('currentBook')!;
+    });
     // final List<PdfTile> listOfChild = [];
     var foldrChild = await AppUtil().readFilesDir(currentBook);
     if (foldrChild != null) {
@@ -89,7 +119,10 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                     print('lesson detected');
                     setState(() {
                       thirdChild.add(
-                        PdfTile(title: splitPath(item.path), path: item.path),
+                        PdfTile(
+                            title: splitPath(item.path),
+                            path: item.path,
+                            isExpanded: false),
                       );
                     });
                   });
@@ -101,6 +134,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                         title: splitPath(child.path),
                         path: child.path,
                         children: thirdChild,
+                        isExpanded: false,
                       ),
                     );
                   });
@@ -110,6 +144,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                       PdfTile(
                         title: splitPath(child.path),
                         path: child.path,
+                        isExpanded: false,
                       ),
                     );
                   });
@@ -120,6 +155,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                     PdfTile(
                       title: splitPath(child.path),
                       path: child.path,
+                      isExpanded: false,
                     ),
                   );
                 });
@@ -132,6 +168,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 title: splitPath(element.path),
                 path: element.path,
                 children: secondChild,
+                isExpanded: false,
               ),
             );
             // secondChild.clear();
@@ -210,7 +247,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     final safeArea =
         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
 
-    final provider = Provider.of<NavigationProvider>(context);
+    final provider = Provider.of<NavigationProvider2>(context);
     var isCollapsed = provider.isCollapsed;
     files.sort((a, b) => a.title.compareTo(b.title));
     for (var element in files) {
@@ -351,20 +388,22 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     );
   }
 
-  onClick(String path, String title) {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => MyNav2(
-            path: path,
-            books: PdfTile(
-              title: title,
-              path: '',
-            ),
-          ),
-        ),
-        (Route<dynamic> route) => false);
-    // print(path);
-  }
+  // onClick(String path, String title) {
+
+  //   // Navigator.of(context).pushAndRemoveUntil(
+  //   //     MaterialPageRoute(
+  //   //       builder: (context) => MyNav2(
+  //   //         path: path,
+  //   //         books: PdfTile(
+  //   //           title: title,
+  //   //           path: '',
+  //   //           isExpanded: false,
+  //   //         ),
+  //   //       ),
+  //   //     ),
+  //   //     (Route<dynamic> route) => false);
+  //   // print(path);
+  // }
 
   Widget buildTile2({
     required bool isCollapsed,
@@ -404,7 +443,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               // onTap: onClicked,
             )
           : ListTile(
-              onTap: () => onClick(path, text),
+              onTap: () => widget.updateData(path, text),
               leading: leadingPdf,
               title: Text(
                 text,
@@ -432,29 +471,34 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
           List<PdfTile> c2 = [];
           for (var elem in c1) {
             if (elem.children.isNotEmpty) {
-              c2.add(PdfTile(title: elem.title, path: elem.path));
+              c2.add(PdfTile(
+                  title: elem.title, path: elem.path, isExpanded: false));
             }
           }
 
           return buildMenuItemTiles(
+            item: item,
             isCollapsed: isCollapsed,
             text: item.title,
             path: item.path,
             child: item.children,
             innerChild: c2,
             icon: Icons.folder_rounded,
+            index: index,
             // items: item.lessons,
           );
         },
       );
 
   Widget buildMenuItemTiles({
+    required PdfTile item,
     required bool isCollapsed,
     required String text,
     required String path,
     required List<PdfTile> child,
     required List<PdfTile> innerChild,
     required IconData icon,
+    required int index,
     // required List<PdfTile> items,
     // VoidCallback? onClicked,
   }) {
@@ -474,10 +518,24 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               // onTap: onClicked,
             )
           : ListTile(
+              horizontalTitleGap: 0,
+              contentPadding: const EdgeInsets.all(0),
+              selectedTileColor: color3,
               minLeadingWidth: 0,
               minVerticalPadding: 0,
-              leading: leading,
+              leading: item.isExpanded
+                  ? const Icon(
+                      Icons.folder_open,
+                      color: Colors.yellowAccent,
+                    )
+                  : leading,
               title: ExpansionTile(
+                onExpansionChanged: (bool expanded) {
+                  setState(() {
+                    item.isExpanded = expanded;
+                  });
+                },
+                initiallyExpanded: item.isExpanded,
                 collapsedIconColor: color,
                 childrenPadding: const EdgeInsets.all(0),
                 title: Text(
@@ -491,34 +549,105 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                     ? child
                         .map(
                           (et) => ListTile(
-                              onTap: () => onClick(et.path, et.title),
+                              leading: selectedPdf == et.title
+                                  ? const Icon(
+                                      Icons.picture_as_pdf_sharp,
+                                      color: Colors.greenAccent,
+                                    )
+                                  : leadingPdf,
+                              horizontalTitleGap: 0,
+                              contentPadding: const EdgeInsets.only(
+                                left: 4,
+                                right: 4,
+                              ),
+                              tileColor: selectedPdf == et.title
+                                  ? Colors.white24
+                                  : Colors.transparent,
+                              onTap: () {
+                                final provider =
+                                    Provider.of<NavigationProvider2>(context,
+                                        listen: false);
+                                setState(() {
+                                  selectedPdf = et.title;
+                                });
+
+                                provider.selectPdf(et.title);
+                                widget.updateData(et.path, et.title);
+                              },
                               title: Text(
                                 et.title,
-                                style: const TextStyle(
-                                    color: color3, fontSize: 15),
+                                style: TextStyle(
+                                    color: selectedPdf == et.title
+                                        ? Colors.greenAccent
+                                        : Colors.redAccent,
+                                    fontSize: 15),
                               )
                               // onTap: onClicked,
                               ),
                         )
                         .toList()
                     : child.map((e) {
-                        return ExpansionTile(
-                          collapsedIconColor: color,
-                          title: Text(
-                            e.title,
-                            style: TextStyle(color: color, fontSize: 15),
-                          ),
-                          children: e.children.map((item) {
-                            return ListTile(
-                                onTap: () => onClick(item.path, item.title),
-                                title: Text(
-                                  item.title,
-                                  style: const TextStyle(
-                                      color: color3, fontSize: 15),
+                        return ListTile(
+                          minLeadingWidth: 0,
+                          minVerticalPadding: 0,
+                          leading: e.isExpanded
+                              ? const Icon(
+                                  Icons.folder_open,
+                                  color: Colors.yellowAccent,
                                 )
-                                // onTap: onClicked,
-                                );
-                          }).toList(),
+                              : leading,
+                          horizontalTitleGap: 0,
+                          contentPadding: const EdgeInsets.all(0),
+                          title: ExpansionTile(
+                            onExpansionChanged: (bool expanded) {
+                              setState(() {
+                                e.isExpanded = expanded;
+                              });
+                            },
+                            initiallyExpanded: e.isExpanded,
+                            collapsedIconColor: color,
+                            title: Text(
+                              e.title,
+                              style: TextStyle(color: color, fontSize: 15),
+                            ),
+                            children: e.children.map((item) {
+                              return ListTile(
+                                  horizontalTitleGap: 0,
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 3),
+                                  leading: selectedPdf == item.title
+                                      ? const Icon(
+                                          Icons.picture_as_pdf_sharp,
+                                          color: Colors.greenAccent,
+                                        )
+                                      : leadingPdf,
+                                  tileColor: selectedPdf == item.title
+                                      ? Colors.white24
+                                      : Colors.transparent,
+                                  onTap: () {
+                                    final provider =
+                                        Provider.of<NavigationProvider2>(
+                                            context,
+                                            listen: false);
+                                    setState(() {
+                                      selectedPdf = item.title;
+                                    });
+
+                                    provider.selectPdf(item.title);
+                                    widget.updateData(item.path, item.title);
+                                  },
+                                  title: Text(
+                                    item.title,
+                                    style: TextStyle(
+                                        color: selectedPdf == item.title
+                                            ? Colors.greenAccent
+                                            : Colors.redAccent,
+                                        fontSize: 15),
+                                  )
+                                  // onTap: onClicked,
+                                  );
+                            }).toList(),
+                          ),
                         );
                       }).toList(),
               ),
@@ -675,9 +804,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
           ),
           onTap: () {
             final provider =
-                Provider.of<NavigationProvider>(context, listen: false);
+                Provider.of<NavigationProvider2>(context, listen: false);
 
-            provider.toggleIsCollapsed();
+            provider.toggleIsCollapsed2();
           },
         ),
       ),
