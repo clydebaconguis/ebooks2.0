@@ -60,7 +60,7 @@ class _SignInState extends State<SignIn> {
 
     var res = await CallApi().login(data, 'studentlogin');
     var body = json.decode(res.body);
-    // print(body);
+    print(body);
 
     if (body['success']) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -173,12 +173,14 @@ class _SignInState extends State<SignIn> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUp(),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => const SignUp(),
+                        //   ),
+                        // );
+                        EasyLoading.showInfo(
+                            'Sign up is temporarily unavailable!');
                       },
                       child: const TextWidget(
                         color: Color(0xffcf167f),
@@ -188,7 +190,10 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        EasyLoading.showInfo(
+                            'Pls inform the authority or your teacher if you forgot your credentials!');
+                      },
                       child: const TextWidget(
                         color: Color(0xffcf167f),
                         text: "Forgot Password",

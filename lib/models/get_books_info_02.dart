@@ -10,7 +10,7 @@ class Books2 {
     var pic = json['picurl'] ?? '';
     var created = json['createddatetime'] ?? '';
 
-    return Books2(json['bookid'], json['title'], pic, created);
+    return Books2(json['id'], json['title'], pic, created);
   }
 
   Map toJson() {

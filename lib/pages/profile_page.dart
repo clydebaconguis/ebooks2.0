@@ -8,7 +8,6 @@ import '../user/user_data.dart';
 import '../widget/display_image_widget.dart';
 import 'edit_description.dart';
 import 'edit_email.dart';
-import 'edit_image.dart';
 import 'edit_name.dart';
 import 'edit_phone.dart';
 
@@ -44,35 +43,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: const Text('Profile'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff500a34), Color(0xffcf167f)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            AppBar(
-              leading: IconButton(
-                padding: EdgeInsets.zero,
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Color(0xffffffff),
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-              backgroundColor: const Color(0xff292735),
-              title: const Text('Profile Page'),
-            ),
             SizedBox(height: height * 0.05),
-            // const Center(
-            //   child: Padding(
-            //     padding: EdgeInsets.only(bottom: 20),
-            //     child: Text(
-            //       'Edit Profile',
-            //       style: TextStyle(
-            //         fontSize: 30,
-            //         fontWeight: FontWeight.w700,
-            //         color: Color.fromRGBO(207, 22, 127, 1.0),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             InkWell(
               onTap: () {
                 // navigateSecondPage(EditImagePage(
@@ -92,6 +78,11 @@ class _ProfilePageState extends State<ProfilePage> {
             buildUserInfoDisplay(
               user.mobilenum,
               'Phone',
+              EditPhoneFormPage(user: user),
+            ),
+            buildUserInfoDisplay(
+              'Grade 11 Jupiter',
+              'Grade Level',
               EditPhoneFormPage(user: user),
             ),
             buildUserInfoDisplay(

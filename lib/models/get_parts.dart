@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:ui';
-
 import 'get_lessons.dart';
-import 'get_part.dart';
 
 class Parts {
   final int id;
@@ -18,7 +14,7 @@ class Parts {
 
   factory Parts.fromJson(Map<String, dynamic> resJs) {
     var ll = List.from(resJs['lessoncontent']);
-    print(ll);
+    // print(ll);
     List<Lessons> lessonList = ll.map((i) => Lessons.fromJson(i)).toList();
     return Parts(resJs['id'], resJs['title'], lessonList);
   }

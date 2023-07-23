@@ -100,7 +100,14 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
       child: Drawer(
         child: Container(
-          color: const Color(0xff292735),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffcf167f), Color(0xff500a34)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+          ),
+          // color: const Color(0xff292735),
           child: Column(
             children: [
               Container(
@@ -177,7 +184,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                             ),
                             CircleAvatar(
                               radius: 15,
-                              backgroundColor: Colors.white12,
+                              backgroundColor: Colors.transparent,
                               child: Image.asset(
                                 "img/cklogo.png",
                                 height: 25,
@@ -193,7 +200,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                     )
                   : CircleAvatar(
                       radius: 15,
-                      backgroundColor: Colors.white12,
+                      backgroundColor: Colors.transparent,
                       child: Image.asset(
                         "img/cklogo.png",
                         height: 25,
@@ -481,27 +488,27 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       );
 
   Widget buildProfileCircle(bool isCollapsed) => isCollapsed
-      ? Column(
+      ? const Column(
           children: [
-            const SizedBox(
+            SizedBox(
               height: 20,
             ),
             Stack(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 32,
-                  backgroundColor: Color(0xE7E91E63),
+                  backgroundColor: Color(0xFFD5F6FF),
                   child: CircleAvatar(
-                    backgroundColor: Color(0xE7E91E63),
+                    backgroundColor: Color(0xFFD5F6FF),
                     backgroundImage: AssetImage("img/anonymous.jpg"),
                     radius: 30,
                   ),
                 ),
-                Positioned(
-                  left: 1,
-                  bottom: -1,
-                  child: buildEditIcon(const Color(0xE7E91E63), 20, 1),
-                )
+                // Positioned(
+                //   left: 1,
+                //   bottom: -1,
+                //   child: buildEditIcon(const Color(0xE70DDA11), 20, 1),
+                // )
               ],
             ),
           ],
@@ -509,22 +516,22 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       : Column(
           children: [
             const SizedBox(height: 24),
-            Stack(
+            const Stack(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 65,
-                  backgroundColor: Color(0xE7E91E63),
+                  backgroundColor: Color(0xFFD5F6FF),
                   child: CircleAvatar(
-                    backgroundColor: Color(0xE7E91E63),
+                    backgroundColor: Color(0xFFD5F6FF),
                     backgroundImage: AssetImage("img/anonymous.jpg"),
                     radius: 60,
                   ),
                 ),
-                Positioned(
-                  left: 4,
-                  bottom: 0,
-                  child: buildEditIcon(const Color(0xE7E91E63), 28, 4),
-                ),
+                // Positioned(
+                //   left: 4,
+                //   bottom: 0,
+                //   child: buildEditIcon(const Color(0xE70DDA11), 28, 4),
+                // ),
               ],
             ),
             const SizedBox(height: 20),
@@ -536,13 +543,21 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                 color: Color(0xFFEC6A92),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            const Text(
+              'Grade 11 Jupiter',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.greenAccent),
+            ),
           ],
         );
 
   Widget buildEditIcon(Color color, double size, double pad) => buildCircle(
       all: pad,
       child: Icon(
-        Icons.check_circle_rounded,
+        Icons.safety_check,
         color: color,
         size: size,
       ));
@@ -554,7 +569,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       ClipOval(
           child: Container(
         padding: EdgeInsets.all(all),
-        color: const Color(0xFF292735),
+        // color: const Color(0xFFE91E63),
         child: child,
       ));
 }

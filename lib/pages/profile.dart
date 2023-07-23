@@ -24,7 +24,7 @@ class _ProfileState extends State<Profile> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            backgroundColor: const Color(0xff292735),
+            backgroundColor: const Color(0xffe57ea4),
             title: const Text('Profile Page'),
           ),
           // body: const ProfilePage(),

@@ -1,6 +1,8 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:ebooks/auth/auth_page.dart';
+import 'package:ebooks/pages/nav_main.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -25,26 +27,38 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   var articles = <String>[
     "Welcome to CK! We’re excited to have you on board.",
-    "CK is the best way to your school study.",
-    "Get ready to experience the best way to access books with ease."
+    "Get ready to experience the best way to access books with ease.",
+    "Access Books Anytime, Anywhere.",
   ];
   final _totalDots = 3;
   double _currentPosition = 0.0;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
     // _initData();
-    // _checkLoginStatus();
+    _checkLoginStatus();
     super.initState();
   }
 
-  // navigateToMainNav() {
-  //   Navigator.of(context).pushAndRemoveUntil(
-  //       MaterialPageRoute(
-  //         builder: (context) => const MyNav(),
-  //       ),
-  //       (Route<dynamic> route) => false);
-  // }
+  _checkLoginStatus() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token')!;
+    if (token.isNotEmpty) {
+      setState(() {
+        isLoggedIn = true;
+      });
+    }
+    isLoggedIn ? navigateToMainNav() : {};
+  }
+
+  navigateToMainNav() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const MyNav(),
+        ),
+        (Route<dynamic> route) => false);
+  }
 
   double _validPosition(double position) {
     if (position >= _totalDots) return 0;
@@ -156,10 +170,11 @@ class _WelcomePageState extends State<WelcomePage> {
                   right: (MediaQuery.of(context).size.width - 200) / 2,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
+                      Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
-                              builder: (context) => const AuthPage()));
+                            builder: (context) => const AuthPage(),
+                          ),
+                          (Route<dynamic> route) => false);
                     },
                     child: Container(
                       height: 80,

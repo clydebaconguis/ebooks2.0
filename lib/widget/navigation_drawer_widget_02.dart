@@ -5,8 +5,6 @@ import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
-import 'package:ebooks/pdf_view/pdf_view.dart';
-import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import '../models/pdf_tile.dart';
-import '../pages/nav_pdf.dart';
 import '../pages/profile_page.dart';
 
 class NavigationDrawerWidget2 extends StatefulWidget {
@@ -74,7 +71,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
   }
 
   bool _checkDirectoryExistsSync(String path) {
-    print(Directory(path).existsSync());
+    // print(Directory(path).existsSync());
     return Directory(path).existsSync();
   }
 
@@ -88,20 +85,20 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     var foldrChild = await AppUtil().readFilesDir(currentBook);
     if (foldrChild != null) {
       foldrChild.forEach((element) async {
-        print("starting get chapter...");
-        print(element.path);
+        // print("starting get chapter...");
+        // print(element.path);
         List<PdfTile> secondChild = [];
         if (element.path.isNotEmpty &&
             splitPath(element.path).toString() != "cover_image") {
-          print(element.path);
+          // print(element.path);
           var split = splitPath(element.path);
           var foldrChild2 = await AppUtil().readFilesDir('$currentBook/$split');
           // print(foldrChild2);
           if (foldrChild2 != null) {
             foldrChild2.forEach((child) async {
-              print('getting lessons');
+              // print('getting lessons');
               List<PdfTile> thirdChild = [];
-              print(child.path);
+              // print(child.path);
               // get the inner if has parts
               // false if no parts and child is a file directory
               //check if its directory
@@ -109,14 +106,14 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               bool isDirectory = _checkDirectoryExistsSync(
                   '${dir.path}/$currentBook/$split/$splitted');
               if (child != null && isDirectory) {
-                print('yes its a directory!');
+                // print('yes its a directory!');
                 var split2 = splitPath(child.path);
                 var foldrChild3 =
                     await AppUtil().readFilesDir('$currentBook/$split/$split2');
-                print(foldrChild3);
+                // print(foldrChild3);
                 if (foldrChild3 != null) {
                   foldrChild3.forEach((item) {
-                    print('lesson detected');
+                    // print('lesson detected');
                     setState(() {
                       thirdChild.add(
                         PdfTile(
@@ -187,30 +184,30 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
   List<PdfTile> flattenNestedArray(List<PdfTile> nestedArray) {
     List<PdfTile> flattenedArray = [];
 
-    nestedArray.forEach((object) {
+    for (var object in nestedArray) {
       // flattenedArray.add(object);
       if (object.children.isNotEmpty) {
         List<PdfTile> innerChld = object.children;
-        innerChld.forEach((element) {
+        for (var element in innerChld) {
           var isDir = _checkDirectoryExistsSync(element.path);
           if (isDir) {
             if (element.children.isNotEmpty) {
               var fldr = element.children;
-              fldr.forEach((elem) {
+              for (var elem in fldr) {
                 var isFldr = _checkDirectoryExistsSync(elem.path);
                 if (!isFldr) {
                   flattenedArray.addAll(fldr);
-                  return;
+                  continue;
                 }
-              });
+              }
             }
           } else {
             flattenedArray.addAll(innerChld);
-            return;
+            continue;
           }
-        });
+        }
       }
-    });
+    }
 
     return flattenedArray;
   }
@@ -221,9 +218,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
 
     if (query.isNotEmpty) {
       flattenedArray = flattenNestedArray(files);
-      flattenedArray.forEach((object) {
-        print(object.title);
-      });
+      // for (var object in flattenedArray) {
+      //   // print(object.title);
+      // }
 
       searchResults = flattenedArray.where((element) {
         if (element.title.toLowerCase().contains(query.toLowerCase())) {
@@ -237,7 +234,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
       });
     }
     setState(() {
-      filteredItems = searchResults;
+      filteredItems = searchResults.toSet().toList();
     });
   }
 
@@ -250,15 +247,22 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     final provider = Provider.of<NavigationProvider2>(context);
     var isCollapsed = provider.isCollapsed;
     files.sort((a, b) => a.title.compareTo(b.title));
-    for (var element in files) {
-      print(element.title);
-    }
+    // for (var element in files) {
+    //   // print(element.title);
+    // }
 
     return SizedBox(
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
       child: Drawer(
         child: Container(
-          color: const Color(0xff292735),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffcf167f), Color(0xff500a34)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+          ),
+          // color: const Color(0xff292735),
           child: Column(
             children: [
               Container(
@@ -356,7 +360,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             ),
                             CircleAvatar(
                               radius: 15,
-                              backgroundColor: Colors.white12,
+                              backgroundColor: Colors.transparent,
                               child: Image.asset(
                                 "img/cklogo.png",
                                 height: 25,
@@ -372,7 +376,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                     )
                   : CircleAvatar(
                       radius: 15,
-                      backgroundColor: Colors.white12,
+                      backgroundColor: Colors.transparent,
                       child: Image.asset(
                         "img/cklogo.png",
                         height: 25,
@@ -431,8 +435,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     required String text,
     required String path,
   }) {
-    const color = Color.fromARGB(255, 229, 100, 100);
-    // final color2 = Colors.pink.shade400;
+    const color = Colors.red;
     const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color);
 
     return Material(
@@ -443,11 +446,28 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               // onTap: onClicked,
             )
           : ListTile(
-              onTap: () => widget.updateData(path, text),
-              leading: leadingPdf,
+              leading: selectedPdf == text
+                  ? const Icon(
+                      Icons.picture_as_pdf_sharp,
+                      color: Colors.greenAccent,
+                    )
+                  : leadingPdf,
+              onTap: () {
+                final provider =
+                    Provider.of<NavigationProvider2>(context, listen: false);
+                setState(() {
+                  selectedPdf = text;
+                });
+
+                provider.selectPdf(text);
+                widget.updateData(path, text);
+              },
               title: Text(
                 text,
-                style: const TextStyle(color: color),
+                style: TextStyle(
+                    color:
+                        selectedPdf == text ? Colors.greenAccent : Colors.white,
+                    fontSize: 15),
               ),
             ),
     );
@@ -475,13 +495,14 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                   title: elem.title, path: elem.path, isExpanded: false));
             }
           }
+          c2.sort((a, b) => a.title.compareTo(b.title));
 
           return buildMenuItemTiles(
             item: item,
             isCollapsed: isCollapsed,
             text: item.title,
             path: item.path,
-            child: item.children,
+            child: c1,
             innerChild: c2,
             icon: Icons.folder_rounded,
             index: index,
@@ -502,9 +523,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     // required List<PdfTile> items,
     // VoidCallback? onClicked,
   }) {
-    final color = Colors.pink.shade50;
+    const color = Colors.white;
     const color2 = Colors.yellow;
-    const color3 = Color.fromARGB(255, 229, 100, 100);
+    const color3 = Colors.red;
     // final color2 = Colors.pink.shade400;
     const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color3);
     final leading = Icon(icon, color: color2);
@@ -540,7 +561,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 childrenPadding: const EdgeInsets.all(0),
                 title: Text(
                   text,
-                  style: TextStyle(color: color, fontSize: 15),
+                  style: const TextStyle(color: color, fontSize: 15),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   softWrap: true,
@@ -549,41 +570,46 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                     ? child
                         .map(
                           (et) => ListTile(
-                              leading: selectedPdf == et.title
-                                  ? const Icon(
-                                      Icons.picture_as_pdf_sharp,
-                                      color: Colors.greenAccent,
-                                    )
-                                  : leadingPdf,
-                              horizontalTitleGap: 0,
-                              contentPadding: const EdgeInsets.only(
-                                left: 4,
-                                right: 4,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(4),
                               ),
-                              tileColor: selectedPdf == et.title
-                                  ? Colors.white24
-                                  : Colors.transparent,
-                              onTap: () {
-                                final provider =
-                                    Provider.of<NavigationProvider2>(context,
-                                        listen: false);
-                                setState(() {
-                                  selectedPdf = et.title;
-                                });
+                            ),
+                            leading: selectedPdf == et.title
+                                ? const Icon(
+                                    Icons.picture_as_pdf_sharp,
+                                    color: Colors.greenAccent,
+                                  )
+                                : leadingPdf,
+                            horizontalTitleGap: 0,
+                            contentPadding: const EdgeInsets.only(
+                              left: 4,
+                              right: 4,
+                            ),
+                            tileColor: selectedPdf == et.title
+                                ? Colors.white24
+                                : Colors.transparent,
+                            onTap: () {
+                              final provider = Provider.of<NavigationProvider2>(
+                                  context,
+                                  listen: false);
+                              setState(() {
+                                selectedPdf = et.title;
+                              });
 
-                                provider.selectPdf(et.title);
-                                widget.updateData(et.path, et.title);
-                              },
-                              title: Text(
-                                et.title,
-                                style: TextStyle(
-                                    color: selectedPdf == et.title
-                                        ? Colors.greenAccent
-                                        : Colors.redAccent,
-                                    fontSize: 15),
-                              )
-                              // onTap: onClicked,
-                              ),
+                              provider.selectPdf(et.title);
+                              widget.updateData(et.path, et.title);
+                            },
+                            title: Text(
+                              et.title,
+                              style: TextStyle(
+                                  color: selectedPdf == et.title
+                                      ? Colors.greenAccent
+                                      : Colors.white,
+                                  fontSize: 15),
+                            ),
+                            // onTap: onClicked,
+                          ),
                         )
                         .toList()
                     : child.map((e) {
@@ -608,10 +634,16 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             collapsedIconColor: color,
                             title: Text(
                               e.title,
-                              style: TextStyle(color: color, fontSize: 15),
+                              style:
+                                  const TextStyle(color: color, fontSize: 15),
                             ),
                             children: e.children.map((item) {
                               return ListTile(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(4),
+                                    ),
+                                  ),
                                   horizontalTitleGap: 0,
                                   contentPadding:
                                       const EdgeInsets.only(left: 3),
@@ -641,7 +673,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                     style: TextStyle(
                                         color: selectedPdf == item.title
                                             ? Colors.greenAccent
-                                            : Colors.redAccent,
+                                            : Colors.white,
                                         fontSize: 15),
                                   )
                                   // onTap: onClicked,
@@ -807,37 +839,6 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 Provider.of<NavigationProvider2>(context, listen: false);
 
             provider.toggleIsCollapsed2();
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
-    const double size = 52;
-    final icon = isCollapsed
-        ? Icons.arrow_back_ios_rounded
-        : Icons.arrow_forward_ios_rounded;
-    final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
-    final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
-    final width = isCollapsed ? double.infinity : size;
-
-    return Container(
-      alignment: alignment,
-      margin: margin,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          child: SizedBox(
-            width: width,
-            height: size,
-            child: Icon(icon, color: const Color(0xE7E73A6E)),
-          ),
-          onTap: () {
-            final provider =
-                Provider.of<NavigationProvider>(context, listen: false);
-
-            provider.toggleIsCollapsed();
           },
         ),
       ),

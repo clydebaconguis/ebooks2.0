@@ -34,9 +34,21 @@ class _NavMainState extends State<NavMain> {
   Widget build(BuildContext context) => Scaffold(
         drawer: const NavigationDrawerWidget(),
         appBar: AppBar(
-          backgroundColor: const Color(0xff292735),
-          title: const Text(MyNav.title),
-          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff500a34), Color(0xffcf167f)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          // backgroundColor: const Color(0xff500a34),
+          title: Image.asset(
+            "img/liceo-logo.png",
+            height: 52,
+            width: 52,
+          ),
         ),
         body: const AllBooks(),
       );

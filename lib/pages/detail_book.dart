@@ -4,11 +4,8 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
-import 'package:ebooks/app_util.dart';
-import 'package:ebooks/models/get_lessons.dart';
 import 'package:ebooks/models/pdf_tile.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,6 +35,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
   var chapters = [];
   var lessons = [];
   var bookCoverUrl = '';
+  bool isButtonEnabled = true;
 
   Future<void> initDiskSpacePlus() async {
     double diskSpace = 0;
@@ -156,10 +154,14 @@ class _DetailBookPageState extends State<DetailBookPage> {
         setState(
           () {
             var results = json.decode(response.body);
+            print(results);
             parts = results['parts'] ?? [];
+            print(parts);
             chapters = results['chapters'] ?? [];
+            print(chapters);
             lessons = results['lessons'] ?? [];
             bookCoverUrl = results['bookcover'] ?? '';
+            print(bookCoverUrl);
             print(lessons);
           },
         );
@@ -204,14 +206,14 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     Directory("${newPart.path}${chapter['title']}/");
                 final Directory newChap =
                     await chapDirFolder.create(recursive: true);
-                print(newChap);
+                // print(newChap);
                 if (lessons.isNotEmpty) {
                   for (var lesson in lessons) {
                     if (lesson['chapterid'] != null &&
                         lesson['chapterid'] == chapter['id']) {
-                      print(lesson['lessontitle']);
-
+                      // print(lesson['lessontitle']);
                       List<Future<void>> futures = [];
+
                       if (lesson['path'] != null) {
                         futures.add(
                           downloadPdFiles(lesson['path'], lesson['lessontitle'],
@@ -219,6 +221,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         );
                       }
                       await Future.wait(futures);
+
                       // All functions have completed executing
                       // EasyLoading.dismiss();
                       // saveCurrentBook(widget.bookInfo.title);
@@ -227,13 +230,12 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     // print(lessonFile);
                   }
                 } else {
-                  print('empty lessons');
+                  // print('empty lessons');
                 }
               }
             }
           }
         }
-
         EasyLoading.dismiss();
         saveCurrentBook(widget.bookInfo.title);
         navigateToMainNav("${bookNewFolder.path}cover_image");
@@ -244,14 +246,14 @@ class _DetailBookPageState extends State<DetailBookPage> {
                 Directory("${bookNewFolder.path}${chapter['title']}/");
             final Directory newChap =
                 await chapDirFolder.create(recursive: true);
-            print(newChap);
+            // print(newChap);
             if (lessons.isNotEmpty) {
               for (var lesson in lessons) {
                 if (lesson['chapterid'] != null &&
                     lesson['chapterid'] == chapter['id']) {
-                  print(lesson['lessontitle']);
-
+                  // print(lesson['lessontitle']);
                   List<Future<void>> futures = [];
+
                   if (lesson['path'] != null) {
                     futures.add(
                       downloadPdFiles(lesson['path'], lesson['lessontitle'],
@@ -259,19 +261,20 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     );
                   }
                   await Future.wait(futures);
+
                   // All functions have completed executing
                   // EasyLoading.dismiss();
                 }
                 // print(lessonFile);
               }
             } else {
-              print('empty lessons');
+              // print('empty lessons');
             }
           }
           saveCurrentBook(widget.bookInfo.title);
           navigateToMainNav("${bookNewFolder.path}cover_image");
         } else {
-          print('chapters empty');
+          // print('chapters empty');
         }
       }
       EasyLoading.dismiss();
@@ -339,6 +342,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
 
   navigateToMainNav(String path) {
     EasyLoading.dismiss();
+    setState(() {
+      isButtonEnabled = true;
+    });
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -356,12 +362,12 @@ class _DetailBookPageState extends State<DetailBookPage> {
     localStorage.setString('currentBook', bookName);
   }
 
-  downloadPdFiles(
+  Future<void> downloadPdFiles(
     String url,
     String filename,
     String bookFolderDir,
   ) async {
-    String host = "$mainHost/$url";
+    String host = "$mainHost$url";
     var savePath = bookFolderDir;
     // print(savePath);
     var dio = Dio();
@@ -597,15 +603,24 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         child: Row(
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                lowStorage
-                                    ? EasyLoading.showInfo(
-                                        'low storage! \npls clean your phone!')
-                                    : _downloadPdf();
-                              },
+                              onPressed: isButtonEnabled
+                                  ? () {
+                                      if (lowStorage) {
+                                        EasyLoading.showInfo(
+                                            'low storage! \npls clean your phone!');
+                                      } else {
+                                        setState(() {
+                                          isButtonEnabled = false;
+                                        });
+                                        _downloadPdf();
+                                      }
+                                    }
+                                  : null,
                               style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
-                                  backgroundColor: Colors.pink,
+                                  backgroundColor: isButtonEnabled
+                                      ? Colors.pink
+                                      : Colors.grey,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
