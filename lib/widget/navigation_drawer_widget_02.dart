@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../main.dart';
 import '../models/pdf_tile.dart';
 import '../pages/profile_page.dart';
@@ -511,6 +510,26 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
         },
       );
 
+  String getFileExtension(String url) {
+    // Find the last occurrence of the dot (.)
+    int dotIndex = url.lastIndexOf('.');
+
+    // If a dot is found and it's not the last character of the URL, return the extension
+    if (dotIndex != -1 && dotIndex < url.length - 1) {
+      String extension = url.substring(dotIndex);
+      return extension;
+    }
+
+    // If no dot is found or it's the last character, return an empty string as the extension
+    return '';
+  }
+
+  void main() {
+    String url = '/path/to/your/file.pdf';
+    String fileExtension = getFileExtension(url);
+    print('File extension: $fileExtension'); // Output: .pdf
+  }
+
   Widget buildMenuItemTiles({
     required PdfTile item,
     required bool isCollapsed,
@@ -528,6 +547,9 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     const color3 = Colors.red;
     // final color2 = Colors.pink.shade400;
     const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color3);
+    const leadingVidSelected =
+        Icon(Icons.play_circle_outline, color: Colors.greenAccent);
+    const leadingVid = Icon(Icons.play_circle_outline, color: Colors.orange);
     final leading = Icon(icon, color: color2);
     child.sort((a, b) => a.title.compareTo(b.title));
 
@@ -575,12 +597,21 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                 Radius.circular(4),
                               ),
                             ),
-                            leading: selectedPdf == et.title
+                            leading: (selectedPdf == et.title &&
+                                    getFileExtension(et.title) == ".pdf")
                                 ? const Icon(
                                     Icons.picture_as_pdf_sharp,
                                     color: Colors.greenAccent,
                                   )
-                                : leadingPdf,
+                                : (selectedPdf == et.title &&
+                                        getFileExtension(et.title) == ".mp4")
+                                    ? leadingVidSelected
+                                    : (selectedPdf != et.title &&
+                                            getFileExtension(et.title) ==
+                                                ".mp4")
+                                        ? leadingVid
+                                        : leadingPdf,
+
                             horizontalTitleGap: 0,
                             contentPadding: const EdgeInsets.only(
                               left: 4,
@@ -601,7 +632,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                               widget.updateData(et.path, et.title);
                             },
                             title: Text(
-                              et.title,
+                              removeFileExtension(et.title),
                               style: TextStyle(
                                   color: selectedPdf == et.title
                                       ? Colors.greenAccent
@@ -647,12 +678,23 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                   horizontalTitleGap: 0,
                                   contentPadding:
                                       const EdgeInsets.only(left: 3),
-                                  leading: selectedPdf == item.title
+                                  leading: (selectedPdf == item.title &&
+                                          getFileExtension(item.title) ==
+                                              ".pdf")
                                       ? const Icon(
                                           Icons.picture_as_pdf_sharp,
                                           color: Colors.greenAccent,
                                         )
-                                      : leadingPdf,
+                                      : (selectedPdf == item.title &&
+                                              getFileExtension(item.title) ==
+                                                  ".mp4")
+                                          ? leadingVidSelected
+                                          : (selectedPdf != item.title &&
+                                                  getFileExtension(
+                                                          item.title) ==
+                                                      ".mp4")
+                                              ? leadingVid
+                                              : leadingPdf,
                                   tileColor: selectedPdf == item.title
                                       ? Colors.white24
                                       : Colors.transparent,
@@ -669,7 +711,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                     widget.updateData(item.path, item.title);
                                   },
                                   title: Text(
-                                    item.title,
+                                    removeFileExtension(item.title),
                                     style: TextStyle(
                                         color: selectedPdf == item.title
                                             ? Colors.greenAccent
@@ -683,62 +725,17 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                         );
                       }).toList(),
               ),
-
-              // title: ExpansionTile(
-
-              //   collapsedIconColor: color,
-              //   title: Text(
-              //     text,
-              //     style: TextStyle(color: color, fontSize: 16),
-              //     overflow: TextOverflow.ellipsis,
-              //     maxLines: 2,
-              //     softWrap: true,
-              //   ),
-              //   children: child.isNotEmpty
-              //       ? child
-              //           .map(
-              //             (e) => ListTile(
-              //                 onTap: () =>
-              //                     e.children.isEmpty ? onClick(e.path) : {},
-              //                 leading:
-              //                     (e.children.isEmpty) ? leadingPdf : leading,
-              //                 title: child2.isNotEmpty
-              //                     ? ExpansionTile(
-              //                         leading: leading,
-              //                         title: Text(
-              //                           e.title,
-              //                           style: const TextStyle(
-              //                               color: Colors.white),
-              //                         ),
-              //                         children: child2
-              //                             .map((em) => ListTile(
-              //                                   leading: leadingPdf,
-              //                                   title: Text(
-              //                                     em.title,
-              //                                     style: const TextStyle(
-              //                                         color: Colors.white),
-              //                                   ),
-              //                                 ))
-              //                             .toList(),
-              //                       )
-              //                     : Text(
-              //                         e.title,
-              //                         style:
-              //                             const TextStyle(color: Colors.white),
-              //                       )),
-              //           )
-              //           .toList()
-              //       : [
-              //           const ListTile(
-              //             title: Text(
-              //               'empty',
-              //               style: TextStyle(color: Colors.white),
-              //             ),
-              //           ),
-              //         ],
-              // ),
             ),
     );
+  }
+
+  String removeFileExtension(String fileName) {
+    int dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex != -1) {
+      return fileName.substring(0, dotIndex);
+    } else {
+      return fileName;
+    }
   }
 
   // Main Nav tile
@@ -881,7 +878,10 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               flex: 3,
               child: Text(
                 currentBook,
-                style: const TextStyle(fontSize: 18, color: Colors.white),
+                style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 3,
                 softWrap: true,

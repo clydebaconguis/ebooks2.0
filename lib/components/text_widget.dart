@@ -31,7 +31,6 @@ class TextWidget extends StatelessWidget {
         text,
         style: TextStyle(
           fontSize: fontSize.toDouble(),
-          fontFamily: "Avenir",
           fontWeight: FontWeight.w900,
           color: color,
         ),

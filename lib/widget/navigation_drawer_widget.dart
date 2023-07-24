@@ -27,6 +27,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   final padding = const EdgeInsets.symmetric(horizontal: 20);
   late List<PdfTile> files = [];
   var user = UserData.myUser;
+  String grade = '';
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   getUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final json = preferences.getString('user');
+    grade = preferences.getString('grade')!;
 
     setState(() {
       user = json == null ? UserData.myUser : User.fromJson(jsonDecode(json));
@@ -546,9 +548,9 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              'Grade 11 Jupiter',
-              style: TextStyle(
+            Text(
+              grade,
+              style: const TextStyle(
                   fontWeight: FontWeight.bold, color: Colors.greenAccent),
             ),
           ],

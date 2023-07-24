@@ -14,6 +14,7 @@ import '../api/my_api.dart';
 import '../components/text_widget.dart';
 import '../models/get_books_info_02.dart';
 import 'package:disk_space_plus/disk_space_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DetailBookPage extends StatefulWidget {
   final Books2 bookInfo;
@@ -60,42 +61,6 @@ class _DetailBookPageState extends State<DetailBookPage> {
     _fetchParts();
     super.initState();
   }
-
-  // readSpecificBook() async {
-  //   var dir = await getApplicationSupportDirectory();
-  //   final pathFile = Directory(dir.path);
-  //   final List<FileSystemEntity> entities = await pathFile.list().toList();
-  //   final Iterable<Directory> files = entities.whereType<Directory>();
-  //   files.forEach((element) {
-  //     print(element.absolute);
-  //   });
-  //   // // return files;
-  //   // entities.forEach((element) {
-  //   //   print(element.path);
-  //   // });
-  //   // print(entities);
-  //   // pathFile.deleteSync(recursive: true);
-  //   // entities.forEach((element) {
-  //   //   print(element.path);
-  //   // });
-  //   // print(entities);
-  // }
-
-  // _fetchParts() async {
-  //   CallApi().getPublicData('bookchapter/${widget.bookInfo.bookid}').then(
-  //     (response) {
-  //       setState(
-  //         () {
-  //           Iterable list = json.decode(response.body);
-  //           lessons = list.map((e) => Lessons.fromJson(e)).toList();
-  //           if (kDebugMode) {
-  //             print("size : ${lessons.length}");
-  //           }
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 
   Future<bool> fileExist(String folderName) async {
     final Directory appDir = await getApplicationSupportDirectory();
@@ -214,11 +179,15 @@ class _DetailBookPageState extends State<DetailBookPage> {
                       // print(lesson['lessontitle']);
                       List<Future<void>> futures = [];
 
-                      if (lesson['path'] != null) {
-                        futures.add(
-                          downloadPdFiles(lesson['path'], lesson['lessontitle'],
-                              '${newChap.path}${lesson['lessontitle']}'),
-                        );
+                      if (lesson['path'] != null && lesson['path'].isNotEmpty) {
+                        for (var lessonFileItem in lesson['path']) {
+                          futures.add(
+                            downloadPdFiles(
+                                lessonFileItem['filepath'],
+                                lessonFileItem['content'],
+                                '${newChap.path}${lessonFileItem['content']}'),
+                          );
+                        }
                       }
                       await Future.wait(futures);
 
@@ -254,13 +223,25 @@ class _DetailBookPageState extends State<DetailBookPage> {
                   // print(lesson['lessontitle']);
                   List<Future<void>> futures = [];
 
-                  if (lesson['path'] != null) {
-                    futures.add(
-                      downloadPdFiles(lesson['path'], lesson['lessontitle'],
-                          '${newChap.path}${lesson['lessontitle']}'),
-                    );
+                  if (lesson['path'] != null && lesson['path'].isNotEmpty) {
+                    for (var lessonFileItem in lesson['path']) {
+                      futures.add(
+                        downloadPdFiles(
+                            lessonFileItem['filepath'],
+                            lessonFileItem['content'],
+                            '${newChap.path}${lessonFileItem['content']}'),
+                      );
+                    }
                   }
                   await Future.wait(futures);
+
+                  // if (lesson['path'] != null) {
+                  //   futures.add(
+                  //     downloadPdFiles(lesson['path'], lesson['lessontitle'],
+                  //         '${newChap.path}${lesson['lessontitle']}'),
+                  //   );
+                  // }
+                  // await Future.wait(futures);
 
                   // All functions have completed executing
                   // EasyLoading.dismiss();
@@ -280,51 +261,6 @@ class _DetailBookPageState extends State<DetailBookPage> {
       EasyLoading.dismiss();
     }
   }
-
-  // _downloadPdf() async {
-  //   EasyLoading.show(status: "Preparing...");
-  //   final Directory appDir = await getApplicationSupportDirectory();
-  //   var imgPathLocal = "${appDir.path}/${widget.bookInfo.title}/cover_image";
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   _isLoading = true;
-  //   var exist = await fileExist(widget.bookInfo.title);
-  //   if (exist) {
-  //     setState(() {
-  //       _isLoading = false;
-  //       // final Directory imgPath =
-  //       //     Directory("${appDir.path}/${widget.bookInfo.title}/cover_image");
-  //       // var imgUrl = "${appDir.path}/${widget.bookInfo.title}/cover_image";
-  //       saveCurrentBook(widget.bookInfo.title);
-  //       navigateToMainNav(imgPathLocal); // <-- Code run after delay
-  //     });
-
-  //   } else {
-  //     final Directory appDirFolder =
-  //         Directory("${appDir.path}/${widget.bookInfo.title}/");
-  //     // print(appDirFolder.path);
-  //     //if folder not exists create folder and then return its path
-  //     final Directory bookNewFolder =
-  //         await appDirFolder.create(recursive: true);
-  //     // print(bookNewFolder.path);
-  //     downloadImage(bookNewFolder.path, "cover_image", widget.bookInfo.picurl);
-  //     List<Future<void>> futures = [];
-  //     for (int i = 0; i < lessons.length; i++) {
-  //       if (lessons[i].path.isNotEmpty) {
-  //         // print(lessons[i].path);
-  //         String filename = AppUtil().splitPath(lessons[i].path);
-  //         futures.add(
-  //             downloadPdFiles(lessons[i].path, filename, bookNewFolder.path));
-  //       }
-  //     }
-  //     await Future.wait(futures);
-  //     // All functions have completed executing
-  //     EasyLoading.dismiss();
-  //     saveCurrentBook(widget.bookInfo.title);
-  //     navigateToMainNav("${bookNewFolder.path}cover_image");
-  //   }
-  // }
 
   checkLoading() {
     if (_isLoading) {
@@ -374,14 +310,13 @@ class _DetailBookPageState extends State<DetailBookPage> {
     dio.interceptors.add(LogInterceptor());
     try {
       // print("Downloading...");
-
       var response = await dio.get(
         host,
         //Received data with List<int>
         options: Options(
           responseType: ResponseType.bytes,
           followRedirects: false,
-          receiveTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 300),
         ),
       );
       var file = File(savePath);
@@ -399,6 +334,11 @@ class _DetailBookPageState extends State<DetailBookPage> {
     final double screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
       home: Scaffold(
         body: Container(
           color: Colors.white,
@@ -489,17 +429,16 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                   height: 10,
                                 ),
                                 TextWidget(
-                                  color: const Color(0xf21ca2c4),
+                                  color: Colors.black87,
                                   text: widget.bookInfo.title,
-                                  fontSize: 30,
+                                  fontSize: 22,
                                 ),
-                                const TextWidget(
-                                    text:
-                                        // "Author: ${widget.bookInfo.createddatetime}",
-                                        "Author : CK Children's Publishing",
-                                    fontSize: 20,
-                                    color: Color(0xFF7b8ea3)),
                                 const Divider(color: Colors.grey),
+                                const TextWidget(
+                                  text: "Author : CK Children's Publishing",
+                                  fontSize: 15,
+                                  color: Colors.black54,
+                                ),
                                 // TextWidget(
                                 //     text: widget.bookInfo.description,
                                 //     fontSize: 16,
@@ -512,92 +451,36 @@ class _DetailBookPageState extends State<DetailBookPage> {
                       const SizedBox(
                         height: 40,
                       ),
-                      const Divider(color: Color(0xFF7b8ea3)),
-                      const SizedBox(
-                        height: 10,
+                      const Divider(
+                        endIndent: 20,
+                        color: Color(0xFF7b8ea3),
                       ),
-                      // Container(
-                      // padding: const EdgeInsets.only(right: 20),
-                      // child: const Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      // children: [
-                      //   Row(
-                      //     mainAxisSize: MainAxisSize.min,
-                      //     children: <Widget>[
-                      //       Icon(
-                      //         Icons.favorite,
-                      //         color: Color(0xFF7b8ea3),
-                      //         size: 40,
-                      //       ),
-                      //       SizedBox(
-                      //         width: 10,
-                      //       ),
-                      //       TextWidget(text: "Like", fontSize: 20),
-                      //     ],
-                      //   ),
-                      //   Row(
-                      //     mainAxisSize: MainAxisSize.min,
-                      //     children: <Widget>[
-                      //       Icon(
-                      //         Icons.share,
-                      //         color: Color(0xFF7b8ea3),
-                      //         size: 40,
-                      //       ),
-                      //       SizedBox(
-                      //         width: 10,
-                      //       ),
-                      //       TextWidget(text: "Share", fontSize: 20),
-                      //     ],
-                      //   ),
-                      // Row(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: <Widget>[
-                      //     Icon(
-                      //       Icons.download_for_offline,
-                      //       color: Color(0xFF7b8ea3),
-                      //       size: 40,
-                      //     ),
-                      //     SizedBox(
-                      //       width: 10,
-                      //     ),
-                      //     TextWidget(text: "Download", fontSize: 20),
-                      //   ],
-                      // )
-                      // ],
-                      // ),
-                      // ),
                       const SizedBox(
-                        height: 40,
+                        height: 15,
                       ),
                       const Row(
                         children: [
                           TextWidget(
                             text: "Details",
-                            fontSize: 30,
+                            fontSize: 22,
                           ),
                         ],
+                      ),
+                      const SizedBox(
+                        height: 10,
                       ),
                       const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: TextWidget(
-                          color: Colors.grey,
+                          color: Colors.black54,
                           text:
-                              'This book is brought to you by CK Children\'s Publishing Company.',
-                          fontSize: 20,
+                              'This book is brought to you by CK Children\'s Publishing. Your Access to Visual Learning and Integration',
+                          fontSize: 17,
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
-                      // SizedBox(
-                      //   height: 200,
-                      // child: TextWidget(
-                      //     // text: widget.bookInfo.article_content,
-                      //     text: widget.bookInfo.content,
-                      //     fontSize: 16,
-                      //     color: Colors.grey),
-                      // ),
-                      const Divider(color: Color(0xFF7b8ea3)),
                       Container(
                         padding: const EdgeInsets.only(right: 20),
                         child: Row(

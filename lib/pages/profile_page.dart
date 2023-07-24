@@ -21,6 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var user = UserData.myUser;
+  String grade = '';
   @override
   void initState() {
     getUser();
@@ -30,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
   getUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final json = preferences.getString('user');
-
+    grade = preferences.getString('grade')!;
     setState(() {
       user = json == null ? UserData.myUser : User.fromJson(jsonDecode(json));
     });
@@ -81,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
               EditPhoneFormPage(user: user),
             ),
             buildUserInfoDisplay(
-              'Grade 11 Jupiter',
+              grade,
               'Grade Level',
               EditPhoneFormPage(user: user),
             ),

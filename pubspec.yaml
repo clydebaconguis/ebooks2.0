@@ -35,9 +35,10 @@ dependencies:
     flutter_easyloading: ^3.0.5
     connectivity_plus: ^4.0.1
     disk_space_plus: ^0.2.3
-    path: ^1.8.3
     page_transition: ^2.0.9
     video_player: ^2.7.0
+    google_fonts: ^4.0.4
+    chewie: ^1.7.0
 
 dev_dependencies:
     flutter_test:

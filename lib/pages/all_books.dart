@@ -171,8 +171,20 @@ class _AllBooksState extends State<AllBooks> {
     await CallApi().getPublicData("viewbook?id=${user.id}").then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
-        print(list);
-        books = list.map((model) => Books2.fromJson(model)).toList();
+        // print(list);
+        Iterable firstArray = [];
+        List<dynamic> bb = [];
+        for (var element in list) {
+          if (element.isNotEmpty) {
+            for (var item in element) {
+              bb.add(item);
+              print(item);
+            }
+          }
+        }
+        firstArray = bb;
+
+        books = firstArray.map((model) => Books2.fromJson(model)).toList();
       });
     });
   }
@@ -230,7 +242,6 @@ class _AllBooksState extends State<AllBooks> {
                                             height: 180.0,
                                             width: width * 0.9,
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(0.0),
                                               boxShadow: [
@@ -473,22 +484,20 @@ class _AllBooksState extends State<AllBooks> {
                                               Text(
                                                 book.title,
                                                 style: const TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 17,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color(0xff292735),
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
                                                 softWrap: true,
                                               ),
-                                              const Divider(
-                                                  color: Colors.black),
+                                              const Divider(),
                                               const TextWidget(
                                                   color: Color(0xcd292735),
                                                   text:
                                                       "Author: CK Children's Publishing",
                                                   fontSize: 14),
-                                              const Divider(color: Colors.grey),
+                                              // const Divider(color: Colors.grey),
                                             ],
                                           ),
                                         ),

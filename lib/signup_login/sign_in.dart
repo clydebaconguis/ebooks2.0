@@ -1,18 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-
-// import 'package:flutter/cupertino.dart';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
 import 'package:ebooks/pages/nav_main.dart';
-import 'package:ebooks/signup_login/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-// import 'package:flutter_app_backend/api/my_api.dart';
-// import 'package:flutter_app_backend/components/text_widget.dart';
-// import 'package:flutter_app_backend/pages/article_page.dart';
-// import 'package:flutter_app_backend/signup_login/sing_up.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -55,9 +49,6 @@ class _SignInState extends State<SignIn> {
       'email': emailController.text,
       'password': textController.text,
     };
-    // print(emailController.text);
-    // print(textController.text);
-
     var res = await CallApi().login(data, 'studentlogin');
     var body = json.decode(res.body);
     print(body);
@@ -65,6 +56,7 @@ class _SignInState extends State<SignIn> {
     if (body['success']) {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('token', body['token']);
+      localStorage.setString('grade', body['grade']);
       localStorage.setString('user', json.encode(body['user']));
       _navigateToBooks();
     } else {
@@ -78,6 +70,11 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
@@ -86,23 +83,6 @@ class _SignInState extends State<SignIn> {
             child: Column(
               children: [
                 SizedBox(height: height * 0.1),
-                Container(
-                  padding: const EdgeInsets.only(left: 0, right: 30),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // IconButton(
-                      //   padding: EdgeInsets.zero,
-                      //   constraints: const BoxConstraints(),
-                      //   icon: const Icon(Icons.arrow_back_ios,
-                      //       color: Color(0xFF363f93)),
-                      //   onPressed: () =>
-                      //       Navigator.of(context, rootNavigator: true)
-                      //           .pop(context),
-                      // )
-                    ],
-                  ),
-                ),
                 SizedBox(height: height * 0.1),
                 const TextWidget(
                   color: Color(0xffcf167f),

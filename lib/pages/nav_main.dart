@@ -4,6 +4,7 @@ import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyNav extends StatelessWidget {
   static const String title = 'Demo';
@@ -16,6 +17,11 @@ class MyNav extends StatelessWidget {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: title,
+          theme: ThemeData(
+            textTheme: GoogleFonts.poppinsTextTheme(
+              Theme.of(context).textTheme,
+            ),
+          ),
           home: const NavMain(),
           builder: EasyLoading.init(),
         ),
@@ -34,6 +40,7 @@ class _NavMainState extends State<NavMain> {
   Widget build(BuildContext context) => Scaffold(
         drawer: const NavigationDrawerWidget(),
         appBar: AppBar(
+          titleSpacing: 0,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -46,8 +53,8 @@ class _NavMainState extends State<NavMain> {
           // backgroundColor: const Color(0xff500a34),
           title: Image.asset(
             "img/liceo-logo.png",
-            height: 52,
-            width: 52,
+            height: 48,
+            width: 48,
           ),
         ),
         body: const AllBooks(),

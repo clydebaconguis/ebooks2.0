@@ -3,14 +3,20 @@ import 'package:ebooks/auth/auth_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: WelcomePage(),
+    return MaterialApp(
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
+      home: const WelcomePage(),
       debugShowCheckedModeBanner: false,
       title: 'Ebook',
     );
@@ -26,8 +32,8 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   var articles = <String>[
-    "Welcome to CK! We’re excited to have you on board.",
-    "Get ready to experience the best way to access books with ease.",
+    "Welcome to CK. We’re excited to have you on board.",
+    "Your Access to Visual Learning and Integration",
     "Access Books Anytime, Anywhere.",
   ];
   final _totalDots = 3;
@@ -83,16 +89,6 @@ class _WelcomePageState extends State<WelcomePage> {
   String getCurrentPositionPretty() {
     return (_currentPosition + 1.0).toStringAsPrecision(2);
   }
-
-  // _initData() async {
-  //   CallApi().getPublicData('welcome').then((response) {
-  //     setState(() {
-  //       Iterable list = json.decode(response.body);
-  //       print(list);
-  //       articles = list.map((model) => ArticleInfo.fromJson(model)).toList();
-  //     });
-  //   });
-  // }
 
   _onPageChanged(int index) {
     setState(() {
@@ -153,7 +149,6 @@ class _WelcomePageState extends State<WelcomePage> {
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
-                        fontFamily: "Avenir",
                         fontWeight: FontWeight.bold),
                   ),
                 );
