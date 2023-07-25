@@ -27,7 +27,7 @@ class DetailBookPage extends StatefulWidget {
 }
 
 class _DetailBookPageState extends State<DetailBookPage> {
-  final String mainHost = CallApi().getHost();
+  String mainHost = "";
   // List<Lessons> lessons = [];
   bool _isLoading = false;
   double _diskSpace = 0;
@@ -37,6 +37,14 @@ class _DetailBookPageState extends State<DetailBookPage> {
   var lessons = [];
   var bookCoverUrl = '';
   bool isButtonEnabled = true;
+
+  getMyDomain() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var savedDomainName = prefs.getString('domainname') ?? '';
+    setState(() {
+      mainHost = savedDomainName;
+    });
+  }
 
   Future<void> initDiskSpacePlus() async {
     double diskSpace = 0;
@@ -57,6 +65,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
 
   @override
   void initState() {
+    getMyDomain();
     initDiskSpacePlus();
     _fetchParts();
     super.initState();
@@ -372,7 +381,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 50,
                       ),
                       Row(
                         children: [
@@ -391,9 +400,9 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                         boxShadow: [
                                           BoxShadow(
                                               color:
-                                                  Colors.grey.withOpacity(0.5),
-                                              spreadRadius: 5,
-                                              blurRadius: 7,
+                                                  Colors.grey.withOpacity(0.3),
+                                              spreadRadius: 8,
+                                              blurRadius: 10,
                                               offset: const Offset(0, 3))
                                         ],
                                         image: DecorationImage(

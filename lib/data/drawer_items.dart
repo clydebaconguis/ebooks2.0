@@ -5,6 +5,7 @@ final itemsFirst = [
   const DrawerItem(title: 'Books', icon: Icons.home_outlined),
   // const DrawerItem(title: 'Classmate', icon: Icons.people_outlined),
   const DrawerItem(title: 'Profile', icon: Icons.account_circle_outlined),
+  const DrawerItem(title: 'Settings', icon: Icons.settings_outlined),
   // DrawerItem(title: 'Testing & Debugging', icon: Icons.settings_applications),
   // DrawerItem(title: 'Performance & Optimization', icon: Icons.build),
 ];

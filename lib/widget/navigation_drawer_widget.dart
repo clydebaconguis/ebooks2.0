@@ -5,6 +5,7 @@ import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/pages/profile_page.dart';
+import 'package:ebooks/pages/settings.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
@@ -46,49 +47,9 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     });
   }
 
-  // getDownloadedBooks() async {
-  //   files.clear();
-  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
-  //   var currentBook = localStorage.getString('currentBook');
-  //   // final List<PdfTile> listOfChild = [];
-  //   var foldrChild = await AppUtil().readFilesDir(currentBook!);
-  //
-  //   if (foldrChild.isNotEmpty) {
-  //     foldrChild.forEach((element) {
-  //       // print(element);
-  //       if (element.path.isNotEmpty &&
-  //           splitPath(element.path).toString() != "cover_image") {
-  //         setState(() {
-  //           files.add(
-  //             PdfTile(title: splitPath(element.path), path: element.path),
-  //           );
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
-  // String split(url) {
-  //   File file = File(url);
-  //   String filename = file.path.split(Platform.pathSeparator).last;
-  //   return filename;
-  // }
-  navigateToSignIn() {
-    Timer(const Duration(seconds: 1), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const SignIn(),
-          ),
-          (Route<dynamic> route) => false);
-      EasyLoading.dismiss();
-    });
-  }
-
   logout() async {
-    EasyLoading.show(status: 'Signing out...');
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     await localStorage.clear();
-    navigateToSignIn();
   }
 
   @override
@@ -124,18 +85,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
               const Divider(
                 color: Colors.white24,
               ),
-
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     child: files.isNotEmpty
-              //         ? buildTile(isCollapsed: isCollapsed, items: files)
-              //         : const Center(
-              //             child: CircularProgressIndicator(),
-              //           ),
-              //   ),
-              // ),
-              // const Spacer(),
-              // const SizedBox(height: 12),
               buildProfileCircle(isCollapsed),
               const SizedBox(
                 height: 20,
@@ -147,7 +96,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                 height: 20,
               ),
               const Spacer(),
-
               buildLogout(items: itemsFirst2, isCollapsed: isCollapsed),
               const SizedBox(height: 30),
               !isCollapsed
@@ -344,9 +292,9 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
       case 1:
         navigateTo(const ProfilePage());
         break;
-      // case 2:
-      // navigateTo(const ProfilePage());
-      // break;
+      case 2:
+        navigateTo(const Setting());
+        break;
     }
   }
 
@@ -410,35 +358,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     );
   }
 
-  // Widget buildCollapseIcon2(BuildContext context, bool isCollapsed) {
-  //   const double size = 52;
-  //   final icon = isCollapsed ? Icons.arrow_back_ios : Icons.arrow_forward_ios;
-  //   final alignment = isCollapsed ? Alignment.center : Alignment.centerRight;
-  //   final margin = isCollapsed ? null : const EdgeInsets.only(right: 16);
-  //   final width = isCollapsed ? double.infinity : size;
-  //
-  //   return Container(
-  //     alignment: alignment,
-  //     margin: margin,
-  //     child: Material(
-  //       color: Colors.transparent,
-  //       child: InkWell(
-  //         child: SizedBox(
-  //           width: width,
-  //           height: size,
-  //           child: Icon(icon, color: Colors.white),
-  //         ),
-  //         onTap: () {
-  //           final provider =
-  //               Provider.of<NavigationProvider>(context, listen: false);
-  //
-  //           provider.toggleIsCollapsed();
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget buildHeader(bool isCollapsed) => isCollapsed
       ? Container(
           padding: const EdgeInsets.only(bottom: 22, top: 22),
@@ -482,10 +401,20 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
           final item = items[index];
 
           return buildMenuItem(
-              isCollapsed: isCollapsed,
-              text: item.title,
-              icon: item.icon,
-              onClicked: () => logout());
+            isCollapsed: isCollapsed,
+            text: item.title,
+            icon: item.icon,
+            onClicked: () {
+              EasyLoading.show(status: 'Signing out...');
+              logout();
+              EasyLoading.dismiss();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const SignIn(),
+                  ),
+                  (Route<dynamic> route) => false);
+            },
+          );
         },
       );
 

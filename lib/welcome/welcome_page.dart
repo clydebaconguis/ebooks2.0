@@ -177,13 +177,24 @@ class _WelcomePageState extends State<WelcomePage> {
                         borderRadius: BorderRadius.circular(50),
                         color: const Color(0xffcf167f),
                       ),
-                      child: const Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             'Get Started',
-                            style: TextStyle(color: Colors.white, fontSize: 26),
+                            style: GoogleFonts.permanentMarker(
+                              textStyle: const TextStyle(
+                                  fontSize: 25,
+                                  color: Colors
+                                      .white // Adjust the font size as needed.
+                                  // You can add other text styles such as color, fontWeight, etc. here.
+                                  ),
+                            ),
                           ),
+                          // Text(
+                          //   'Get Started',
+                          //   style: TextStyle(color: Colors.white, fontSize: 26),
+                          // ),
                         ],
                       ),
                     ),

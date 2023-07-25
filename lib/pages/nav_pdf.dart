@@ -7,6 +7,7 @@ import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
@@ -48,29 +49,29 @@ class NavPdf extends StatefulWidget {
 
 class _NavPdfState extends State<NavPdf> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String host = CallApi().getHost();
+  String host = "";
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
 
+  getMyDomain() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var savedDomainName = prefs.getString('domainname') ?? '';
+    setState(() {
+      host = savedDomainName;
+    });
+  }
+
   @override
   void initState() {
+    getMyDomain();
     restrictScreenshot();
-    // _videoPlayerController = VideoPlayerController.network(
-    //     'https://samplelib.com/lib/preview/mp4/sample-5s.mp4');
-    // _chewieController = ChewieController(
-    //   videoPlayerController: _videoPlayerController,
-    //   autoPlay: true,
-    //   looping: true,
-    // Other customization options can be added here
-    // );
     _openDrawerAutomatically();
-
     super.initState();
   }
 
   void playVidOnline(String vidPath) {
     setState(() {
-      _videoPlayerController = VideoPlayerController.network(vidPath);
+      _videoPlayerController = VideoPlayerController.file(File(vidPath));
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
         autoPlay: true,
@@ -88,7 +89,7 @@ class _NavPdfState extends State<NavPdf> {
   }
 
   void _openDrawerAutomatically() {
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       _scaffoldKey.currentState?.openDrawer();
     });
   }

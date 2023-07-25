@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../components/text_widget.dart';
 import '../models/get_books_info_02.dart';
 import '../models/pdf_tile.dart';
 import '../user/user.dart';
@@ -24,7 +23,7 @@ class AllBooks extends StatefulWidget {
 
 class _AllBooksState extends State<AllBooks> {
   late ConnectivityResult _connectivityResult = ConnectivityResult.none;
-  final String host = CallApi().getHost();
+  String host = '';
   var books = <Books2>[];
   List<PdfTile> files = [];
   bool reloaded = false;
@@ -49,8 +48,10 @@ class _AllBooksState extends State<AllBooks> {
   getUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final json = preferences.getString('user');
+    var savedDomainName = preferences.getString('domainname') ?? '';
 
     setState(() {
+      host = savedDomainName;
       user = json == null ? UserData.myUser : User.fromJson(jsonDecode(json));
     });
   }
@@ -80,7 +81,7 @@ class _AllBooksState extends State<AllBooks> {
         displayScreeMsg();
       });
     });
-    // readSpecificBook();
+    readSpecificBook();
     super.initState();
   }
 
@@ -214,7 +215,7 @@ class _AllBooksState extends State<AllBooks> {
                               index,
                             ) {
                               var file = files[index];
-                              debugPrint(file.path.toString());
+                              // debugPrint(file.path.toString());
                               return GestureDetector(
                                 onTap: () {
                                   saveCurrentBook(file.title);
@@ -235,22 +236,25 @@ class _AllBooksState extends State<AllBooks> {
                                   child: Stack(
                                     children: [
                                       Positioned(
+                                        left: 5,
+                                        right: 5,
                                         top: 35,
                                         child: Material(
-                                          elevation: 0.0,
+                                          elevation: 0,
                                           child: Container(
                                             height: 180.0,
                                             width: width * 0.9,
                                             decoration: BoxDecoration(
+                                              color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(0.0),
+                                                  BorderRadius.circular(5.0),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.grey
-                                                      .withOpacity(0.3),
+                                                      .withOpacity(0.2),
                                                   offset:
                                                       const Offset(0.0, 0.0),
-                                                  blurRadius: 20.0,
+                                                  blurRadius: 18.0,
                                                   spreadRadius: 4.0,
                                                 )
                                               ],
@@ -261,7 +265,7 @@ class _AllBooksState extends State<AllBooks> {
                                       ),
                                       Positioned(
                                         top: 0,
-                                        left: 10,
+                                        left: 12,
                                         child: Card(
                                           color: Colors.transparent,
                                           elevation: 10.0,
@@ -304,8 +308,8 @@ class _AllBooksState extends State<AllBooks> {
                                         ),
                                       ),
                                       Positioned(
-                                        top: 45,
-                                        left: width * 0.5,
+                                        top: 47,
+                                        left: width * 0.5 - 5,
                                         child: SizedBox(
                                           height: 180,
                                           width: 150,
@@ -316,7 +320,7 @@ class _AllBooksState extends State<AllBooks> {
                                               Text(
                                                 file.title,
                                                 style: const TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 17,
                                                   fontWeight: FontWeight.bold,
                                                   color: Color(0xff292735),
                                                 ),
@@ -324,36 +328,33 @@ class _AllBooksState extends State<AllBooks> {
                                                 maxLines: 3,
                                                 softWrap: true,
                                               ),
-                                              const Divider(
-                                                  color: Colors.black),
+                                              const Divider(),
                                               const ListTile(
-                                                contentPadding:
-                                                    EdgeInsets.only(left: 0),
-                                                horizontalTitleGap: 0,
-                                                minVerticalPadding: 0,
-                                                minLeadingWidth: 0,
-                                                leading: Icon(
-                                                  Icons.download_done_rounded,
-                                                  color: Colors.green,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                ),
-                                                title: TextWidget(
-                                                    color: Colors.grey,
-                                                    text: "Downloaded",
-                                                    fontSize: 14),
-                                              ),
-                                              const Divider(color: Colors.grey),
-                                              // Text(
-                                              //   book.description,
-                                              //   style: const TextStyle(
-                                              //       fontWeight: FontWeight.bold,
-                                              //       color: Colors.grey,
-                                              //       fontSize: 14),
-                                              //   overflow: TextOverflow.ellipsis,
-                                              //   maxLines: 2,
-                                              //   softWrap: true,
-                                              // ),
+                                                  contentPadding:
+                                                      EdgeInsets.all(0),
+                                                  horizontalTitleGap: 0,
+                                                  minVerticalPadding: 0,
+                                                  minLeadingWidth: 0,
+                                                  leading: Icon(
+                                                    Icons.download_done_rounded,
+                                                    color: Colors.green,
+                                                    textDirection:
+                                                        TextDirection.ltr,
+                                                  ),
+                                                  title: Text(
+                                                    "Downloaded",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black54,
+                                                      fontSize: 15,
+                                                    ),
+                                                  )
+                                                  // title: TextWidget(
+                                                  //     color: Colors.black54,
+                                                  //     text: "Downloaded",
+                                                  //     fontSize: 15),
+                                                  ),
                                             ],
                                           ),
                                         ),
@@ -370,7 +371,6 @@ class _AllBooksState extends State<AllBooks> {
                         child: Column(
                           children: books.map(
                             (book) {
-                              debugPrint(book.picurl.toString());
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -388,6 +388,8 @@ class _AllBooksState extends State<AllBooks> {
                                   child: Stack(
                                     children: [
                                       Positioned(
+                                        left: 5,
+                                        right: 5,
                                         top: 35,
                                         child: Material(
                                           elevation: 0.0,
@@ -397,14 +399,14 @@ class _AllBooksState extends State<AllBooks> {
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(0.0),
+                                                  BorderRadius.circular(5.0),
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.grey
-                                                      .withOpacity(0.3),
+                                                      .withOpacity(0.2),
                                                   offset:
                                                       const Offset(0.0, 0.0),
-                                                  blurRadius: 20.0,
+                                                  blurRadius: 18.0,
                                                   spreadRadius: 4.0,
                                                 )
                                               ],
@@ -415,7 +417,7 @@ class _AllBooksState extends State<AllBooks> {
                                       ),
                                       Positioned(
                                         top: 0,
-                                        left: 10,
+                                        left: 12,
                                         child: Card(
                                           color: Colors.transparent,
                                           elevation: 10.0,
@@ -429,7 +431,6 @@ class _AllBooksState extends State<AllBooks> {
                                               ? CachedNetworkImage(
                                                   imageUrl:
                                                       "$host${book.picurl}",
-                                                  // "https://drive.google.com/uc?export=view&id=${book.img}",
                                                   imageBuilder: (context,
                                                           imageProvider) =>
                                                       Container(
@@ -472,8 +473,8 @@ class _AllBooksState extends State<AllBooks> {
                                         ),
                                       ),
                                       Positioned(
-                                        top: 45,
-                                        left: width * 0.5,
+                                        top: 47,
+                                        left: width * 0.5 - 5,
                                         child: SizedBox(
                                           height: 180,
                                           width: 150,
@@ -492,12 +493,22 @@ class _AllBooksState extends State<AllBooks> {
                                                 softWrap: true,
                                               ),
                                               const Divider(),
-                                              const TextWidget(
-                                                  color: Color(0xcd292735),
-                                                  text:
-                                                      "Author: CK Children's Publishing",
-                                                  fontSize: 14),
-                                              // const Divider(color: Colors.grey),
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                    right: 2),
+                                                child: const Text(
+                                                  "Author: CK Children's Publishing",
+                                                  style: TextStyle(
+                                                    color: Color(0xcd292735),
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                  softWrap: true,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),

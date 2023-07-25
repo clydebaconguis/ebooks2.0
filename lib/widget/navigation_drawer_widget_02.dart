@@ -524,12 +524,6 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     return '';
   }
 
-  void main() {
-    String url = '/path/to/your/file.pdf';
-    String fileExtension = getFileExtension(url);
-    print('File extension: $fileExtension'); // Output: .pdf
-  }
-
   Widget buildMenuItemTiles({
     required PdfTile item,
     required bool isCollapsed,
