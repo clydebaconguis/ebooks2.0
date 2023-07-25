@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/components/text_widget.dart';
 import 'package:ebooks/pages/nav_main.dart';
-import 'package:ebooks/pages/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,50 +106,55 @@ class _SignInState extends State<SignIn> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
-            padding: const EdgeInsets.only(left: 30, right: 40),
+            padding: const EdgeInsets.only(left: 30, right: 30),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   const SizedBox(
                     height: 20,
                   ),
-                  ListTile(
-                    horizontalTitleGap: 0,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Setting(),
-                      ),
-                    ),
-                    leading: const Icon(
-                      Icons.settings_suggest_rounded,
-                      color: Colors.black,
-                      size: 35,
-                    ),
-                    title: const Text(
-                      "Configure Domain",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ),
+                  // ListTile(
+                  //   horizontalTitleGap: 0,
+                  //   onTap: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const Setting(),
+                  //     ),
+                  //   ),
+                  //   leading: const Icon(
+                  //     Icons.settings_suggest_rounded,
+                  //     color: Colors.black,
+                  //     size: 35,
+                  //   ),
+                  //   title: const Text(
+                  //     "Configure Domain",
+                  //     style: TextStyle(color: Colors.black54),
+                  //   ),
+                  // ),
                   SizedBox(height: height * 0.1),
                   Text(
                     'You’re One Step Away From Greatness',
-                    style: GoogleFonts.permanentMarker(
+                    style: GoogleFonts.prompt(
                       textStyle: const TextStyle(
-                          fontSize: 30,
-                          color: Color.fromARGB(255, 209, 22,
-                              128) // Adjust the font size as needed.
-                          // You can add other text styles such as color, fontWeight, etc. here.
-                          ),
+                        color: Color.fromARGB(
+                          255,
+                          209,
+                          22,
+                          128,
+                        ),
+                        fontWeight: FontWeight.w900,
+                        fontSize: 33,
+                      ),
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: height * 0.1),
                   TextInput(
                       textString: "Email",
                       textController: emailController,
                       hint: "Email"),
-                  SizedBox(
-                    height: height * .05,
+                  const SizedBox(
+                    height: 30,
                   ),
                   TextInput(
                     textString: "Password",
@@ -166,13 +170,16 @@ class _SignInState extends State<SignIn> {
                     children: [
                       Text(
                         'Sign in',
-                        style: GoogleFonts.permanentMarker(
+                        style: GoogleFonts.prompt(
                           textStyle: const TextStyle(
-                              fontSize: 22,
-                              color: Color.fromARGB(255, 209, 22,
-                                  128) // Adjust the font size as needed.
-                              // You can add other text styles such as color, fontWeight, etc. here.
+                              color: Color.fromARGB(
+                                255,
+                                209,
+                                22,
+                                128,
                               ),
+                              fontWeight: FontWeight.w900,
+                              fontSize: 26),
                         ),
                       ),
                       GestureDetector(
@@ -254,6 +261,7 @@ class TextInput extends StatefulWidget {
   final TextEditingController textController;
   final String hint;
   final bool obscureText;
+
   const TextInput({
     Key? key,
     required this.textString,
@@ -268,6 +276,26 @@ class TextInput extends StatefulWidget {
 
 class _TextInputState extends State<TextInput> {
   bool _obscureText = true;
+  final _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -277,17 +305,24 @@ class _TextInputState extends State<TextInput> {
       controller: widget.textController,
       keyboardType: TextInputType.text,
       obscureText: widget.textString == "Password" ? _obscureText : false,
+      focusNode: _focusNode,
       decoration: InputDecoration(
-        enabledBorder: const UnderlineInputBorder(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Color(0xffcf167f),
+            color: _isFocused ? Colors.blue : Colors.grey,
+            width: 2.0,
           ),
         ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Color(0xffcf167f),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(
+            color: Colors.blue,
+            width: 2.0,
           ),
         ),
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: 15, horizontal: 16), // Adjust the vertical padding here
         hintText: widget.textString,
         hintStyle: const TextStyle(
           color: Color(0xFF9b9b9b),
