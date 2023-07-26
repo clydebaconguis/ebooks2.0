@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:ebooks/data/drawer_items.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../models/pdf_tile.dart';
 import '../user/user.dart';
@@ -50,6 +50,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   logout() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     await localStorage.clear();
+    // EasyLoading.dismiss();
   }
 
   @override
@@ -369,18 +370,23 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         )
       : Container(
           padding: const EdgeInsets.only(bottom: 22, top: 22),
-          child: const Row(
+          child: Row(
             children: [
-              SizedBox(width: 24),
-              Image(
+              const SizedBox(width: 24),
+              const Image(
                 width: 50,
                 height: 50,
                 image: AssetImage("img/liceo-logo.png"),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Text(
                 'EBook',
-                style: TextStyle(fontSize: 32, color: Colors.white),
+                style: GoogleFonts.prompt(
+                  textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 30),
+                ),
               ),
             ],
           ),
@@ -405,14 +411,13 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             text: item.title,
             icon: item.icon,
             onClicked: () {
-              EasyLoading.show(status: 'Signing out...');
+              // EasyLoading.show(status: 'Signing out...');
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const SignIn(),
+                ),
+              );
               logout();
-              EasyLoading.dismiss();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => const SignIn(),
-                  ),
-                  (Route<dynamic> route) => false);
             },
           );
         },
@@ -458,20 +463,20 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                     radius: 60,
                   ),
                 ),
-                // Positioned(
-                //   left: 4,
-                //   bottom: 0,
-                //   child: buildEditIcon(const Color(0xE70DDA11), 28, 4),
-                // ),
               ],
             ),
             const SizedBox(height: 20),
-            Text(
-              user.name.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFEC6A92),
+            Padding(
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 10),
+              child: Text(
+                user.name.toUpperCase(),
+                style: GoogleFonts.prompt(
+                  textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18),
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(
@@ -479,9 +484,19 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             ),
             Text(
               grade,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.greenAccent),
+              style: GoogleFonts.prompt(
+                textStyle: const TextStyle(
+                  color: Colors.greenAccent,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              textAlign: TextAlign.center,
             ),
+            // Text(
+            //   grade,
+            //   style: const TextStyle(
+            //       fontWeight: FontWeight.bold, color: Colors.greenAccent),
+            // ),
           ],
         );
 

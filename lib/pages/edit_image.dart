@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
+// import 'package:path/path.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,33 +53,33 @@ class _EditImagePageState extends State<EditImagePage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: SizedBox(
-              width: 330,
-              child: GestureDetector(
-                onTap: () async {
-                  final image = await ImagePicker()
-                      .pickImage(source: ImageSource.gallery);
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 20),
+          //   child: SizedBox(
+          //     width: 330,
+          //     child: GestureDetector(
+          //       onTap: () async {
+          //         final image = await ImagePicker()
+          //             .pickImage(source: ImageSource.gallery);
 
-                  if (image == null) return;
+          //         if (image == null) return;
 
-                  final location = await getApplicationDocumentsDirectory();
-                  final name = basename(image.path);
-                  final imageFile = File('${location.path}/$name');
-                  final newImage = await File(image.path).copy(imageFile.path);
-                  setState(() {
-                    // widget.user = widget.user.copy(image: newImage.path);
-                    // user.image = newImage.path;
-                    updateUserValue(newImage.path);
-                  });
-                },
-                child: widget.user.image.contains('https')
-                    ? Image.network(widget.user.image)
-                    : Image.file(File(widget.user.image)),
-              ),
-            ),
-          ),
+          //         final location = await getApplicationDocumentsDirectory();
+          //         final name = basename(image.path);
+          //         final imageFile = File('${location.path}/$name');
+          //         final newImage = await File(image.path).copy(imageFile.path);
+          //         setState(() {
+          //           // widget.user = widget.user.copy(image: newImage.path);
+          //           // user.image = newImage.path;
+          //           updateUserValue(newImage.path);
+          //         });
+          //       },
+          //       child: widget.user.image.contains('https')
+          //           ? Image.network(widget.user.image)
+          //           : Image.file(File(widget.user.image)),
+          //     ),
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.only(top: 40),
             child: Align(

@@ -2,14 +2,16 @@ import 'dart:io';
 
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/models/pdf_tile.dart';
+import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
+import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
@@ -25,11 +27,11 @@ class MyNav2 extends StatelessWidget {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: books.title,
-          theme: ThemeData(
-            textTheme: GoogleFonts.poppinsTextTheme(
-              Theme.of(context).textTheme,
-            ),
-          ),
+          // theme: ThemeData(
+          //   textTheme: GoogleFonts.poppinsTextTheme(
+          //     Theme.of(context).textTheme,
+          //   ),
+          // ),
           home: NavPdf(
             path: path,
             books: books,
@@ -49,24 +51,40 @@ class NavPdf extends StatefulWidget {
 
 class _NavPdfState extends State<NavPdf> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String host = "";
+  String host = CallApi().getHost();
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
 
-  getMyDomain() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savedDomainName = prefs.getString('domainname') ?? '';
-    setState(() {
-      host = savedDomainName;
-    });
-  }
+  // getMyDomain() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var savedDomainName = prefs.getString('domainname') ?? '';
+  //   setState(() {
+  //     host = savedDomainName;
+  //   });
+  // }
 
   @override
   void initState() {
-    getMyDomain();
+    getUser();
     restrictScreenshot();
     _openDrawerAutomatically();
     super.initState();
+  }
+
+  getUser() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final json = preferences.getString('token');
+    if (json == null || json.isEmpty) {
+      redirectToSignIn();
+    }
+  }
+
+  void redirectToSignIn() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const SignIn(),
+        ),
+        (Route<dynamic> route) => false);
   }
 
   void playVidOnline(String vidPath) {
@@ -145,12 +163,18 @@ class _NavPdfState extends State<NavPdf> {
           ),
           title: title.isEmpty ? Text(widget.books.title) : Text(title),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NavMain()),
+                );
+              },
+              icon: const Icon(Icons.home_filled),
+            ),
+          ],
         ),
-        // body: Center(
-        //   child: Chewie(
-        //     controller: _chewieController,
-        //   ),
-        // ),
         body: (pdfPath.isNotEmpty && getFileExtension(pdfPath) == ".pdf")
             ? SfPdfViewer.file(
                 File(pdfPath),

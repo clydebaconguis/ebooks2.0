@@ -8,7 +8,6 @@ import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,16 +47,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (context) => NavigationProvider(),
-        child: MaterialApp(
+        child: const MaterialApp(
           color: Colors.black12,
           debugShowCheckedModeBanner: false,
           title: title,
-          theme: ThemeData(
-            textTheme: GoogleFonts.poppinsTextTheme(
-              Theme.of(context).textTheme,
-            ),
-          ),
-          home: const AllBooks(),
+          // theme: ThemeData(
+          //   textTheme: GoogleFonts.promp(
+          //     Theme.of(context).textTheme,
+          //   ),
+          // ),
+          home: AllBooks(),
         ),
       );
 }

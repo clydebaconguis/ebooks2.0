@@ -10,13 +10,13 @@ class Welcome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: const WelcomePage(),
+    return const MaterialApp(
+      // theme: ThemeData(
+      //   textTheme: GoogleFonts.poppinsTextTheme(
+      //     Theme.of(context).textTheme,
+      //   ),
+      // ),
+      home: WelcomePage(),
       debugShowCheckedModeBanner: false,
       title: 'Ebook',
     );
@@ -146,10 +146,12 @@ class _WelcomePageState extends State<WelcomePage> {
                   margin: const EdgeInsets.only(right: 10),
                   child: Text(
                     articles[i].isEmpty ? "Nothing " : articles[i],
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                    style: GoogleFonts.prompt(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22),
+                    ),
                   ),
                 );
               },
@@ -182,19 +184,13 @@ class _WelcomePageState extends State<WelcomePage> {
                         children: <Widget>[
                           Text(
                             'Get Started',
-                            style: GoogleFonts.permanentMarker(
+                            style: GoogleFonts.prompt(
                               textStyle: const TextStyle(
-                                  fontSize: 25,
-                                  color: Colors
-                                      .white // Adjust the font size as needed.
-                                  // You can add other text styles such as color, fontWeight, etc. here.
-                                  ),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 25),
                             ),
                           ),
-                          // Text(
-                          //   'Get Started',
-                          //   style: TextStyle(color: Colors.white, fontSize: 26),
-                          // ),
                         ],
                       ),
                     ),

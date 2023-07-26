@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../user/user.dart';
 import '../user/user_data.dart';
@@ -39,60 +40,84 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final user = UserData.myUser;
     final double height = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Profile'),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff500a34), Color(0xffcf167f)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "Profile",
+                  style: GoogleFonts.prompt(
+                    textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff500a34), Color(0xffcf167f)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: height * 0.05),
-            InkWell(
-              onTap: () {
-                // navigateSecondPage(EditImagePage(
-                //   user: user,
-                // ));
-              },
-              child: DisplayImage(
-                imagePath: 'img/anonymous.jpg',
-                onPressed: () {},
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: height * 0.05),
+              InkWell(
+                onTap: () {
+                  // navigateSecondPage(EditImagePage(
+                  //   user: user,
+                  // ));
+                },
+                child: DisplayImage(
+                  imagePath: 'img/anonymous.jpg',
+                  onPressed: () {},
+                ),
               ),
-            ),
-            buildUserInfoDisplay(
-              user.name,
-              'Name',
-              EditNameFormPage(user: user),
-            ),
-            buildUserInfoDisplay(
-              user.mobilenum,
-              'Phone',
-              EditPhoneFormPage(user: user),
-            ),
-            buildUserInfoDisplay(
-              grade,
-              'Grade Level',
-              EditPhoneFormPage(user: user),
-            ),
-            buildUserInfoDisplay(
-              user.email,
-              'Email',
-              EditEmailFormPage(user: user),
-            ),
-            // buildAbout(user),
-          ],
+              buildUserInfoDisplay(
+                user.name,
+                'Name',
+                EditNameFormPage(user: user),
+              ),
+              buildUserInfoDisplay(
+                user.mobilenum,
+                'Phone',
+                EditPhoneFormPage(user: user),
+              ),
+              buildUserInfoDisplay(
+                grade,
+                'Grade Level',
+                EditPhoneFormPage(user: user),
+              ),
+              buildUserInfoDisplay(
+                user.email,
+                'Email',
+                EditEmailFormPage(user: user),
+              ),
+              // buildAbout(user),
+            ],
+          ),
         ),
       ),
     );

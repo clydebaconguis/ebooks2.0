@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:ebooks/app_util.dart';
 import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
-import 'package:ebooks/pages/classmate_page.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 import '../models/pdf_tile.dart';
-import '../pages/profile_page.dart';
 
 class NavigationDrawerWidget2 extends StatefulWidget {
   final Function(String, String) updateData;
@@ -273,11 +271,11 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 child: buildHeader(isCollapsed),
               ),
               // const SizedBox(height: 5),
-              buildList(items: itemsFirst3, isCollapsed: isCollapsed),
+              // buildList(items: itemsFirst3, isCollapsed: isCollapsed),
 
-              const Divider(
-                color: Colors.white24,
-              ),
+              // const Divider(
+              //   color: Colors.white24,
+              // ),
 
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 8.0),
@@ -757,21 +755,17 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
       );
 
   void selectItem(BuildContext context, int index) {
-    navigateTo(page) => Navigator.of(context).push(MaterialPageRoute(
+    navigateTo(page) => Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
           builder: (context) => page,
-        ));
+        ),
+        (Route<dynamic> route) => false);
 
     Navigator.of(context).pop();
 
     switch (index) {
       case 0:
         navigateTo(const MyNav());
-        break;
-      case 1:
-        navigateTo(const Classmate());
-        break;
-      case 2:
-        navigateTo(const ProfilePage());
         break;
     }
   }

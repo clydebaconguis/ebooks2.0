@@ -21,14 +21,13 @@ const snackBar2 = SnackBar(
 
 class _SignInState extends State<SignIn> {
   var loggedIn = false;
-  var domain = '';
+  bool isButtonEnabled = true;
   // late bool _isLoading = false;
   TextEditingController textController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
   @override
   void initState() {
-    _loadSavedDomainName();
     super.initState();
   }
 
@@ -43,21 +42,6 @@ class _SignInState extends State<SignIn> {
           ),
           (Route<dynamic> route) => false);
     });
-  }
-
-  _loadSavedDomainName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savedDomainName = prefs.getString('domainname') ?? '';
-    setState(() {
-      domain = savedDomainName;
-    });
-    if (domain.isNotEmpty) {
-      if (textController.text.isNotEmpty || emailController.text.isNotEmpty) {
-        _login();
-      }
-    } else {
-      EasyLoading.showInfo("Domain Not Configured");
-    }
   }
 
   _login() async {
@@ -90,6 +74,9 @@ class _SignInState extends State<SignIn> {
     } finally {
       EasyLoading.dismiss();
     }
+    setState(() {
+      isButtonEnabled = true;
+    });
   }
 
   @override
@@ -97,155 +84,158 @@ class _SignInState extends State<SignIn> {
     final double height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // ListTile(
-                  //   horizontalTitleGap: 0,
-                  //   onTap: () => Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => const Setting(),
-                  //     ),
-                  //   ),
-                  //   leading: const Icon(
-                  //     Icons.settings_suggest_rounded,
-                  //     color: Colors.black,
-                  //     size: 35,
-                  //   ),
-                  //   title: const Text(
-                  //     "Configure Domain",
-                  //     style: TextStyle(color: Colors.black54),
-                  //   ),
-                  // ),
-                  SizedBox(height: height * 0.1),
-                  Text(
-                    'You’re One Step Away From Greatness',
-                    style: GoogleFonts.prompt(
-                      textStyle: const TextStyle(
-                        color: Color.fromARGB(
-                          255,
-                          209,
-                          22,
-                          128,
-                        ),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 33,
-                      ),
+      home: WillPopScope(
+        onWillPop: () async {
+          // Prevent navigating back by returning false
+          return false;
+        },
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Container(
+              padding: const EdgeInsets.only(left: 30, right: 30),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: height * 0.1),
-                  TextInput(
-                      textString: "Email",
-                      textController: emailController,
-                      hint: "Email"),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextInput(
-                    textString: "Password",
-                    textController: textController,
-                    hint: "Password",
-                    obscureText: true,
-                  ),
-                  SizedBox(
-                    height: height * .05,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Sign in',
-                        style: GoogleFonts.prompt(
-                          textStyle: const TextStyle(
-                              color: Color.fromARGB(
-                                255,
-                                209,
-                                22,
-                                128,
-                              ),
-                              fontWeight: FontWeight.w900,
-                              fontSize: 26),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          if (textController.text.isEmpty ||
-                              emailController.text.isEmpty) {
-                            EasyLoading.showToast(
-                              'Fill all fields!',
-                              toastPosition: EasyLoadingToastPosition.bottom,
-                            );
-                          } else {
-                            _loadSavedDomainName();
-                          }
-                        },
-                        child: Container(
-                          height: 60,
-                          width: 60,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 209, 22, 128),
+                    // ListTile(
+                    //   horizontalTitleGap: 0,
+                    //   onTap: () => Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const Setting(),
+                    //     ),
+                    //   ),
+                    //   leading: const Icon(
+                    //     Icons.settings_suggest_rounded,
+                    //     color: Colors.black,
+                    //     size: 35,
+                    //   ),
+                    //   title: const Text(
+                    //     "Configure Domain",
+                    //     style: TextStyle(color: Colors.black54),
+                    //   ),
+                    // ),
+                    SizedBox(height: height * 0.1),
+                    Text(
+                      'You’re One Step Away From Greatness',
+                      style: GoogleFonts.prompt(
+                        textStyle: const TextStyle(
+                          color: Color.fromARGB(
+                            255,
+                            209,
+                            22,
+                            128,
                           ),
-                          child: const Icon(Icons.arrow_forward,
-                              color: Colors.white, size: 30),
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * .1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => const SignUp(),
-                          //   ),
-                          // );
-                          EasyLoading.showInfo(
-                              'Sign up is temporarily unavailable!');
-                        },
-                        child: const TextWidget(
-                          color: Color(0xffcf167f),
-                          text: "Sign up",
-                          fontSize: 16,
-                          isUnderLine: true,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 33,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          EasyLoading.showInfo(
-                              'Pls inform the authority or your teacher if you forgot your credentials!');
-                        },
-                        child: const TextWidget(
-                          color: Color(0xffcf167f),
-                          text: "Forgot Password",
-                          fontSize: 16,
-                          isUnderLine: true,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: height * 0.1),
+                    TextInput(
+                        textString: "Email",
+                        textController: emailController,
+                        hint: "Email"),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextInput(
+                      textString: "Password",
+                      textController: textController,
+                      hint: "Password",
+                      obscureText: true,
+                    ),
+                    SizedBox(
+                      height: height * .05,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Sign in',
+                          style: GoogleFonts.prompt(
+                            textStyle: const TextStyle(
+                                color: Color.fromARGB(
+                                  255,
+                                  209,
+                                  22,
+                                  128,
+                                ),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 26),
+                          ),
                         ),
-                      )
-                    ],
-                  )
-                ],
+                        GestureDetector(
+                          onTap: isButtonEnabled
+                              ? () {
+                                  if (textController.text.isEmpty ||
+                                      emailController.text.isEmpty) {
+                                    EasyLoading.showToast(
+                                      'Fill all fields!',
+                                      toastPosition:
+                                          EasyLoadingToastPosition.bottom,
+                                    );
+                                  } else {
+                                    setState(() {
+                                      isButtonEnabled = false;
+                                    });
+                                    _login();
+                                  }
+                                }
+                              : null,
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isButtonEnabled
+                                  ? const Color.fromARGB(255, 209, 22, 128)
+                                  : Colors.grey,
+                            ),
+                            child: const Icon(Icons.arrow_forward,
+                                color: Colors.white, size: 30),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * .1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            EasyLoading.showInfo(
+                                'Sign up is temporarily unavailable!');
+                          },
+                          child: const TextWidget(
+                            color: Color(0xffcf167f),
+                            text: "Sign up",
+                            fontSize: 16,
+                            isUnderLine: true,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            EasyLoading.showInfo(
+                                'Pls inform the authority or your teacher if you forgot your credentials!');
+                          },
+                          child: const TextWidget(
+                            color: Color(0xffcf167f),
+                            text: "Forgot Password",
+                            fontSize: 16,
+                            isUnderLine: true,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

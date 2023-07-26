@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:ebooks/models/pdf_tile.dart';
+import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
+import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,7 +29,7 @@ class DetailBookPage extends StatefulWidget {
 }
 
 class _DetailBookPageState extends State<DetailBookPage> {
-  String mainHost = "";
+  String mainHost = CallApi().getHost();
   // List<Lessons> lessons = [];
   bool _isLoading = false;
   double _diskSpace = 0;
@@ -38,13 +40,13 @@ class _DetailBookPageState extends State<DetailBookPage> {
   var bookCoverUrl = '';
   bool isButtonEnabled = true;
 
-  getMyDomain() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savedDomainName = prefs.getString('domainname') ?? '';
-    setState(() {
-      mainHost = savedDomainName;
-    });
-  }
+  // getMyDomain() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var savedDomainName = prefs.getString('domainname') ?? '';
+  //   setState(() {
+  //     mainHost = savedDomainName;
+  //   });
+  // }
 
   Future<void> initDiskSpacePlus() async {
     double diskSpace = 0;
@@ -65,10 +67,26 @@ class _DetailBookPageState extends State<DetailBookPage> {
 
   @override
   void initState() {
-    getMyDomain();
+    getToken();
     initDiskSpacePlus();
     _fetchParts();
     super.initState();
+  }
+
+  getToken() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final json = preferences.getString('token');
+    if (json == null || json.isEmpty) {
+      redirectToSignIn();
+    }
+  }
+
+  void redirectToSignIn() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const SignIn(),
+        ),
+        (Route<dynamic> route) => false);
   }
 
   Future<bool> fileExist(String folderName) async {
@@ -290,7 +308,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
     setState(() {
       isButtonEnabled = true;
     });
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => MyNav2(
@@ -341,212 +359,234 @@ class _DetailBookPageState extends State<DetailBookPage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: Scaffold(
-        body: Container(
-          color: Colors.white,
-          child: SafeArea(
-            child: Scaffold(
-              backgroundColor: Colors.white,
-              appBar: AppBar(
-                toolbarHeight: 30,
-                backgroundColor: const Color(0xFFffffff),
-                elevation: 0.0,
-              ),
-              body: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.only(left: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.only(left: 0, right: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.arrow_back_ios,
-                                  color: Color(0xff232324)),
-                              onPressed: () => Navigator.pop(context),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              toolbarHeight: 30,
+              backgroundColor: const Color(0xFFffffff),
+              elevation: 0.0,
+            ),
+            body: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.only(left: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(left: 0, right: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Material(
-                            elevation: 0.0,
-                            child: widget.bookInfo.picurl.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl:
-                                        '$mainHost${widget.bookInfo.picurl}',
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      height: 200,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.3),
-                                              spreadRadius: 8,
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 3))
-                                        ],
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            icon: const Icon(Icons.arrow_back_ios,
+                                color: Color(0xff232324)),
+                            onPressed: () =>
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => const MyNav(),
                                     ),
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  )
-                                : Container(
+                                    (Route<dynamic> route) => false),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      children: [
+                        Material(
+                          elevation: 0.0,
+                          child: widget.bookInfo.picurl.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl:
+                                      '$mainHost${widget.bookInfo.picurl}',
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
                                     height: 200,
                                     width: 150,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      image: const DecorationImage(
-                                        image: AssetImage("img/CK_logo.png"),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(0.3),
+                                            spreadRadius: 8,
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 3))
+                                      ],
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
                                   ),
-                          ),
-                          Container(
-                            width: screenWidth - 30 - 180 - 20,
-                            margin: const EdgeInsets.only(left: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                )
+                              : Container(
+                                  height: 200,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    image: const DecorationImage(
+                                      image: AssetImage("img/CK_logo.png"),
+                                    ),
+                                  ),
                                 ),
-                                TextWidget(
-                                  color: Colors.black87,
-                                  text: widget.bookInfo.title,
-                                  fontSize: 22,
-                                ),
-                                const Divider(color: Colors.grey),
-                                const TextWidget(
-                                  text: "Author : CK Children's Publishing",
-                                  fontSize: 15,
-                                  color: Colors.black54,
-                                ),
-                                // TextWidget(
-                                //     text: widget.bookInfo.description,
-                                //     fontSize: 16,
-                                //     color: const Color(0xFF7b8ea3)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      const Divider(
-                        endIndent: 20,
-                        color: Color(0xFF7b8ea3),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Row(
-                        children: [
-                          TextWidget(
-                            text: "Details",
-                            fontSize: 22,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: TextWidget(
-                          color: Colors.black54,
-                          text:
-                              'This book is brought to you by CK Children\'s Publishing. Your Access to Visual Learning and Integration',
-                          fontSize: 17,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: isButtonEnabled
-                                  ? () {
-                                      if (lowStorage) {
-                                        EasyLoading.showInfo(
-                                            'low storage! \npls clean your phone!');
-                                      } else {
-                                        setState(() {
-                                          isButtonEnabled = false;
-                                        });
-                                        _downloadPdf();
-                                      }
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: isButtonEnabled
-                                      ? Colors.pink
-                                      : Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                  ),
-                                  alignment: Alignment.center),
-                              child: const Text(
-                                "View Book",
-                                style: TextStyle(
-                                  fontSize: 20,
+                        Container(
+                          width: screenWidth - 30 - 180 - 20,
+                          margin: const EdgeInsets.only(left: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                widget.bookInfo.title,
+                                style: GoogleFonts.prompt(
+                                  textStyle: const TextStyle(
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 22),
                                 ),
                               ),
-                            ),
-                            // Expanded(child: Container()),
-                            // const IconButton(
-                            //     icon: Icon(Icons.arrow_forward_ios),
-                            //     onPressed: null)
-                          ],
+                              // TextWidget(
+                              //   color: Colors.black87,
+                              //   text: widget.bookInfo.title,
+                              //   fontSize: 22,
+                              // ),
+                              const Divider(color: Colors.grey),
+                              const TextWidget(
+                                text: "Author : CK Children's Publishing",
+                                fontSize: 15,
+                                color: Colors.black54,
+                              ),
+                              // TextWidget(
+                              //     text: widget.bookInfo.description,
+                              //     fontSize: 16,
+                              //     color: const Color(0xFF7b8ea3)),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    const Divider(
+                      endIndent: 20,
+                      color: Color(0xFF7b8ea3),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Details",
+                          style: GoogleFonts.prompt(
+                            textStyle: const TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 22),
+                          ),
+                        ),
+                        // TextWidget(
+                        //   text: "Details",
+                        //   fontSize: 22,
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: TextWidget(
+                        color: Colors.black54,
+                        text:
+                            'This book is brought to you by CK Children\'s Publishing. Your Access to Visual Learning and Integration',
+                        fontSize: 17,
                       ),
-                      // const Divider(color: Color(0xFF7b8ea3)),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: isButtonEnabled
+                                ? () {
+                                    if (lowStorage) {
+                                      EasyLoading.showInfo(
+                                          'low storage! \npls clean your phone!');
+                                    } else {
+                                      setState(() {
+                                        isButtonEnabled = false;
+                                      });
+                                      _downloadPdf();
+                                    }
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor:
+                                    isButtonEnabled ? Colors.pink : Colors.grey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 10.0,
+                                ),
+                                alignment: Alignment.center),
+                            // child: const Text(
+                            //   "View Book",
+                            //   style: TextStyle(
+                            //     fontSize: 20,
+                            //   ),
+                            // ),
+                            child: Text(
+                              "View Book",
+                              style: GoogleFonts.prompt(
+                                textStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 20),
+                              ),
+                            ),
+                          ),
+                          // Expanded(child: Container()),
+                          // const IconButton(
+                          //     icon: Icon(Icons.arrow_forward_ios),
+                          //     onPressed: null)
+                        ],
+                      ),
+                    ),
+                    // const Divider(color: Color(0xFF7b8ea3)),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
-      builder: EasyLoading.init(),
+      // builder: EasyLoading.init(),
     );
   }
 }

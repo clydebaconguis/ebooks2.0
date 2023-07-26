@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ebooks/api/my_api.dart';
 import 'package:ebooks/app_util.dart';
 import 'package:ebooks/pages/nav_pdf.dart';
+import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,7 @@ import '../user/user.dart';
 import '../user/user_data.dart';
 import 'detail_book.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AllBooks extends StatefulWidget {
   const AllBooks({Key? key}) : super(key: key);
@@ -23,7 +25,7 @@ class AllBooks extends StatefulWidget {
 
 class _AllBooksState extends State<AllBooks> {
   late ConnectivityResult _connectivityResult = ConnectivityResult.none;
-  String host = '';
+  String host = CallApi().getHost();
   var books = <Books2>[];
   List<PdfTile> files = [];
   bool reloaded = false;
@@ -48,12 +50,23 @@ class _AllBooksState extends State<AllBooks> {
   getUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final json = preferences.getString('user');
-    var savedDomainName = preferences.getString('domainname') ?? '';
+    var token = preferences.getString('token');
+    if (token == null || token.isEmpty) {
+      redirectToSignIn();
+    }
 
     setState(() {
-      host = savedDomainName;
+      // host = savedDomainName;
       user = json == null ? UserData.myUser : User.fromJson(jsonDecode(json));
     });
+  }
+
+  void redirectToSignIn() {
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const SignIn(),
+        ),
+        (Route<dynamic> route) => false);
   }
 
   @override
@@ -81,7 +94,7 @@ class _AllBooksState extends State<AllBooks> {
         displayScreeMsg();
       });
     });
-    readSpecificBook();
+    // readSpecificBook();
     super.initState();
   }
 
@@ -319,42 +332,65 @@ class _AllBooksState extends State<AllBooks> {
                                             children: [
                                               Text(
                                                 file.title,
-                                                style: const TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xff292735),
+                                                style: GoogleFonts.prompt(
+                                                  textStyle: const TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      fontSize: 18),
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
                                                 softWrap: true,
                                               ),
+                                              // Text(
+                                              //   file.title,
+                                              //   style: const TextStyle(
+                                              //     fontSize: 17,
+                                              //     fontWeight: FontWeight.bold,
+                                              //     color: Color(0xff292735),
+                                              //   ),
+                                              //   overflow: TextOverflow.ellipsis,
+                                              //   maxLines: 3,
+                                              //   softWrap: true,
+                                              // ),
                                               const Divider(),
-                                              const ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.all(0),
-                                                  horizontalTitleGap: 0,
-                                                  minVerticalPadding: 0,
-                                                  minLeadingWidth: 0,
-                                                  leading: Icon(
-                                                    Icons.download_done_rounded,
-                                                    color: Colors.green,
-                                                    textDirection:
-                                                        TextDirection.ltr,
+                                              ListTile(
+                                                contentPadding:
+                                                    const EdgeInsets.all(0),
+                                                horizontalTitleGap: 0,
+                                                minVerticalPadding: 0,
+                                                minLeadingWidth: 0,
+                                                leading: const Icon(
+                                                  Icons.download_done_rounded,
+                                                  color: Colors.green,
+                                                  textDirection:
+                                                      TextDirection.ltr,
+                                                ),
+                                                // title: Text(
+                                                //   "Downloaded",
+                                                //   style: TextStyle(
+                                                //     fontWeight:
+                                                //         FontWeight.bold,
+                                                //     color: Colors.black54,
+                                                //     fontSize: 15,
+                                                //   ),
+                                                // ),
+                                                title: Text(
+                                                  "Downloaded",
+                                                  style: GoogleFonts.prompt(
+                                                    textStyle: const TextStyle(
+                                                        color: Colors.green,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 15),
                                                   ),
-                                                  title: Text(
-                                                    "Downloaded",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black54,
-                                                      fontSize: 15,
-                                                    ),
-                                                  )
-                                                  // title: TextWidget(
-                                                  //     color: Colors.black54,
-                                                  //     text: "Downloaded",
-                                                  //     fontSize: 15),
-                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  softWrap: true,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -482,11 +518,24 @@ class _AllBooksState extends State<AllBooks> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              // Text(
+                                              //   book.title,
+                                              //   style: const TextStyle(
+                                              //     fontSize: 17,
+                                              //     fontWeight: FontWeight.bold,
+                                              //   ),
+                                              //   overflow: TextOverflow.ellipsis,
+                                              //   maxLines: 3,
+                                              //   softWrap: true,
+                                              // ),
                                               Text(
                                                 book.title,
-                                                style: const TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
+                                                style: GoogleFonts.prompt(
+                                                  textStyle: const TextStyle(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      fontSize: 18),
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 3,
