@@ -9,6 +9,7 @@ import 'package:ebooks/widget/navigation_drawer_widget_02.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -27,11 +28,13 @@ class MyNav2 extends StatelessWidget {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: books.title,
-          // theme: ThemeData(
-          //   textTheme: GoogleFonts.poppinsTextTheme(
-          //     Theme.of(context).textTheme,
-          //   ),
-          // ),
+          theme: ThemeData(
+            textTheme: const TextTheme(
+              bodyMedium: TextStyle(
+                  fontFamily:
+                      'Poppins'), // Example of using Poppins font in the theme
+            ),
+          ),
           home: NavPdf(
             path: path,
             books: books,
@@ -148,48 +151,59 @@ class _NavPdfState extends State<NavPdf> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
-        drawer: NavigationDrawerWidget2(updateData: updateData),
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff500a34), Color(0xffcf167f)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(statusBarColor: Color(0xff500a34)),
+        child: Scaffold(
+          key: _scaffoldKey, // Assign the GlobalKey to the Scaffold
+          drawer: NavigationDrawerWidget2(updateData: updateData),
+          appBar: AppBar(
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff500a34), Color(0xffcf167f)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
             ),
-          ),
-          title: title.isEmpty ? Text(widget.books.title) : Text(title),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NavMain()),
-                );
-              },
-              icon: const Icon(Icons.home_filled),
-            ),
-          ],
-        ),
-        body: (pdfPath.isNotEmpty && getFileExtension(pdfPath) == ".pdf")
-            ? SfPdfViewer.file(
-                File(pdfPath),
-                canShowPaginationDialog: false,
-                canShowScrollHead: false,
-              )
-            : (pdfPath.isNotEmpty && getFileExtension(pdfPath) == ".mp4")
-                ? Center(
-                    child: Chewie(
-                      controller: _chewieController,
-                    ),
+            title: title.isEmpty
+                ? Text(
+                    widget.books.title,
+                    style: GoogleFonts.prompt(fontWeight: FontWeight.bold),
                   )
-                : Image.file(
-                    File(widget.books.path),
+                : Text(
+                    title,
+                    style: GoogleFonts.prompt(fontWeight: FontWeight.bold),
                   ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NavMain()),
+                  );
+                },
+                icon: const Icon(Icons.home_filled),
+              ),
+            ],
+          ),
+          body: (pdfPath.isNotEmpty && getFileExtension(pdfPath) == ".pdf")
+              ? SfPdfViewer.file(
+                  File(pdfPath),
+                  canShowPaginationDialog: false,
+                  canShowScrollHead: false,
+                )
+              : (pdfPath.isNotEmpty && getFileExtension(pdfPath) == ".mp4")
+                  ? Center(
+                      child: Chewie(
+                        controller: _chewieController,
+                      ),
+                    )
+                  : Image.file(
+                      File(widget.books.path),
+                    ),
+        ),
       ),
     );
   }

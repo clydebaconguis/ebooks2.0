@@ -8,7 +8,7 @@ import 'package:ebooks/pages/settings.dart';
 import 'package:ebooks/provider/navigation_provider.dart';
 import 'package:ebooks/signup_login/sign_in.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+// import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -317,8 +317,14 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             )
           : ListTile(
               leading: leading,
-              title: Text(text,
-                  style: const TextStyle(color: color, fontSize: 16)),
+              title: Text(
+                text,
+                style: GoogleFonts.prompt(
+                  color: color,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: onClicked,
             ),
     );

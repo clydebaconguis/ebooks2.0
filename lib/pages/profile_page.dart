@@ -6,11 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../user/user.dart';
 import '../user/user_data.dart';
-import '../widget/display_image_widget.dart';
+// import '../widget/display_image_widget.dart';
 import 'edit_description.dart';
-import 'edit_email.dart';
-import 'edit_name.dart';
-import 'edit_phone.dart';
+// import 'edit_email.dart';
+// import 'edit_name.dart';
+// import 'edit_phone.dart';
 
 // This class handles the Page to dispaly the user's info on the "Edit Profile" Screen
 class ProfilePage extends StatefulWidget {
@@ -40,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
+    // final double height = MediaQuery.of(context).size.height;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -82,44 +82,135 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: height * 0.05),
-              InkWell(
-                onTap: () {
-                  // navigateSecondPage(EditImagePage(
-                  //   user: user,
-                  // ));
-                },
-                child: DisplayImage(
-                  imagePath: 'img/anonymous.jpg',
-                  onPressed: () {},
-                ),
-              ),
-              buildUserInfoDisplay(
-                user.name,
-                'Name',
-                EditNameFormPage(user: user),
-              ),
-              buildUserInfoDisplay(
-                user.mobilenum,
-                'Phone',
-                EditPhoneFormPage(user: user),
-              ),
-              buildUserInfoDisplay(
-                grade,
-                'Grade Level',
-                EditPhoneFormPage(user: user),
-              ),
-              buildUserInfoDisplay(
-                user.email,
-                'Email',
-                EditEmailFormPage(user: user),
-              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Card(
+                      margin: const EdgeInsets.all(10),
+                      elevation: 4.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const CircleAvatar(
+                              backgroundColor:
+                                  Color.fromARGB(255, 140, 228, 243),
+                              radius: 60.0,
+                              backgroundImage: AssetImage(
+                                'img/anonymous.jpg', // Replace with the actual profile picture URL
+                              ),
+                            ),
+                            const SizedBox(height: 22),
+                            Text(
+                              user.name,
+                              style: GoogleFonts.prompt(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xff500a34),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 25.0),
+                            buildProfileItem(
+                                Icons.phone,
+                                'Phone',
+                                user.mobilenum.isNotEmpty
+                                    ? user.mobilenum
+                                    : 'Not Specified'),
+                            const Divider(),
+                            buildProfileItem(Icons.school, 'Grade Level',
+                                grade.isNotEmpty ? grade : 'Not Specified'),
+                            const Divider(),
+                            buildProfileItem(
+                                Icons.email,
+                                'Email',
+                                user.email.isNotEmpty
+                                    ? user.email
+                                    : 'Not Specified'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              )
+
+              // SizedBox(height: height * 0.05),
+              // InkWell(
+              //   onTap: () {
+              //     // navigateSecondPage(EditImagePage(
+              //     //   user: user,
+              //     // ));
+              //   },
+              //   child: DisplayImage(
+              //     imagePath: 'img/anonymous.jpg',
+              //     onPressed: () {},
+              //   ),
+              // ),
+              // buildUserInfoDisplay(
+              //   user.name,
+              //   'Name',
+              //   EditNameFormPage(user: user),
+              // ),
+              // buildUserInfoDisplay(
+              //   user.mobilenum,
+              //   'Phone',
+              //   EditPhoneFormPage(user: user),
+              // ),
+              // buildUserInfoDisplay(
+              //   grade,
+              //   'Grade Level',
+              //   EditPhoneFormPage(user: user),
+              // ),
+              // buildUserInfoDisplay(
+              //   user.email,
+              //   'Email',
+              //   EditEmailFormPage(user: user),
+              // ),
               // buildAbout(user),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildProfileItem(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.black54),
+        const SizedBox(width: 8.0),
+        Text(
+          '$label:',
+          style: GoogleFonts.prompt(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Text(
+            value,
+            style: GoogleFonts.prompt(
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.right,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            softWrap: true,
+          ),
+        ),
+      ],
     );
   }
 

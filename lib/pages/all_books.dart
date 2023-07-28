@@ -58,6 +58,7 @@ class _AllBooksState extends State<AllBooks> {
     setState(() {
       // host = savedDomainName;
       user = json == null ? UserData.myUser : User.fromJson(jsonDecode(json));
+      // print(user.id);
     });
   }
 
@@ -125,12 +126,9 @@ class _AllBooksState extends State<AllBooks> {
     final pathFile = Directory(dir.path);
     // final pathFile = Directory(
     //     '${dir.path}/Visual Graphics Design Okey/1 INTRODUCTION TO COMPUTER IMAGES AND ADOBE PHOTOSHOP/Chapter 2: Getting Started in Photoshop');
-    final List<FileSystemEntity> entities = await pathFile.list().toList();
     pathFile.deleteSync(recursive: true);
-    for (var element in entities) {
-      print(element.path);
-    }
-    print(entities);
+
+    // print(entities);
   }
 
   getDownloadedBooks() async {
@@ -192,7 +190,7 @@ class _AllBooksState extends State<AllBooks> {
           if (element.isNotEmpty) {
             for (var item in element) {
               bb.add(item);
-              print(item);
+              // print(item);
             }
           }
         }
@@ -220,256 +218,78 @@ class _AllBooksState extends State<AllBooks> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: (files.isNotEmpty && !activeConnection)
-                    ? SingleChildScrollView(
-                        child: Column(
-                          children: files.asMap().keys.toList().map(
-                            (
-                              index,
-                            ) {
-                              var file = files[index];
-                              // debugPrint(file.path.toString());
-                              return GestureDetector(
-                                onTap: () {
-                                  saveCurrentBook(file.title);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyNav2(
-                                        books: file,
-                                        path: '',
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20),
-                                  height: 250,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        left: 5,
-                                        right: 5,
-                                        top: 35,
-                                        child: Material(
-                                          elevation: 0,
-                                          child: Container(
-                                            height: 180.0,
-                                            width: width * 0.9,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2),
-                                                  offset:
-                                                      const Offset(0.0, 0.0),
-                                                  blurRadius: 18.0,
-                                                  spreadRadius: 4.0,
-                                                )
-                                              ],
-                                            ),
-                                            // child: Text("This is where your content goes")
-                                          ),
+                child: RefreshIndicator(
+                  onRefresh: () => checkConnectivity(),
+                  child: (files.isNotEmpty && !activeConnection)
+                      ? SingleChildScrollView(
+                          child: Column(
+                            children: files.asMap().keys.toList().map(
+                              (
+                                index,
+                              ) {
+                                var file = files[index];
+                                // debugPrint(file.path.toString());
+                                return GestureDetector(
+                                  onTap: () {
+                                    saveCurrentBook(file.title);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyNav2(
+                                          books: file,
+                                          path: '',
                                         ),
                                       ),
-                                      Positioned(
-                                        top: 0,
-                                        left: 12,
-                                        child: Card(
-                                          color: Colors.transparent,
-                                          elevation: 10.0,
-                                          shadowColor:
-                                              Colors.grey.withOpacity(0.5),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                          ),
-                                          child: file.path.isNotEmpty
-                                              ? Container(
-                                                  height: 200,
-                                                  width: 150,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    image: DecorationImage(
-                                                      image: FileImage(
-                                                          File(file.path)),
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(
-                                                  height: 200,
-                                                  width: 150,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    image:
-                                                        const DecorationImage(
-                                                      image: AssetImage(
-                                                          "img/CK_logo.png"),
-                                                    ),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 47,
-                                        left: width * 0.5 - 5,
-                                        child: SizedBox(
-                                          height: 180,
-                                          width: 150,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                file.title,
-                                                style: GoogleFonts.prompt(
-                                                  textStyle: const TextStyle(
-                                                      color: Colors.black87,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      fontSize: 18),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 3,
-                                                softWrap: true,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    height: 250,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 5,
+                                          right: 5,
+                                          top: 35,
+                                          child: Material(
+                                            elevation: 0,
+                                            child: Container(
+                                              height: 180.0,
+                                              width: width * 0.9,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2),
+                                                    offset:
+                                                        const Offset(0.0, 0.0),
+                                                    blurRadius: 18.0,
+                                                    spreadRadius: 4.0,
+                                                  )
+                                                ],
                                               ),
-                                              // Text(
-                                              //   file.title,
-                                              //   style: const TextStyle(
-                                              //     fontSize: 17,
-                                              //     fontWeight: FontWeight.bold,
-                                              //     color: Color(0xff292735),
-                                              //   ),
-                                              //   overflow: TextOverflow.ellipsis,
-                                              //   maxLines: 3,
-                                              //   softWrap: true,
-                                              // ),
-                                              const Divider(),
-                                              ListTile(
-                                                contentPadding:
-                                                    const EdgeInsets.all(0),
-                                                horizontalTitleGap: 0,
-                                                minVerticalPadding: 0,
-                                                minLeadingWidth: 0,
-                                                leading: const Icon(
-                                                  Icons.download_done_rounded,
-                                                  color: Colors.green,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                ),
-                                                // title: Text(
-                                                //   "Downloaded",
-                                                //   style: TextStyle(
-                                                //     fontWeight:
-                                                //         FontWeight.bold,
-                                                //     color: Colors.black54,
-                                                //     fontSize: 15,
-                                                //   ),
-                                                // ),
-                                                title: Text(
-                                                  "Downloaded",
-                                                  style: GoogleFonts.prompt(
-                                                    textStyle: const TextStyle(
-                                                        color: Colors.green,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        fontSize: 15),
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  softWrap: true,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Column(
-                          children: books.map(
-                            (book) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailBookPage(
-                                          bookInfo: book, index: 0),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20),
-                                  height: 250,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        left: 5,
-                                        right: 5,
-                                        top: 35,
-                                        child: Material(
-                                          elevation: 0.0,
-                                          child: Container(
-                                            height: 180.0,
-                                            width: width * 0.9,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.2),
-                                                  offset:
-                                                      const Offset(0.0, 0.0),
-                                                  blurRadius: 18.0,
-                                                  spreadRadius: 4.0,
-                                                )
-                                              ],
+                                              // child: Text("This is where your content goes")
                                             ),
-                                            // child: Text("This is where your content goes")
                                           ),
                                         ),
-                                      ),
-                                      Positioned(
-                                        top: 0,
-                                        left: 12,
-                                        child: Card(
-                                          color: Colors.transparent,
-                                          elevation: 10.0,
-                                          shadowColor:
-                                              Colors.grey.withOpacity(0.5),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                          ),
-                                          child: book.picurl.isNotEmpty
-                                              ? CachedNetworkImage(
-                                                  imageUrl:
-                                                      "$host${book.picurl}",
-                                                  imageBuilder: (context,
-                                                          imageProvider) =>
-                                                      Container(
+                                        Positioned(
+                                          top: 0,
+                                          left: 12,
+                                          child: Card(
+                                            color: Colors.transparent,
+                                            elevation: 10.0,
+                                            shadowColor:
+                                                Colors.grey.withOpacity(0.5),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            child: file.path.isNotEmpty
+                                                ? Container(
                                                     height: 200,
                                                     width: 150,
                                                     decoration: BoxDecoration(
@@ -477,100 +297,318 @@ class _AllBooksState extends State<AllBooks> {
                                                           BorderRadius.circular(
                                                               10.0),
                                                       image: DecorationImage(
-                                                        image: imageProvider,
+                                                        image: FileImage(
+                                                            File(file.path)),
                                                         fit: BoxFit.fill,
                                                       ),
                                                     ),
-                                                  ),
-                                                  placeholder: (context, url) =>
-                                                      const Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  ),
-                                                  errorWidget: (context, url,
-                                                          error) =>
-                                                      const Icon(Icons.error),
-                                                )
-                                              : Container(
-                                                  height: 200,
-                                                  width: 150,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    image:
-                                                        const DecorationImage(
-                                                      image: AssetImage(
-                                                          "img/CK_logo.png"),
+                                                  )
+                                                : Container(
+                                                    height: 200,
+                                                    width: 150,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      image:
+                                                          const DecorationImage(
+                                                        image: AssetImage(
+                                                            "img/CK_logo.png"),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
+                                          ),
                                         ),
-                                      ),
-                                      Positioned(
-                                        top: 47,
-                                        left: width * 0.5 - 5,
-                                        child: SizedBox(
-                                          height: 180,
-                                          width: 150,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              // Text(
-                                              //   book.title,
-                                              //   style: const TextStyle(
-                                              //     fontSize: 17,
-                                              //     fontWeight: FontWeight.bold,
-                                              //   ),
-                                              //   overflow: TextOverflow.ellipsis,
-                                              //   maxLines: 3,
-                                              //   softWrap: true,
-                                              // ),
-                                              Text(
-                                                book.title,
-                                                style: GoogleFonts.prompt(
-                                                  textStyle: const TextStyle(
-                                                      color: Colors.black87,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      fontSize: 18),
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 3,
-                                                softWrap: true,
-                                              ),
-                                              const Divider(),
-                                              Container(
-                                                padding: const EdgeInsets.only(
-                                                    right: 2),
-                                                child: const Text(
-                                                  "Author: CK Children's Publishing",
-                                                  style: TextStyle(
-                                                    color: Color(0xcd292735),
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
+                                        Positioned(
+                                          top: 47,
+                                          left: width * 0.5 - 5,
+                                          child: SizedBox(
+                                            height: 180,
+                                            width: 150,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  file.title,
+                                                  style: GoogleFonts.prompt(
+                                                    textStyle: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        fontSize: 18),
                                                   ),
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  maxLines: 2,
+                                                  maxLines: 3,
                                                   softWrap: true,
                                                 ),
-                                              ),
-                                            ],
+                                                // Text(
+                                                //   file.title,
+                                                //   style: const TextStyle(
+                                                //     fontSize: 17,
+                                                //     fontWeight: FontWeight.bold,
+                                                //     color: Color(0xff292735),
+                                                //   ),
+                                                //   overflow: TextOverflow.ellipsis,
+                                                //   maxLines: 3,
+                                                //   softWrap: true,
+                                                // ),
+                                                const Divider(),
+                                                ListTile(
+                                                  contentPadding:
+                                                      const EdgeInsets.all(0),
+                                                  horizontalTitleGap: 0,
+                                                  minVerticalPadding: 0,
+                                                  minLeadingWidth: 0,
+                                                  leading: const Icon(
+                                                    Icons.download_done_rounded,
+                                                    color: Colors.green,
+                                                    textDirection:
+                                                        TextDirection.ltr,
+                                                  ),
+                                                  // title: Text(
+                                                  //   "Downloaded",
+                                                  //   style: TextStyle(
+                                                  //     fontWeight:
+                                                  //         FontWeight.bold,
+                                                  //     color: Colors.black54,
+                                                  //     fontSize: 15,
+                                                  //   ),
+                                                  // ),
+                                                  title: Text(
+                                                    "Downloaded",
+                                                    style: GoogleFonts.prompt(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              color:
+                                                                  Colors.green,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              fontSize: 15),
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ).toList(),
+                                );
+                              },
+                            ).toList(),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: books.map(
+                              (book) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // print(book.bookid);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailBookPage(
+                                            bookInfo: book, index: 0),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    height: 250,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 5,
+                                          right: 5,
+                                          top: 35,
+                                          child: Material(
+                                            elevation: 0.0,
+                                            child: Container(
+                                              height: 180.0,
+                                              width: width * 0.9,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2),
+                                                    offset:
+                                                        const Offset(0.0, 0.0),
+                                                    blurRadius: 18.0,
+                                                    spreadRadius: 4.0,
+                                                  )
+                                                ],
+                                              ),
+                                              // child: Text("This is where your content goes")
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          left: 12,
+                                          child: Card(
+                                            color: Colors.transparent,
+                                            elevation: 10.0,
+                                            shadowColor:
+                                                Colors.grey.withOpacity(0.5),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15.0),
+                                            ),
+                                            child: book.picurl.isNotEmpty
+                                                ? CachedNetworkImage(
+                                                    imageUrl:
+                                                        "$host${book.picurl}",
+                                                    imageBuilder: (context,
+                                                            imageProvider) =>
+                                                        Container(
+                                                      height: 200,
+                                                      width: 150,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.0),
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.fill,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    ),
+                                                    errorWidget:
+                                                        (context, url, error) =>
+                                                            Container(
+                                                      height: 200,
+                                                      width: 150,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            spreadRadius: 4.0,
+                                                            blurRadius: 20.0,
+                                                            offset:
+                                                                const Offset(
+                                                                    0, 3),
+                                                          )
+                                                        ],
+                                                        image:
+                                                            const DecorationImage(
+                                                          image: AssetImage(
+                                                              "img/CK_logo.png"),
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    height: 200,
+                                                    width: 150,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      image:
+                                                          const DecorationImage(
+                                                        image: AssetImage(
+                                                            "img/CK_logo.png"),
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 47,
+                                          left: width * 0.5 - 5,
+                                          child: SizedBox(
+                                            height: 180,
+                                            width: 150,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Text(
+                                                //   book.title,
+                                                //   style: const TextStyle(
+                                                //     fontSize: 17,
+                                                //     fontWeight: FontWeight.bold,
+                                                //   ),
+                                                //   overflow: TextOverflow.ellipsis,
+                                                //   maxLines: 3,
+                                                //   softWrap: true,
+                                                // ),
+                                                Text(
+                                                  book.title,
+                                                  style: GoogleFonts.prompt(
+                                                    textStyle: const TextStyle(
+                                                        color: Colors.black87,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        fontSize: 18),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 3,
+                                                  softWrap: true,
+                                                ),
+                                                const Divider(),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 2),
+                                                  child: Text(
+                                                    "Author: CK Children's Publishing",
+                                                    style: GoogleFonts.poppins(
+                                                      color: const Color(
+                                                          0xcd292735),
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ).toList(),
+                          ),
                         ),
-                      ),
-              )
+                ),
+              ),
             ],
           ),
         ),

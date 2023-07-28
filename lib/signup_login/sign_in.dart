@@ -56,7 +56,7 @@ class _SignInState extends State<SignIn> {
       var body = {};
       if (res != null) {
         body = json.decode(res.body);
-        print(body);
+        // print(body);
       }
 
       if (body['success']) {
@@ -69,7 +69,7 @@ class _SignInState extends State<SignIn> {
         EasyLoading.showError('Failed to Login');
       }
     } catch (e) {
-      print('Error during login: $e');
+      // print('Error during login: $e');
       EasyLoading.showError('An error occurred during login');
     } finally {
       EasyLoading.dismiss();
@@ -193,7 +193,7 @@ class _SignInState extends State<SignIn> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isButtonEnabled
-                                  ? const Color.fromARGB(255, 209, 22, 128)
+                                  ? const Color(0xFF99135F)
                                   : Colors.grey,
                             ),
                             child: const Icon(Icons.arrow_forward,

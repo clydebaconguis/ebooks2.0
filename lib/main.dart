@@ -70,12 +70,15 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   @override
-  Widget build(BuildContext context) => Scaffold(
-        drawer: const NavigationDrawerWidget(),
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text(
-            MyApp.title,
+  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(statusBarColor: Color(0xff500a34)),
+        child: Scaffold(
+          drawer: const NavigationDrawerWidget(),
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            title: const Text(
+              MyApp.title,
+            ),
           ),
         ),
       );

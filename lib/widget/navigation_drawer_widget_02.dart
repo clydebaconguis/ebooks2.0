@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:ebooks/app_util.dart';
-import 'package:ebooks/data/drawer_items.dart';
+// import 'package:ebooks/data/drawer_items.dart';
 import 'package:ebooks/models/drawer_item.dart';
 import 'package:ebooks/pages/nav_main.dart';
 import 'package:ebooks/provider/navigation_provider2.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -280,7 +281,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 8.0),
                 child: TextField(
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(
                     color: Colors.white,
                   ),
                   onChanged: (value) {
@@ -575,7 +576,8 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                 childrenPadding: const EdgeInsets.all(0),
                 title: Text(
                   text,
-                  style: const TextStyle(color: color, fontSize: 15),
+                  style: GoogleFonts.poppins(
+                      color: color, fontSize: 15, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                   softWrap: true,
@@ -625,11 +627,12 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             },
                             title: Text(
                               removeFileExtension(et.title),
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                   color: selectedPdf == et.title
                                       ? Colors.greenAccent
                                       : Colors.white,
-                                  fontSize: 15),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600),
                             ),
                             // onTap: onClicked,
                           ),
@@ -657,8 +660,11 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             collapsedIconColor: color,
                             title: Text(
                               e.title,
-                              style:
-                                  const TextStyle(color: color, fontSize: 15),
+                              style: GoogleFonts.poppins(
+                                color: color,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             children: e.children.map((item) {
                               return ListTile(
@@ -704,11 +710,12 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                   },
                                   title: Text(
                                     removeFileExtension(item.title),
-                                    style: TextStyle(
+                                    style: GoogleFonts.poppins(
                                         color: selectedPdf == item.title
                                             ? Colors.greenAccent
                                             : Colors.white,
-                                        fontSize: 15),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
                                   )
                                   // onTap: onClicked,
                                   );
@@ -866,7 +873,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               flex: 3,
               child: Text(
                 currentBook,
-                style: const TextStyle(
+                style: GoogleFonts.prompt(
                     fontSize: 18,
                     color: Colors.white,
                     fontWeight: FontWeight.bold),
