@@ -29,11 +29,12 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
   late List<PdfTile> files = [];
   var user = UserData.myUser;
   String grade = '';
+  String currentPage = '';
 
   @override
   void initState() {
-    // getDownloadedBooks();
     getUser();
+
     super.initState();
   }
 
@@ -59,6 +60,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
         EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
     final provider = Provider.of<NavigationProvider>(context);
     var isCollapsed = provider.isCollapsed;
+    currentPage = provider.currentPage;
 
     return SizedBox(
       width: isCollapsed ? MediaQuery.of(context).size.width * 0.2 : null,
@@ -167,18 +169,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     );
   }
 
-  onClick(path) {
-    // Navigator.of(context).pushAndRemoveUntil(
-    //     MaterialPageRoute(
-    //       builder: (context) => MyNav2(
-    //         path: path,
-    //         books: PdfTile(),
-    //       ),
-    //     ),
-    //     (Route<dynamic> route) => false);
-    // print(path);
-  }
-
   // Pdf Tile
   Widget buildTile({
     required bool isCollapsed,
@@ -229,28 +219,6 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                 text,
                 style: TextStyle(color: color),
               ),
-              // title: ExpansionTile(
-              //   collapsedIconColor: color,
-              //   title: Text(
-              //     text,
-              //     style: TextStyle(color: color, fontSize: 16),
-              //     overflow: TextOverflow.ellipsis,
-              //     maxLines: 2,
-              //     softWrap: true,
-              //   ),
-              //   children: items
-              //       .map((it) => ListTile(
-              //             onTap: () => onClick(it.path),
-              //             minVerticalPadding: 0,
-              //             horizontalTitleGap: 0,
-              //             leading: leadingPdf,
-              //             title: Text(
-              //               it.title,
-              //               style: TextStyle(color: color, fontSize: 16),
-              //             ),
-              //           ))
-              //       .toList(),
-              // ),
             ),
     );
   }
@@ -288,7 +256,16 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
 
     switch (index) {
       case 0:
-        navigateTo(const MyNav());
+        if (currentPage != "Home") {
+          navigateTo(const MyNav());
+          final provider =
+              Provider.of<NavigationProvider>(context, listen: false);
+          setState(() {
+            currentPage = "Home";
+          });
+
+          provider.setNewPage("Home");
+        }
         break;
       case 1:
         navigateTo(const ProfilePage());
@@ -417,12 +394,12 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
             text: item.title,
             icon: item.icon,
             onClicked: () {
-              // EasyLoading.show(status: 'Signing out...');
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const SignIn(),
-                ),
-              );
+              Navigator.pop(context);
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const SignIn(),
+                  ),
+                  (Route<dynamic> route) => false);
               logout();
             },
           );

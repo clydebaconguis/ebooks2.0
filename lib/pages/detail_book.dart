@@ -364,16 +364,22 @@ class _DetailBookPageState extends State<DetailBookPage> {
                 // backgroundColor: const Color(0xff500a34),
                 title: Row(
                   children: [
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
                     // IconButton(
                     //   padding: EdgeInsets.zero,
                     //   constraints: const BoxConstraints(),
-                    //   icon: const Icon(Icons.arrow_back_ios,
-                    //       color: Color(0xff232324)),
+                    //   icon:
+                    //       const Icon(Icons.arrow_back_ios, color: Colors.white),
                     //   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
                     //       MaterialPageRoute(
                     //         builder: (context) => const MyNav(),
                     //       ),
                     //       (Route<dynamic> route) => false),
+                    // ),
+                    // const SizedBox(
+                    //   width: 10,
                     // ),
                     Expanded(
                       child: Text(
