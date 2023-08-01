@@ -12,8 +12,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../api/my_api.dart';
-import '../models/get_books_info_02.dart';
+import 'package:ebooks/api/my_api.dart';
+import 'package:ebooks/models/get_books_info_02.dart';
 import 'package:disk_space_plus/disk_space_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -54,7 +54,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
 
     setState(() {
       _diskSpace = diskSpace;
-      if (_diskSpace < 2000.00) {
+      if (_diskSpace < 1000.00) {
         setState(() {
           lowStorage = true;
         });
