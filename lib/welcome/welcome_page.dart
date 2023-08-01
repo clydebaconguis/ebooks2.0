@@ -32,8 +32,8 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   var articles = <String>[
-    "Welcome to CK. We’re excited to have you on board.",
-    "Your Access to Visual Learning and Integration",
+    "Welcome to ICT-eBook. We’re excited to have you on board.",
+    "Powered by CK Your Access to Visual Learning and Integration",
     "Access Books Anytime, Anywhere.",
   ];
   final _totalDots = 3;

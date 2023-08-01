@@ -89,56 +89,73 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Expanded(
                     child: Card(
-                      margin: const EdgeInsets.all(10),
-                      elevation: 4.0,
+                      margin: const EdgeInsets.all(12),
+                      elevation: 0.0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const CircleAvatar(
-                              backgroundColor:
-                                  Color.fromARGB(255, 140, 228, 243),
-                              radius: 60.0,
-                              backgroundImage: AssetImage(
-                                'img/anonymous.jpg', // Replace with the actual profile picture URL
-                              ),
-                            ),
-                            const SizedBox(height: 22),
-                            Text(
-                              user.name,
-                              style: GoogleFonts.prompt(
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xff500a34),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 25.0),
-                            buildProfileItem(
-                                Icons.phone,
-                                'Phone',
-                                user.mobilenum.isNotEmpty
-                                    ? user.mobilenum
-                                    : 'Not Specified'),
-                            const Divider(),
-                            buildProfileItem(Icons.school, 'Grade Level',
-                                grade.isNotEmpty ? grade : 'Not Specified'),
-                            const Divider(),
-                            buildProfileItem(
-                                Icons.email,
-                                'Email',
-                                user.email.isNotEmpty
-                                    ? user.email
-                                    : 'Not Specified'),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              offset: const Offset(0.0, 0.0),
+                              blurRadius: 18.0,
+                              spreadRadius: 4.0,
+                            )
                           ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const CircleAvatar(
+                                backgroundColor:
+                                    Color.fromARGB(255, 140, 228, 243),
+                                radius: 60.0,
+                                backgroundImage: AssetImage(
+                                  'img/anonymous.jpg', // Replace with the actual profile picture URL
+                                ),
+                              ),
+                              const SizedBox(height: 22),
+                              Text(
+                                user.name,
+                                style: GoogleFonts.prompt(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xff500a34),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 25.0),
+                              buildProfileItem(
+                                  Icons.phone,
+                                  'Phone',
+                                  user.mobilenum.isNotEmpty
+                                      ? user.mobilenum
+                                      : 'Not Specified'),
+                              const Divider(),
+                              buildProfileItem(Icons.school, 'Grade Level',
+                                  grade.isNotEmpty ? grade : 'Not Specified'),
+                              const Divider(),
+                              buildProfileItem(
+                                  Icons.email,
+                                  'Email',
+                                  user.email.isNotEmpty
+                                      ? user.email
+                                      : 'Not Specified'),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               )
 

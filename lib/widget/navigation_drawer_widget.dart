@@ -117,18 +117,18 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
                             const SizedBox(
                               width: 8,
                             ),
-                            const Text(
+                            Text(
                               'Copyright 2023',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                   color: Colors.white38, fontSize: 12),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(
                               width: 10,
                             ),
-                            const Text(
+                            Text(
                               'Powered by',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                   color: Colors.white38, fontSize: 12),
                               textAlign: TextAlign.center,
                             ),
@@ -363,7 +363,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
               ),
               const SizedBox(width: 16),
               Text(
-                'EBook',
+                'ICT-eBook',
                 style: GoogleFonts.prompt(
                   textStyle: const TextStyle(
                       color: Colors.white,

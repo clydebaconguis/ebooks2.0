@@ -97,45 +97,15 @@ class _SignInState extends State<SignIn> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(height: height * 0.1),
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundColor: Colors.transparent,
+                      child: Image.asset("img/liceo-logo.png"),
+                    ),
                     const SizedBox(
-                      height: 20,
+                      height: 40,
                     ),
-                    // ListTile(
-                    //   horizontalTitleGap: 0,
-                    //   onTap: () => Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const Setting(),
-                    //     ),
-                    //   ),
-                    //   leading: const Icon(
-                    //     Icons.settings_suggest_rounded,
-                    //     color: Colors.black,
-                    //     size: 35,
-                    //   ),
-                    //   title: const Text(
-                    //     "Configure Domain",
-                    //     style: TextStyle(color: Colors.black54),
-                    //   ),
-                    // ),
-                    SizedBox(height: height * 0.1),
-                    Text(
-                      'You’re One Step Away From Greatness',
-                      style: GoogleFonts.prompt(
-                        textStyle: const TextStyle(
-                          color: Color.fromARGB(
-                            255,
-                            209,
-                            22,
-                            128,
-                          ),
-                          fontWeight: FontWeight.w900,
-                          fontSize: 33,
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: height * 0.1),
                     TextInput(
                         textString: "Email",
                         textController: emailController,
