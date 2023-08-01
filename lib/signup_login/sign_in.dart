@@ -129,14 +129,10 @@ class _SignInState extends State<SignIn> {
                           'Sign in',
                           style: GoogleFonts.prompt(
                             textStyle: const TextStyle(
-                                color: Color.fromARGB(
-                                  255,
-                                  209,
-                                  22,
-                                  128,
-                                ),
-                                fontWeight: FontWeight.w900,
-                                fontSize: 26),
+                              color: Color(0xFF99135F),
+                              fontWeight: FontWeight.w900,
+                              fontSize: 26,
+                            ),
                           ),
                         ),
                         GestureDetector(
@@ -184,7 +180,7 @@ class _SignInState extends State<SignIn> {
                                 'Sign up is temporarily unavailable!');
                           },
                           child: const TextWidget(
-                            color: Color(0xffcf167f),
+                            color: Color(0xFF99135F),
                             text: "Sign up",
                             fontSize: 16,
                             isUnderLine: true,
@@ -196,7 +192,7 @@ class _SignInState extends State<SignIn> {
                                 'Pls inform the authority or your teacher if you forgot your credentials!');
                           },
                           child: const TextWidget(
-                            color: Color(0xffcf167f),
+                            color: Color(0xFF99135F),
                             text: "Forgot Password",
                             fontSize: 16,
                             isUnderLine: true,

@@ -433,8 +433,8 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     required String text,
     required String path,
   }) {
-    const color = Colors.red;
-    const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color);
+    const color = Color.fromRGBO(70, 191, 247, 1);
+    const leadingPdf = Icon(Icons.menu_book, color: color);
 
     return Material(
       color: Colors.transparent,
@@ -446,7 +446,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
           : ListTile(
               leading: selectedPdf == text
                   ? const Icon(
-                      Icons.picture_as_pdf_sharp,
+                      Icons.menu_book,
                       color: Colors.greenAccent,
                     )
                   : leadingPdf,
@@ -502,7 +502,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
             path: item.path,
             child: c1,
             innerChild: c2,
-            icon: Icons.folder_rounded,
+            icon: Icons.add_circle_outline,
             index: index,
             // items: item.lessons,
           );
@@ -536,10 +536,11 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
     // VoidCallback? onClicked,
   }) {
     const color = Colors.white;
-    const color2 = Colors.yellow;
+    const blue = Color.fromRGBO(70, 191, 247, 1);
+    const color2 = Colors.greenAccent;
     const color3 = Colors.red;
     // final color2 = Colors.pink.shade400;
-    const leadingPdf = Icon(Icons.picture_as_pdf_sharp, color: color3);
+    const leadingPdf = Icon(Icons.menu_book, color: blue);
     const leadingVidSelected =
         Icon(Icons.play_circle_outline, color: Colors.greenAccent);
     const leadingVid = Icon(Icons.play_circle_outline, color: Colors.orange);
@@ -561,7 +562,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
               minVerticalPadding: 0,
               leading: item.isExpanded
                   ? const Icon(
-                      Icons.folder_open,
+                      Icons.remove_circle_outline,
                       color: Colors.yellowAccent,
                     )
                   : leading,
@@ -594,7 +595,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                             leading: (selectedPdf == et.title &&
                                     getFileExtension(et.title) == ".pdf")
                                 ? const Icon(
-                                    Icons.picture_as_pdf_sharp,
+                                    Icons.menu_book,
                                     color: Colors.greenAccent,
                                   )
                                 : (selectedPdf == et.title &&
@@ -644,7 +645,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                           minVerticalPadding: 0,
                           leading: e.isExpanded
                               ? const Icon(
-                                  Icons.folder_open,
+                                  Icons.remove_circle_outline,
                                   color: Colors.yellowAccent,
                                 )
                               : leading,
@@ -680,7 +681,7 @@ class _NavigationDrawerWidget2State extends State<NavigationDrawerWidget2> {
                                           getFileExtension(item.title) ==
                                               ".pdf")
                                       ? const Icon(
-                                          Icons.picture_as_pdf_sharp,
+                                          Icons.menu_book,
                                           color: Colors.greenAccent,
                                         )
                                       : (selectedPdf == item.title &&
