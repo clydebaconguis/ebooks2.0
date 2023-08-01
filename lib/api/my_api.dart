@@ -4,11 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CallApi {
-  final String _ckIpv4 = 'https://app.cklms.ph/';
-  final String _domain = 'https://app.cklms.ph/api/';
+  // final String _ckIpv4 = 'https://app.cklms.ph/';
+  // final String _domain = 'https://app.cklms.ph/api/';
 
-  // final String _ckIpv4 = 'http://192.168.0.105:8000/';
-  // final String _domain = 'http://192.168.0.105:8000/api/';
+  final String _ckIpv4 = 'http://192.168.0.105:8000/';
+  final String _domain = 'http://192.168.0.105:8000/api/';
   getHost() {
     // var domain = await _loadSavedDomainName();
     // return '$domain/';

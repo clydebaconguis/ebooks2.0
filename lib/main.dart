@@ -8,6 +8,7 @@ import 'package:ebooks/widget/navigation_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +70,21 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    changeStatusBarColor();
+    super.initState();
+  }
+
+  changeStatusBarColor() async {
+    await FlutterStatusbarcolor.setStatusBarColor(const Color(0xff500a34));
+    if (useWhiteForeground(const Color(0xff500a34))) {
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
+    } else {
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(statusBarColor: Color(0xff500a34)),

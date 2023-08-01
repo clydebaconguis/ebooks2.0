@@ -342,297 +342,289 @@ class _DetailBookPageState extends State<DetailBookPage> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: Color(0xff500a34)),
-      child: Scaffold(
-        body: Container(
-          color: Colors.white,
-          child: SafeArea(
-            child: Scaffold(
-              backgroundColor: Colors.white,
-              appBar: AppBar(
-                titleSpacing: 0,
-                flexibleSpace: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xff500a34), Color(0xffcf167f)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                ),
-                // backgroundColor: const Color(0xff500a34),
-                title: Row(
-                  children: [
-                    // const SizedBox(
-                    //   width: 20,
-                    // ),
-                    // IconButton(
-                    //   padding: EdgeInsets.zero,
-                    //   constraints: const BoxConstraints(),
-                    //   icon:
-                    //       const Icon(Icons.arrow_back_ios, color: Colors.white),
-                    //   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    //       MaterialPageRoute(
-                    //         builder: (context) => const MyNav(),
-                    //       ),
-                    //       (Route<dynamic> route) => false),
-                    // ),
-                    // const SizedBox(
-                    //   width: 10,
-                    // ),
-                    Expanded(
-                      child: Text(
-                        widget.bookInfo.title,
-                        style: GoogleFonts.prompt(
-                          textStyle: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 18),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        softWrap: true,
-                      ),
-                    ),
-                  ],
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            titleSpacing: 0,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff500a34), Color(0xffcf167f)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-              body: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.only(left: 20),
-                child: SingleChildScrollView(
-                  child: Column(
+            ),
+            // backgroundColor: const Color(0xff500a34),
+            title: Row(
+              children: [
+                // const SizedBox(
+                //   width: 20,
+                // ),
+                // IconButton(
+                //   padding: EdgeInsets.zero,
+                //   constraints: const BoxConstraints(),
+                //   icon:
+                //       const Icon(Icons.arrow_back_ios, color: Colors.white),
+                //   onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                //       MaterialPageRoute(
+                //         builder: (context) => const MyNav(),
+                //       ),
+                //       (Route<dynamic> route) => false),
+                // ),
+                // const SizedBox(
+                //   width: 10,
+                // ),
+                Expanded(
+                  child: Text(
+                    widget.bookInfo.title,
+                    style: GoogleFonts.prompt(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    softWrap: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          body: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(left: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Container(
+                  //   padding: const EdgeInsets.only(left: 0, right: 30),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       IconButton(
+                  //         padding: EdgeInsets.zero,
+                  //         constraints: const BoxConstraints(),
+                  //         icon: const Icon(Icons.arrow_back_ios,
+                  //             color: Color(0xff232324)),
+                  //         onPressed: () =>
+                  //             Navigator.of(context).pushAndRemoveUntil(
+                  //                 MaterialPageRoute(
+                  //                   builder: (context) => const MyNav(),
+                  //                 ),
+                  //                 (Route<dynamic> route) => false),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  Row(
                     children: [
-                      // Container(
-                      //   padding: const EdgeInsets.only(left: 0, right: 30),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: [
-                      //       IconButton(
-                      //         padding: EdgeInsets.zero,
-                      //         constraints: const BoxConstraints(),
-                      //         icon: const Icon(Icons.arrow_back_ios,
-                      //             color: Color(0xff232324)),
-                      //         onPressed: () =>
-                      //             Navigator.of(context).pushAndRemoveUntil(
-                      //                 MaterialPageRoute(
-                      //                   builder: (context) => const MyNav(),
-                      //                 ),
-                      //                 (Route<dynamic> route) => false),
-                      //       )
-                      //     ],
-                      //   ),
-                      // ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(
-                        children: [
-                          Material(
-                            elevation: 0.0,
-                            child: widget.bookInfo.picurl.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl:
-                                        '$mainHost${widget.bookInfo.picurl}',
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      height: 200,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.3),
-                                              spreadRadius: 8,
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 3))
-                                        ],
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                    ),
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                      height: 200,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.3),
-                                              spreadRadius: 8,
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 3))
-                                        ],
-                                        image: const DecorationImage(
-                                          image: AssetImage("img/CK_logo.png"),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    height: 200,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      image: const DecorationImage(
-                                        image: AssetImage("img/CK_logo.png"),
-                                      ),
+                      Material(
+                        elevation: 0.0,
+                        child: widget.bookInfo.picurl.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: '$mainHost${widget.bookInfo.picurl}',
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  height: 200,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          spreadRadius: 8,
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 3))
+                                    ],
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.fill,
                                     ),
                                   ),
-                          ),
-                          Container(
-                            width: screenWidth - 30 - 180 - 20,
-                            margin: const EdgeInsets.only(left: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 10,
                                 ),
-                                Text(
-                                  widget.bookInfo.title,
-                                  style: GoogleFonts.prompt(
-                                    textStyle: const TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 22),
-                                  ),
-                                ),
-                                // TextWidget(
-                                //   color: Colors.black87,
-                                //   text: widget.bookInfo.title,
-                                //   fontSize: 22,
-                                // ),
-                                const Divider(color: Colors.grey),
-                                Text(
-                                  "Author : CK Children's Publishing",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.black54,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => Container(
+                                  height: 200,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          spreadRadius: 8,
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 3))
+                                    ],
+                                    image: const DecorationImage(
+                                      image: AssetImage("img/CK_logo.png"),
+                                      fit: BoxFit.contain,
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      const Divider(
-                        endIndent: 20,
-                        color: Color(0xFF7b8ea3),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Details",
-                            style: GoogleFonts.prompt(
-                              textStyle: const TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 22),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Text(
-                          'This book is brought to you by CK Children\'s Publishing. Your Access to Visual Learning and Integration',
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.black54),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: isButtonEnabled
-                                  ? () {
-                                      if (lowStorage) {
-                                        EasyLoading.showInfo(
-                                            'low storage! \npls clean your phone!');
-                                      } else {
-                                        setState(() {
-                                          isButtonEnabled = false;
-                                        });
-                                        _downloadPdf();
-                                      }
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: isButtonEnabled
-                                      ? const Color.fromARGB(255, 156, 21, 102)
-                                      : Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                              )
+                            : Container(
+                                height: 200,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  image: const DecorationImage(
+                                    image: AssetImage("img/CK_logo.png"),
                                   ),
-                                  padding: const EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                  ),
-                                  alignment: Alignment.center),
-                              // child: const Text(
-                              //   "View Book",
-                              //   style: TextStyle(
-                              //     fontSize: 20,
-                              //   ),
-                              // ),
-                              child: Text(
-                                "View Book",
-                                style: GoogleFonts.prompt(
-                                  textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 20),
                                 ),
                               ),
+                      ),
+                      Container(
+                        width: screenWidth - 30 - 180 - 20,
+                        margin: const EdgeInsets.only(left: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10,
                             ),
-                            // Expanded(child: Container()),
-                            // const IconButton(
-                            //     icon: Icon(Icons.arrow_forward_ios),
-                            //     onPressed: null)
+                            Text(
+                              widget.bookInfo.title,
+                              style: GoogleFonts.prompt(
+                                textStyle: const TextStyle(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 22),
+                              ),
+                            ),
+                            // TextWidget(
+                            //   color: Colors.black87,
+                            //   text: widget.bookInfo.title,
+                            //   fontSize: 22,
+                            // ),
+                            const Divider(color: Colors.grey),
+                            Text(
+                              "Author : CK Children's Publishing",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      // const Divider(color: Color(0xFF7b8ea3)),
                     ],
                   ),
-                ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  const Divider(
+                    endIndent: 20,
+                    color: Color(0xFF7b8ea3),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Details",
+                        style: GoogleFonts.prompt(
+                          textStyle: const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 22),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Text(
+                      'This book is brought to you by CK Children\'s Publishing. Your Access to Visual Learning and Integration',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.black54),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: isButtonEnabled
+                              ? () {
+                                  if (lowStorage) {
+                                    EasyLoading.showInfo(
+                                        'low storage! \npls clean your phone!');
+                                  } else {
+                                    setState(() {
+                                      isButtonEnabled = false;
+                                    });
+                                    _downloadPdf();
+                                  }
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: isButtonEnabled
+                                  ? const Color.fromARGB(255, 156, 21, 102)
+                                  : Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.only(
+                                left: 15.0,
+                                right: 15.0,
+                                top: 10.0,
+                                bottom: 10.0,
+                              ),
+                              alignment: Alignment.center),
+                          // child: const Text(
+                          //   "View Book",
+                          //   style: TextStyle(
+                          //     fontSize: 20,
+                          //   ),
+                          // ),
+                          child: Text(
+                            "View Book",
+                            style: GoogleFonts.prompt(
+                              textStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 20),
+                            ),
+                          ),
+                        ),
+                        // Expanded(child: Container()),
+                        // const IconButton(
+                        //     icon: Icon(Icons.arrow_forward_ios),
+                        //     onPressed: null)
+                      ],
+                    ),
+                  ),
+                  // const Divider(color: Color(0xFF7b8ea3)),
+                ],
               ),
             ),
           ),
         ),
       ),
     );
+
     // builder: EasyLoading.init(),
   }
 }
